@@ -1,2 +1,1 @@
-# Comp.-Grafica
-Computação Gráfica - Bernardo, André, Luiz, Julia e Ana
+Trabalho de Computação Gráfica de André Luís, Bernardo e Juliana
