@@ -94,17 +94,19 @@ for(var i=0; i<45; i++) {
 let cubeMaterial;
 cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 // position the cube
-for(var i = -22.5; i < 22.5; i++) {
-  for(var j= -22.5; j < 22.5; j++) {
-    cube.position.set(i, 0.5, j);
-    scene.add(cube);
+for(var i = -22; i <= 22; i++) {
+  for(var j= -22; j <= 22; j++) {
+    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    if(i == -22 || i == 22 || j == -22 || j == 22) {
+      cube.position.set(i, 0.5, j);
+      scene.add(cube);
+    }
   }
 }
 //cube.position.set(1, 0.5, 1);
 // add the cube to the scene
-scene.add(cube);
+//scene.add(cube);
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
