@@ -75,16 +75,16 @@ scene.add(groundPlane);
 const gridHelper = new THREE.GridHelper( 45, 45, "rgb(255,0,0)", "rgb(7,7,7)");
 scene.add( gridHelper );
 
-var meitrix = [];
+var matriz = [];
 for(var i=0; i<45; i++) {
-  meitrix[i] = [];
+  matriz[i] = [];
   for(var j=0; j<45; j++) {
-    meitrix[i][j] = undefined;
+    matriz[i][j] = undefined;
     if (i == 0 || i == 44 || j == 0 || j == 44) {
-      meitrix[i][j] = 1;
+      matriz[i][j] = 1;
     }
     else {
-      meitrix[i][j] = 0;
+      matriz[i][j] = 0;
     }
   }
 }
@@ -104,9 +104,6 @@ for(var i = -22; i <= 22; i++) {
     }
   }
 }
-//cube.position.set(1, 0.5, 1);
-// add the cube to the scene
-//scene.add(cube);
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
@@ -172,6 +169,14 @@ function updateCamera()
   //cameraHolder.getWorldPosition(pos); // salva a posição global do objeto na variavel 'pos'
   // message.changeMessage("Pos: {" + pos.x + ", " + pos.y + ", " + pos.z + "} " + 
   //                        "/ Quaternion: {" + quaternion.w + "} ");
+}
+
+function controlAxis() {
+
+}
+
+function controlPerpective() {
+
 }
 
 function keyboardUpdate() {
