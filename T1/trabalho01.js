@@ -7,6 +7,7 @@ import {initRenderer,
         initDefaultSpotlight, 
         createGroundPlane,
         SecondaryBox, 
+        setDefaultMaterial,
         getMaxSize,
         onWindowResize,
         createGroundPlaneWired} from "../libs/util/util.js";
@@ -16,7 +17,7 @@ var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
 var keyboard = new KeyboardState();
-initDefaultSpotlight(scene, new THREE.Vector3(25, 15, 20)); // Use default light
+initDefaultSpotlight(scene, new THREE.Vector3(50, 50, 50)); // Use default light
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
@@ -76,17 +77,34 @@ scene.add( gridHelper );
 
 var meitrix = [];
 for(var i=0; i<45; i++) {
-    meitrix[i] = [];
-    for(var j=0; j<45; j++) {
-        meitrix[i][j] = undefined;
-        if (i == 0 || i == 44 || j == 0 || j == 44) {
-          meitrix[i][j] = 1;
-        }
-        else {
-          meitrix[i][j] = 0;
-        }
+  meitrix[i] = [];
+  for(var j=0; j<45; j++) {
+    meitrix[i][j] = undefined;
+    if (i == 0 || i == 44 || j == 0 || j == 44) {
+      meitrix[i][j] = 1;
     }
+    else {
+      meitrix[i][j] = 0;
+    }
+  }
 }
+
+
+// create a cube
+let cubeMaterial;
+cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
+let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+// position the cube
+for(var i = -22.5; i < 22.5; i++) {
+  for(var j= -22.5; j < 22.5; j++) {
+    cube.position.set(i, 0.5, j);
+    scene.add(cube);
+  }
+}
+//cube.position.set(1, 0.5, 1);
+// add the cube to the scene
+scene.add(cube);
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
