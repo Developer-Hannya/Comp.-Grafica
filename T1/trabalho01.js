@@ -66,9 +66,27 @@ var floor  = textureLoader.load('../assets/textures/granite.jpg');
 //-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
-var groundPlaneWired = createGroundPlaneWired(45.0, 45.0, 45, 45, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
-  //groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
-  scene.add(groundPlaneWired);
+
+var groundPlane = createGroundPlane(45, 45, 45, 45, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlane);
+
+const gridHelper = new THREE.GridHelper( 45, 45, "rgb(255,0,0)", "rgb(7,7,7)");
+scene.add( gridHelper );
+
+var meitrix = [];
+for(var i=0; i<45; i++) {
+    meitrix[i] = [];
+    for(var j=0; j<45; j++) {
+        meitrix[i][j] = undefined;
+        if (i == 0 || i == 44 || j == 0 || j == 44) {
+          meitrix[i][j] = 1;
+        }
+        else {
+          meitrix[i][j] = 0;
+        }
+    }
+}
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
