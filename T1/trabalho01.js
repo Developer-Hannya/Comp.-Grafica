@@ -12,17 +12,29 @@ import {initRenderer,
         onWindowResize,
         createGroundPlaneWired} from "../libs/util/util.js";
 import { Vector3 } from '../build/three.module.js';
+import { moveCharacter } from './moveCharacter.js';
 
 var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
-var keyboard = new KeyboardState();
+export var keyboard = new KeyboardState();
 initDefaultSpotlight(scene, new THREE.Vector3(50, 50, 50)); // Use default light
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 
+//-------------------------------------------------------------------------------
+// Player
+//-------------------------------------------------------------------------------
+var player = {
+  object: null,
+  loaded: false,
+  bb: new THREE.Box3(),
+  xSpeed: 0,
+  zSpeed: 0
+}
 
+createBBHelper(player.bb, 'yellow')
 //-------------------------------------------------------------------------------
 // Quaternion
 //-------------------------------------------------------------------------------
@@ -59,12 +71,6 @@ var firstRender = false;
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //-------------------------------------------------------------------------------
-// textures
-//-------------------------------------------------------------------------------
-var textureLoader = new THREE.TextureLoader();
-var floor  = textureLoader.load('../assets/textures/granite.jpg');
-
-//-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
 
@@ -95,12 +101,15 @@ let cubeMaterial;
 cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
+let objects = [];
 for(var i = -22; i <= 22; i++) {
   for(var j= -22; j <= 22; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     if(i == -22 || i == 22 || j == -22 || j == 22) {
       cube.position.set(i, 0.5, j);
       scene.add(cube);
+      let cubeBb  = new THREE.Box3().setFromObject(cube);
+      objects.push(cubeBb);
     }
   }
 }
@@ -111,7 +120,6 @@ var axesHelper = new THREE.AxesHelper( 2 );
 scene.add( axesHelper );
 
 //----------------------------------------------------------------------------
-var man = null;
 var playAction = true;
 var time = 0;
 var mixer = new Array();
@@ -137,11 +145,12 @@ function loadGLTFFile(modelName)
     });
 
     // create the man animated object  
-    man = obj;
+    player.object = obj;
     
     scene.add ( obj );
-    cameraHolder.add(man);
-    man.applyQuaternion(quaternion);
+    cameraHolder.add(player.object);
+    player.object.applyQuaternion(quaternion);
+    player.loaded = true;
 
     // Create animationMixer and push it in the array of mixers
     var mixerLocal = new THREE.AnimationMixer(obj);
@@ -182,137 +191,12 @@ function controlPerpective() {
 function keyboardUpdate() {
 
   keyboard.update();
-  playAction = false;
-  // codigo ORIGINAL para mover o personagem e a camera
-  /*
-  if (keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
-    playAction = true;
-    cameraHolder.translateZ(0.07);
-    cameraHolder.translateX(0.07);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(45));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("down") && keyboard.pressed("left") || keyboard.pressed("S") && keyboard.pressed("A"))  {
-    playAction = true;
-    cameraHolder.translateZ(0.07);
-    cameraHolder.translateX(-0.07);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("up") && keyboard.pressed("left") || keyboard.pressed("W") && keyboard.pressed("A"))  {
-    playAction = true;
-    cameraHolder.translateZ(-0.07);
-    cameraHolder.translateX(-0.07);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
-    playAction = true;
-    cameraHolder.translateZ(-0.07);
-    cameraHolder.translateX(0.07);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("left") || keyboard.pressed("A")){
-     playAction = true;
-     cameraHolder.translateX(-0.1);
-     quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
-     man.quaternion.slerp(quaternion,0.1);
-  }
- else if (keyboard.pressed("right") || keyboard.pressed("D"))  {
-    playAction = true;
-    cameraHolder.translateX(0.1);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("up") || keyboard.pressed("W")){
-    playAction = true;
-    cameraHolder.translateZ(-0.1);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("down") || keyboard.pressed("S"))  {
-    playAction = true;
-    cameraHolder.translateZ(0.1);
-    quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
-    man.quaternion.slerp(quaternion,0.1);
-  }
-  else if (keyboard.pressed("pageup")){
-    cameraHolder.translateY(0.1);
-  }
-  else if (keyboard.pressed("pagedown"))  {
-    cameraHolder.translateY(-0.1);
-  }
+  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects);
   if ( keyboard.down("C"))  {
     changeProjection();
   }
   updateCamera();
 }
-*/
-if (keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
-  playAction = true;
-  cameraHolder.translateX(0.1);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("down") && keyboard.pressed("left") || keyboard.pressed("S") && keyboard.pressed("A"))  {
-  playAction = true;
-  cameraHolder.translateZ(0.1);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
-  man.quaternion.slerp(quaternion,0.1);  
-}
-else if (keyboard.pressed("up") && keyboard.pressed("left") || keyboard.pressed("W") && keyboard.pressed("A"))  {
-  playAction = true;
-  cameraHolder.translateX(-0.1);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
-  playAction = true;
-  cameraHolder.translateZ(-0.1);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("left") || keyboard.pressed("A")){
-  playAction = true;
-  cameraHolder.translateZ(0.07);
-  cameraHolder.translateX(-0.07);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("right") || keyboard.pressed("D"))  {
-  playAction = true;
-  cameraHolder.translateZ(-0.07);
-  cameraHolder.translateX(0.07);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("up") || keyboard.pressed("W")){
-  playAction = true;
-  cameraHolder.translateZ(-0.07);
-  cameraHolder.translateX(-0.07);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("down") || keyboard.pressed("S"))  {
-  playAction = true;
-  cameraHolder.translateZ(0.07);
-  cameraHolder.translateX(0.07);
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(45));
-  man.quaternion.slerp(quaternion,0.1);
-}
-else if (keyboard.pressed("pageup")){
-  cameraHolder.translateY(0.1);
-}
-else if (keyboard.pressed("pagedown"))  {
-  cameraHolder.translateY(-0.1);
-}
-if ( keyboard.down("C"))  {
-  changeProjection();
-}
-updateCamera();
-}
-
 
 function changeProjection()
 {
@@ -334,6 +218,7 @@ function changeProjection()
 
 function render()
 {
+  updatePlayer();
   stats.update();
   var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
   keyboardUpdate(); 
@@ -345,4 +230,35 @@ function render()
     for(var i = 0; i<mixer.length; i++)
       mixer[i].update( delta );
   }
+}
+
+function updatePlayer()
+{
+   if(player.loaded)
+   {
+      let playerPos = new THREE.Vector3();
+      player.object.localToWorld(playerPos);
+      playerPos.y += 1;
+      // console.log(playerPos);
+      let size = new THREE.Vector3(2, 2, 2);
+      player.bb.setFromCenterAndSize(playerPos, size);
+   }
+}
+
+//colisão
+export default function checkCollisions(object, playerBb)
+{
+   let collision = playerBb.intersectsBox(object);
+   if(collision){
+      return true;
+   }
+   return false;
+}
+
+function createBBHelper(bb, color)
+{
+   // Create a bounding box helper
+   let helper = new THREE.Box3Helper( bb, color );
+   scene.add( helper );
+   return helper;
 }
