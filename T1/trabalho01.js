@@ -13,14 +13,15 @@ import {initRenderer,
         createGroundPlaneWired} from "../libs/util/util.js";
 import { Vector3 } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
+import { onDocumentMouseDown } from './selecaoDeObjetos.js';
 
-var scene = new THREE.Scene();    // Create main scene
+export var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
 export var keyboard = new KeyboardState();
 initDefaultSpotlight(scene, new THREE.Vector3(50, 50, 50)); // Use default light
 
-var renderer = initRenderer();    // View function in util/utils
+export var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 
 //-------------------------------------------------------------------------------
@@ -50,7 +51,7 @@ let camUp   = new THREE.Vector3(0, 1, 0);
 var aspect = window.innerWidth / window.innerHeight;
 var d = 6.7;
 var message = new SecondaryBox("");
-var camera = new THREE.OrthographicCamera(- d * aspect, d * aspect, d, - d, 0.1, 1000); // (left, right, top, bottom, near, far);
+export var camera = new THREE.OrthographicCamera(- d * aspect, d * aspect, d, - d, 0.1, 1000); // (left, right, top, bottom, near, far);
   //camera.lookAt(camLook);
   camera.position.set(camPos);
   camera.up.set(camUp);
@@ -97,11 +98,11 @@ for(var i=0; i<45; i++) {
 
 
 // create a cube
-let cubeMaterial;
-cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
+export let cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
+export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
-let objects = [];
+export let objects = [];
 for(var i = -22; i <= 22; i++) {
   for(var j= -22; j <= 22; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
@@ -109,7 +110,12 @@ for(var i = -22; i <= 22; i++) {
       cube.position.set(i, 0.5, j);
       scene.add(cube);
       let cubeBb  = new THREE.Box3().setFromObject(cube);
-      objects.push(cubeBb);
+      let box = {
+        obj: cube,
+        bb: cubeBb,
+        selected: false
+      };
+      objects.push(box);
     }
   }
 }
@@ -120,13 +126,17 @@ var axesHelper = new THREE.AxesHelper( 2 );
 scene.add( axesHelper );
 
 //----------------------------------------------------------------------------
+// Seleção de objetos
+//----------------------------------------------------------------------------
+document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+//----------------------------------------------------------------------------
+
 var playAction = true;
 var time = 0;
 var mixer = new Array();
 
 // Load animated files
 loadGLTFFile('../assets/objects/walkingMan.glb');
-
 render();
 
 function loadGLTFFile(modelName)
@@ -239,7 +249,6 @@ function updatePlayer()
       let playerPos = new THREE.Vector3();
       player.object.localToWorld(playerPos);
       playerPos.y += 1;
-      // console.log(playerPos);
       let size = new THREE.Vector3(2, 2, 2);
       player.bb.setFromCenterAndSize(playerPos, size);
    }
