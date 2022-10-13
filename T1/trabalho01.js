@@ -183,7 +183,8 @@ function keyboardUpdate() {
 
   keyboard.update();
   playAction = false;
-  // codigo para mover o personagem e a camera
+  // codigo ORIGINAL para mover o personagem e a camera
+  /*
   if (keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
     playAction = true;
     cameraHolder.translateZ(0.07);
@@ -247,6 +248,71 @@ function keyboardUpdate() {
   }
   updateCamera();
 }
+*/
+if (keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
+  playAction = true;
+  cameraHolder.translateX(0.1);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("down") && keyboard.pressed("left") || keyboard.pressed("S") && keyboard.pressed("A"))  {
+  playAction = true;
+  cameraHolder.translateZ(0.1);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
+  man.quaternion.slerp(quaternion,0.1);  
+}
+else if (keyboard.pressed("up") && keyboard.pressed("left") || keyboard.pressed("W") && keyboard.pressed("A"))  {
+  playAction = true;
+  cameraHolder.translateX(-0.1);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
+  playAction = true;
+  cameraHolder.translateZ(-0.1);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("left") || keyboard.pressed("A")){
+  playAction = true;
+  cameraHolder.translateZ(0.07);
+  cameraHolder.translateX(-0.07);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("right") || keyboard.pressed("D"))  {
+  playAction = true;
+  cameraHolder.translateZ(-0.07);
+  cameraHolder.translateX(0.07);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("up") || keyboard.pressed("W")){
+  playAction = true;
+  cameraHolder.translateZ(-0.07);
+  cameraHolder.translateX(-0.07);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("down") || keyboard.pressed("S"))  {
+  playAction = true;
+  cameraHolder.translateZ(0.07);
+  cameraHolder.translateX(0.07);
+  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(45));
+  man.quaternion.slerp(quaternion,0.1);
+}
+else if (keyboard.pressed("pageup")){
+  cameraHolder.translateY(0.1);
+}
+else if (keyboard.pressed("pagedown"))  {
+  cameraHolder.translateY(-0.1);
+}
+if ( keyboard.down("C"))  {
+  changeProjection();
+}
+updateCamera();
+}
+
 
 function changeProjection()
 {
