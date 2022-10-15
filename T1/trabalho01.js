@@ -98,7 +98,7 @@ for(var i=0; i<45; i++) {
 
 
 // create a cube
-export let cubeMaterial = setDefaultMaterial("rgb(222,184,135)");
+export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
@@ -117,6 +117,26 @@ for(var i = -22; i <= 22; i++) {
       };
       objects.push(box);
     }
+  }
+}
+
+for(var i = -19; i <= 19; i++) {
+  for(var j= -19; j <= 19; j++) {
+    var k = Math.floor(Math.random() * 2);
+    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    if((i != 0 && j != 0) && k == 1) {
+      cube.position.set(i, 0.5, j);
+      scene.add(cube);
+      let cubeBb  = new THREE.Box3().setFromObject(cube);
+      let box = {
+        obj: cube,
+        bb: cubeBb,
+        selected: false
+      };
+      objects.push(box);
+      k = Math.floor(Math.random() * 2);
+    }
+    k = Math.floor(Math.random() * 2);
   }
 }
 
