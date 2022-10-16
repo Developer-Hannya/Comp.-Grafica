@@ -34,7 +34,11 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       player.object.quaternion.slerp(quaternion,0.1);
     }
     else if (keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
+<<<<<<< HEAD
       player.bb.min.z -= 0.2
+=======
+      player.bb.min.z -= 0.2;
+>>>>>>> 7cab42bd89ac6fd48c138a20a5eda58abe7ef4dc
       playAction = true;
       player.zSpeed = -0.07;
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
