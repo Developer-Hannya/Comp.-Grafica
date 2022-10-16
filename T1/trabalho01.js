@@ -247,9 +247,9 @@ export default function checkCollisions(object, playerBb)
    return false;
 }
 
+// deixa a bb visivel
 function createBBHelper(bb, color)
 {
-   // deixa a bb visivel
    let helper = new THREE.Box3Helper( bb, color );
    scene.add( helper );
    return helper;
