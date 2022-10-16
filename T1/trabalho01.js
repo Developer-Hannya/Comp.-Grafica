@@ -35,7 +35,7 @@ var player = {
   zSpeed: 0
 }
 
-createBBHelper(player.bb, 'yellow')
+// createBBHelper(player.bb, 'yellow')
 //-------------------------------------------------------------------------------
 // Quaternion
 //-------------------------------------------------------------------------------
@@ -75,19 +75,19 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 // Setting ground plane
 //-------------------------------------------------------------------------------
 
-var groundPlane = createGroundPlane(45, 45, 45, 45, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(75, 75, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
-const gridHelper = new THREE.GridHelper( 45, 45, "rgb(255,0,0)", "rgb(7,7,7)");
+const gridHelper = new THREE.GridHelper( 75, 75, "rgb(255,0,0)", "rgb(7,7,7)");
 scene.add( gridHelper );
 
 var matriz = [];
-for(var i=0; i<45; i++) {
+for(var i=0; i<75; i++) {
   matriz[i] = [];
-  for(var j=0; j<45; j++) {
-    matriz[i][j] = undefined;
-    if (i == 0 || i == 44 || j == 0 || j == 44) {
+  for(var j=0; j<75; j++) {
+    // matriz[i][j] = undefined;
+    if (i == 0 || i == 74 || j == 0 || j == 74) {
       matriz[i][j] = 1;
     }
     else {
@@ -103,11 +103,14 @@ export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
 export let objects = [];
-for(var i = -22; i <= 22; i++) {
-  for(var j= -22; j <= 22; j++) {
+export let parede = [];
+for(var i = -37; i <= 37; i++) {
+  for(var j= -37; j <= 37; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if(i == -22 || i == 22 || j == -22 || j == 22) {
+    if(i == -37 || i == 37 || j == -37 || j == 37) {
       cube.position.set(i, 0.5, j);
+      cube.castShadow = true;
+      cube.receiveShadow = true;
       scene.add(cube);
       let cubeBb  = new THREE.Box3().setFromObject(cube);
       let box = {
@@ -115,28 +118,37 @@ for(var i = -22; i <= 22; i++) {
         bb: cubeBb,
         selected: false
       };
-      objects.push(box);
+      parede.push(box);
     }
   }
 }
 
-for(var i = -19; i <= 19; i++) {
-  for(var j= -19; j <= 19; j++) {
-    var k = Math.floor(Math.random() * 2);
+//adicionando blocos do meio
+for(var i = -33; i <= 33; i++) {
+  for(var j= -33; j <= 33; j++) {
+    var k = Math.floor(Math.random() * 30);
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
     if((i != 0 && j != 0) && k == 1) {
-      cube.position.set(i, 0.5, j);
-      scene.add(cube);
-      let cubeBb  = new THREE.Box3().setFromObject(cube);
-      let box = {
-        obj: cube,
-        bb: cubeBb,
-        selected: false
-      };
-      objects.push(box);
-      k = Math.floor(Math.random() * 2);
+      if(matriz[i-2+37][j+37] === 0 && matriz[i-2+37][j+1+37] === 0 && matriz[i-2+37][j-1+37] === 0 && matriz[i-2+37][j+2+37] === 0 && matriz[i-2+37][j-2+37] === 0 &&
+        matriz[i+2+37][j+37] === 0 && matriz[i+2+37][j+1+37] === 0 && matriz[i+2+37][j-1+37] === 0 && matriz[i+2+37][j+2+37] === 0 && matriz[i+2+37][j-2+37] === 0 &&
+        matriz[i+37][j-2+37] === 0 && matriz[i-1+37][j-2+37] === 0 && matriz[i+1+37][j-2+37] === 0 &&
+        matriz[i+37][j+2+37] === 0 && matriz[i-1+37][j+2+37] === 0 && matriz[i+1+37][j+2+37] === 0){
+        cube.position.set(i, 0.5, j);
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+        scene.add(cube);
+        matriz[i+37][j+37] = 1;
+        let cubeBb  = new THREE.Box3().setFromObject(cube);
+        let box = {
+          obj: cube,
+          bb: cubeBb,
+          selected: false
+        };
+        objects.push(box);
+        k = Math.floor(Math.random() * 30);
+      }
     }
-    k = Math.floor(Math.random() * 2);
+    k = Math.floor(Math.random() * 30);
   }
 }
 
@@ -210,18 +222,10 @@ function updateCamera()
   //                        "/ Quaternion: {" + quaternion.w + "} ");
 }
 
-function controlAxis() {
-
-}
-
-function controlPerpective() {
-
-}
-
 function keyboardUpdate() {
 
   keyboard.update();
-  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects);
+  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
   if ( keyboard.down("C"))  {
     changeProjection();
   }
@@ -269,7 +273,7 @@ function updatePlayer()
       let playerPos = new THREE.Vector3();
       player.object.localToWorld(playerPos);
       playerPos.y += 1;
-      let size = new THREE.Vector3(2, 2, 2);
+      let size = new THREE.Vector3(1.1, 1.1, 1.1);
       player.bb.setFromCenterAndSize(playerPos, size);
    }
 }
@@ -286,7 +290,7 @@ export default function checkCollisions(object, playerBb)
 
 function createBBHelper(bb, color)
 {
-   // Create a bounding box helper
+   // deixa a bb visivel
    let helper = new THREE.Box3Helper( bb, color );
    scene.add( helper );
    return helper;

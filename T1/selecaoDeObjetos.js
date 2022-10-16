@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, camera, objects } from './trabalho01.js';
+import { cubeMaterial, cubeMaterialSelected, renderer, camera, objects, parede } from './trabalho01.js';
 
 export function onDocumentMouseDown( event ) 
 {
@@ -11,6 +11,10 @@ export function onDocumentMouseDown( event )
     mouse.y = - ( event.clientY / renderer.domElement.clientHeight ) * 2 + 1;
     
     raycaster.setFromCamera( mouse, camera );
+
+    //se for pra selecionar a parede também, descomentar as 2 linhas abaixo e comentar a próxima:
+    //let boxes = objects.concat(parede);
+    //boxes = boxes.map(box => box.obj);
 
     let boxes = objects.map(box => box.obj);
     
