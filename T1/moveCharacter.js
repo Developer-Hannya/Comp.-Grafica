@@ -15,28 +15,28 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
     if (keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
       player.bb.max.x += 0.2;
       playAction = true;
-      player.xSpeed = 0.1;
+      player.xSpeed = 0.07;
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
       player.object.quaternion.slerp(quaternion,0.1);
     }
     else if (keyboard.pressed("down") && keyboard.pressed("left") || keyboard.pressed("S") && keyboard.pressed("A"))  {
       player.bb.max.z += 0.2;
       playAction = true;
-      player.zSpeed = 0.1;
+      player.zSpeed = 0.07;
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
       player.object.quaternion.slerp(quaternion,0.1);  
     }
     else if (keyboard.pressed("up") && keyboard.pressed("left") || keyboard.pressed("W") && keyboard.pressed("A"))  {
       player.bb.min.x -= 0.2;
       playAction = true;
-      player.xSpeed = -0.1;
+      player.xSpeed = -0.07;
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
       player.object.quaternion.slerp(quaternion,0.1);
     }
     else if (keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
-      player.bb.min.z -= 0.2
+      player.bb.min.z -= 0.1
       playAction = true;
-      player.zSpeed = -0.1;
+      player.zSpeed = -0.07;
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
       player.object.quaternion.slerp(quaternion,0.1);
     }
