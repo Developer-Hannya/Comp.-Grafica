@@ -54,7 +54,7 @@ scene.add(obj);
 // Default light intensity, position, color, ambient color and intensity
 let lightIntensity = 1.0;
 let lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
-let lightColor = "rgb(255,255,255)";
+let lightColor = "rgb(0,255,0)";
 let ambientColor = "rgb(50,50,50)";
 
 // Sphere to represent the light

@@ -57,7 +57,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(75, 75, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(60, 30, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
@@ -68,9 +68,18 @@ groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane2);
 
 // add a grid in ground so it look like it has tiles
-const gridHelper = new THREE.GridHelper( 75, 75, "rgb(255,0,0)", "rgb(7,7,7)");
+const gridHelper = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
+gridHelper.translateX(-15);
 scene.add( gridHelper );
 
+const gridHelper1 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelper1.translateX(15);
+scene.add( gridHelper1 );
+
+var groundPlaneA1 = createGroundPlane(60, 30, 75, 75, "rgb(0,184,0)"); // (width, height, width segments, height segments, color)
+groundPlaneA1.translateX(77);
+groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlaneA1);
 
 var matriz = [];
 for(var i=0; i<75; i++) {
@@ -94,10 +103,10 @@ let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
 export let objects = [];
 export let parede = [];
-for(var i = -37; i <= 37; i++) {
-  for(var j= -37; j <= 37; j++) {
+for(var i = -30; i <= 30; i++) {
+  for(var j= -15; j <= 15; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if(i == -37 || i == 37 || j == -37 || j == 37) {
+    if(i == -30 || i == 30 || j == -15 || j == 15) {
       cube.position.set(i, 0.5, j);
       cube.castShadow = true;
       cube.receiveShadow = true;
