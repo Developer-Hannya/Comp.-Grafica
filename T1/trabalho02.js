@@ -123,6 +123,7 @@ for(var i = -30; i <= 30; i++) {
 }
 
 //adicionando blocos do meio
+/*
 for(var i = -33; i <= 33; i++) {
   for(var j= -33; j <= 33; j++) {
     var k = Math.floor(Math.random() * 30);
@@ -150,6 +151,7 @@ for(var i = -33; i <= 33; i++) {
     k = Math.floor(Math.random() * 30);
   }
 }
+*/
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
