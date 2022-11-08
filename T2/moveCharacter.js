@@ -1,6 +1,6 @@
 import * as THREE from  'three';
-import checkCollisions from "./trabalho01.js";
-import { keyboard } from './trabalho01.js';
+import checkCollisions from "./trabalho02.js";
+import { keyboard } from './trabalho02.js';
 
 export function moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede){
     // codigo para mover o personagem, a camera e colidir com objetos

@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede } from './trabalho01.js';
+import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede } from './trabalho02.js';
 import { camera} from './camera.js';
 
 export function onDocumentMouseDown( event ) 

@@ -8,7 +8,6 @@ import {initRenderer,
         initDefaultBasicLight,
         setDefaultMaterial,
         getMaxSize,
-        onWindowResize,
         createGroundPlaneWired} from "../libs/util/util.js";
 import { Vector3 } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
@@ -48,9 +47,6 @@ var player = {
 
 // Control the appearence of first object loaded
 var firstRender = false;
-
-// Listen window size changes
-window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //-------------------------------------------------------------------------------
 // Setting ground plane
