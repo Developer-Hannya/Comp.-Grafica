@@ -16,6 +16,8 @@ import {changeProjection,
         updateCamera,
         camera,
         cameraHolder} from './camera.js';
+import {loadLight,
+        updateLight} from './luz.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -23,14 +25,23 @@ var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
 var quaternion = new THREE.Quaternion();      //cria um quaternion
   quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
-export var renderer = initRenderer();    // View function in util/utils
-  renderer.setClearColor("rgb(30, 30, 42)");
-scene.add(cameraHolder);
 
 //-------------------------------------------------------------------------------
-// Light
+// Renderer
 //-------------------------------------------------------------------------------
-const light = new initDefaultBasicLight(scene, true, new THREE.Vector3(100,150,-50), 130, 4000, 0.1, 1000);
+export var renderer = new THREE.WebGLRenderer();    // View function in util/utils
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMapsoft = true;
+  // VSM/PCF/PCFSoft
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+  renderer.setPixelRatio(window.innerWidth/window.innerHeight); 
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  document.getElementById("webgl-output").appendChild(renderer.domElement);
+  renderer.setClearColor("rgb(30, 30, 42)");
+
+scene.add(cameraHolder);
+
+loadLight();
 
 //-------------------------------------------------------------------------------
 // Player
@@ -208,6 +219,7 @@ function keyboardUpdate() {
 function render()
 {
   updatePlayer();
+  updateLight()
   stats.update();
   var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
   keyboardUpdate(); 

@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {renderer} from './trabalho02.js';
+import {renderer, scene} from './trabalho02.js';
 import {SecondaryBox} from "../libs/util/util.js";
 
 
