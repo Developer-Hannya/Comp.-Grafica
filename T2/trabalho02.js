@@ -17,6 +17,8 @@ import {changeProjection,
         updateCamera,
         camera,
         cameraHolder} from './camera.js';
+import { createLadder } from './escadas.js';
+import { createPortals } from './portais.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -27,6 +29,9 @@ var quaternion = new THREE.Quaternion();      //cria um quaternion
 export var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 scene.add(cameraHolder);
+
+createLadder();
+createPortals();
 
 //-------------------------------------------------------------------------------
 // Light
@@ -63,7 +68,7 @@ scene.add(groundPlane);
 
 // secondary ground plane
 var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
-groundPlane2.translateY(-0.5);
+groundPlane2.translateY(-6);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane2);
 
@@ -76,10 +81,10 @@ const gridHelper1 = new THREE.GridHelper(40, 40, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelper1.translateX(20);
 scene.add( gridHelper1 );
 
-var groundPlaneA1 = createGroundPlane(80, 40, 75, 75, "rgb(0,184,0)"); // (width, height, width segments, height segments, color)
-groundPlaneA1.translateX(77);
-groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
-scene.add(groundPlaneA1);
+// var groundPlaneA1 = createGroundPlane(80, 40, 75, 75, "rgb(0,184,0)"); // (width, height, width segments, height segments, color)
+// groundPlaneA1.translateX(77);
+// groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
+// scene.add(groundPlaneA1);
 
 var matriz = [];
 for(var i=0; i<75; i++) {
