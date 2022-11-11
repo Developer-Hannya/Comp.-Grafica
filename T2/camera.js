@@ -1,11 +1,11 @@
 import * as THREE from  'three';
-import {renderer, scene} from './trabalho02.js';
+import {keyboard, renderer, scene} from './trabalho02.js';
 import {SecondaryBox} from "../libs/util/util.js";
 
-
-var message = new SecondaryBox("press 'C' to change camera type");
+var message = new SecondaryBox("press 'C' to change camera type - Orthographic");
   //var camLook = new THREE.Vector3(-1.0, -1.0, -1.0);
-  var camPos  = new THREE.Vector3(0,0,0);
+  var camPos  = new THREE.Vector3(10,10,10);
+  //setFromSphericalCoords(distance, angle, angle)
   camPos.setFromSphericalCoords(18, Math.PI / 3, Math.PI / 4); // changes the angle of the camera to an dimetric perspective
   var camUp   = new THREE.Vector3(0, 1, 0);
   var aspect = window.innerWidth / window.innerHeight;
@@ -25,10 +25,11 @@ export function changeProjection()
   {
     // OrthographicCamera( left, right, top, bottom, near, far )
     camera = new THREE.OrthographicCamera(- d * aspect, d * aspect, d, - d, 0.1, 1000);
-
+    message.changeMessage("press 'C' to change camera type - Orthographic");
   } else {
     // PerspectiveCamera( fov, aspect, near, far)
     camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 1000);
+    message.changeMessage("press 'C' to change camera type - Perspective");
   }
   camera.position.copy(posit);
   camera.lookAt(cameraHolder.position);
@@ -40,8 +41,17 @@ export function updateCamera()
   // atualiza a câmera
   //onWindowResize(camera, renderer);
   camera.position.copy(camPos); 
+  if(keyboard.pressed("pageup")){
+    camera.translateY(0.1);
+    camPos.y += 0.1;
+  }
+  if(keyboard.pressed("pagedown")){
+    camera.translateY(-0.1);
+    camPos.y += -0.1;
+  }
   camera.up.copy(camUp);
-  camera.lookAt(cameraHolder.position);
+  if(!keyboard.pressed("Q"))
+    camera.lookAt(cameraHolder.position);
 
   //var pos = new THREE.Vector3();
   //cameraHolder.getWorldPosition(pos); // salva a posição global do objeto na variavel 'pos'
