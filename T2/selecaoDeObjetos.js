@@ -1,6 +1,7 @@
 import * as THREE from  'three';
 import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede } from './trabalho02.js';
 import { camera} from './camera.js';
+import {BlocoSelecionavel} from './objetos.js';
 
 export function onDocumentMouseDown( event ) 
 {

@@ -21,7 +21,7 @@ import {loadLights,
         directlight,
         spotLight,
         lightDowngrade} from './luz.js';
-import {LuminousButton} from './objetos.js';
+import {BlocoSelecionavel, LuminousButton} from './objetos.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -271,6 +271,26 @@ for(var i = -40.5; i <= 40.5; i++) {
 //     k = Math.floor(Math.random() * 30);
 //   }
 // }
+
+// NÃO TA PRONTO
+function criaCuboSelecionavelA3(){
+  let pos = new THREE.Vector3(5,0.5,0);
+  let pos2 = new THREE.Vector3(60,-5,5,-8);
+  let material = new THREE.MeshPhongMaterial({
+    shininess: "200",
+    specular: "white",
+    color: "gray",
+  });
+  let cubeA3 = new BlocoSelecionavel(pos);
+  let cubes = [];
+  cubes.push(cubeA3);
+  let totalCubes = objects.concat(cubeA3)
+
+  //objects.push(cubeA3);
+  scene.add(cubeA3);
+  //cube2.position.set(60,-5.5,-8);
+}
+criaCuboSelecionavelA3();
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );

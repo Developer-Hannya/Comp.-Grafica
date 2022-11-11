@@ -34,4 +34,30 @@ export class LuminousButton extends THREE.Mesh{
     }
 }
 
+// NÃO TA PRONTO
+export class BlocoSelecionavel extends THREE.Mesh{
+    constructor(position){
+        let geometry  = new THREE.BoxGeometry(1, 1, 1);
+        let material = new THREE.MeshPhongMaterial({
+            shininess: "200",
+            specular: "white",
+            color: "gray",
+        });
+        super(geometry, material);
+        this.position.copy(position);
+        this.selected = false;
+        this.castShadow = true;
+        this.receiveShadow = true;
+        this.bb = new THREE.Box3().setFromObject(this);
+        this.bbSize = new THREE.Vector3(1.1, 1.1, 1.1);
+        this.bb.setFromCenterAndSize( this.position, this.bbSize );
+        this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
+        this.bbHelper.visible = false;
+        scene.add(this.bbHelper);
+    }
+    isSelected(){
+        this.material.color("green");
+    }
+}
+
 
