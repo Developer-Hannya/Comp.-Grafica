@@ -75,11 +75,12 @@ export class spotLight extends THREE.SpotLight{
     setIntensity(value){
         return this.intensity = value;
     }
+    // usando intensity e não visible, pois assim as luzes carregam logo no inicio
     visibilityTrue(){
-        return this.visible = true;
+        return this.intensity = 0.8;
     }
     visibilityFalse(){
-        return this.visible = false;
+        return this.intensity = 0;
     }
     loadLight(){
         this.loaded = true;
@@ -126,7 +127,6 @@ export function loadLights(){
 
     spotlightEscada.pointTo(43, -6, 0);
     scene.add(spotlightEscada);
-    //spotlightEscada.visibilityTrue();
     //scene.add(spotLightHelperEscada);
     //spotLightHelperEscada.update();
 }

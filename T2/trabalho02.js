@@ -9,7 +9,7 @@ import {initRenderer,
         setDefaultMaterial,
         getMaxSize,
         createGroundPlaneWired} from "../libs/util/util.js";
-import { Light, Object3D, Vector3 } from '../build/three.module.js';
+import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
 import { onDocumentMouseDown } from './selecaoDeObjetos.js';
 import {changeProjection,
@@ -33,11 +33,13 @@ var quaternion = new THREE.Quaternion();      //cria um quaternion
 //-------------------------------------------------------------------------------
 // Renderer
 //-------------------------------------------------------------------------------
-export var renderer = new THREE.WebGLRenderer();    // View function in util/utils
+export var renderer = new THREE.WebGLRenderer({
+  powerPreference: "high-performance",
+});    // View function in util/utils
   renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
   renderer.shadowMapsoft = true;
   // VSM/PCF/PCFSoft
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
   renderer.setPixelRatio(window.innerWidth/window.innerHeight); 
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.getElementById("webgl-output").appendChild(renderer.domElement);
@@ -46,37 +48,6 @@ export var renderer = new THREE.WebGLRenderer();    // View function in util/uti
 scene.add(cameraHolder);
 
 loadLights();
-
-var LButtons = [];    // vector of luminous buttons
-var spotlights = [];  // vector of spotlights
-let aux = [];         // auxiliar vector
-// load the luminous buttons on area A3 and theirs spotlights
-function loadObjects(){
-  for (let i = 0; i <= 7; i++) {
-    if(i<=3){
-      let spotlight = new spotLight('white', 0.8, 10, 0.5, 0.3, 0.1, new THREE.Vector3(55 + i*7, 0, -9.5));
-      let button = new LuminousButton(new THREE.Vector3(55 + i*7, -4, -10), spotlight);
-      LButtons.push(button);
-      spotlights.push(spotlight);
-      scene.add(button);
-    }
-    else{
-      let spotlight = new spotLight('white', 0.8, 10, 0.5, 0.3, 0.1, new THREE.Vector3(55 + (i-4)*7, 0, 9.5));
-      let button = new LuminousButton(new THREE.Vector3(55 + (i-4)*7, -4, 10), spotlight);
-      LButtons.push(button);
-      spotlights.push(spotlight);
-      scene.add(button);
-    }
-  }
-}
-loadObjects();
-// map of all spotlights
-export var totalSpotlights = aux.concat(spotlights);
-    totalSpotlights = totalSpotlights.map(obj => obj);
-// map of all luminous buttons
-export var totalButtons = aux.concat(LButtons);
-  totalButtons = totalButtons.map(obj => obj);
-  totalSpotlights.forEach(obj => {obj.loadLight()});
 
   //-------------------------------------------------------------------------------
   // Player
@@ -156,71 +127,126 @@ for(var i=0; i<75; i++) {
   }
 }
 
-// create cube components
-export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
+// create basic cube components
+//export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
+export let cubeMaterial = new MeshLambertMaterial({
+  color: "rgb(182,144,95)",
+  shininess: "200",
+  specular: "white",
+});
 export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-export let objects = [];            // vetor auxiliar
+export let objects = [];            // vetor de objetos
 export let parede = [];             // vetor para guardar blocos da parede
 export let teto = [];               // vetor para guardar blocos do teto
 export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
+export var LButtons = [];           // vetor de botões iluminados
+export var spotlights = [];         // vetor de spotlights
 
-// position cubes in the area A3 like a "house"
-for(var y = -5.5; y <= 1; y++){
-  for(var x = 45.5; x <= 85.5; x++) {
-    for(var z= -10.5; z <= 10.5; z++) {
-      let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      if((x == 45.5 || x == 85.5 || z == -10.5 || z == 10.5) && (((x < -2.5)||(x > 2.5)) && ((z < -2.5)||(z > 2.5)))) {
-        cube.position.set(x, y, z);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
+function createArea3(){
+  // position cubes in the area A3 like a "house"
+  for(var y = -5.5; y <= 1; y++){
+    for(var x = 45.5; x <= 85.5; x++) {
+      for(var z= -10.5; z <= 10.5; z++) {
+        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        if((x == 45.5 || x == 85.5 || z == -10.5 || z == 10.5) && (((x < -2.5)||(x > 2.5)) && ((z < -2.5)||(z > 2.5)))) {
+          cube.position.set(x, y, z);
+          cube.castShadow = true;
+          cube.receiveShadow = true;
+          scene.add(cube);
+          let cubeBb  = new THREE.Box3().setFromObject(cube);
+          let box = {
+            obj: cube,
+            bb: cubeBb,
+            selected: false,
+          };
+          parede.push(box);
+        }
+        if(y === 0.5){
+          cube.position.set(x, y, z);
+          cube.castShadow = true;
+          cube.receiveShadow = true;
+          //cube.visible = true;
+          scene.add(cube);
+          let cubeBb  = new THREE.Box3().setFromObject(cube);
+          let box = {
           obj: cube,
           bb: cubeBb,
           selected: false,
         };
-        parede.push(box);
-      }
-      if(y === 0.5){
-        cube.position.set(x, y, z);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        //cube.visible = true;
-        scene.add(cube);
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
-        obj: cube,
-        bb: cubeBb,
-        selected: false,
-      };
-      teto.push(box);
-      //parede.push(box);
-      }
-      if (y > -5 && z === 10.5){
-        cube.position.set(x, y, z);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
-        obj: cube,
-        bb: cubeBb,
-        selected: false,
-        };
-        paredeTranslucida.push(box);
+        teto.push(box);
+        //parede.push(box);
+        }
+        if (y > -5 && z === 10.5){
+          cube.position.set(x, y, z);
+          cube.castShadow = true;
+          cube.receiveShadow = true;
+          scene.add(cube);
+          let cubeBb  = new THREE.Box3().setFromObject(cube);
+          let box = {
+          obj: cube,
+          bb: cubeBb,
+          selected: false,
+          };
+          paredeTranslucida.push(box);
+        }
       }
     }
   }
+  // load the luminous buttons on area A3 and theirs spotlights
+  function loadA3Objects(){
+    for (let i = 0; i <= 7; i++) {
+      if(i<=3){
+        let spotlight = new spotLight('white', 0.8, 10, 0.5, 0.3, 0.1, new THREE.Vector3(55 + i*7, 0, -9.5));
+        let button = new LuminousButton(new THREE.Vector3(55 + i*7, -4, -10), spotlight);
+        LButtons.push(button);
+        spotlights.push(spotlight);
+        scene.add(button);
+      }
+      else{
+        let spotlight = new spotLight('white', 0.8, 10, 0.5, 0.3, 0.1, new THREE.Vector3(55 + (i-4)*7, 0, 9.5));
+        let button = new LuminousButton(new THREE.Vector3(55 + (i-4)*7, -4, 10), spotlight);
+        LButtons.push(button);
+        spotlights.push(spotlight);
+        scene.add(button);
+      }
+    }
+  }
+  loadA3Objects();
+  // cria os cubos selecionaveis da A3
+  function criaCubosSelecionaveisA3(){
+    for(let i = 0; i <=1; i ++){  
+      let cubeA3 = new THREE.Mesh(cubeGeometry,cubeMaterial);
+      if(i === 0)
+        cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
+      else
+        cubeA3.position.copy(new THREE.Vector3(76, -5.5, 8));
+      let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
+      let boxA3 = {
+        obj: cubeA3,
+        bb: cubeBbA3,
+        selected: false
+      };
+      cubeA3.castShadow = true;
+      cubeA3.receiveShadow = true;
+      scene.add(cubeA3);
+      objects.push(boxA3);
+    }
+  }
+  criaCubosSelecionaveisA3();
 }
+createArea3();
+
+// map com as spotlights
+export var totalSpotlights = spotlights.map(obj => obj);
+// map com os botões iluminados
+export var totalButtons = LButtons.map(obj => obj);
+totalSpotlights.forEach(obj => {obj.loadLight()});
 // map com blocos do teto
-var totalTetos = aux.concat(teto);
-  totalTetos = totalTetos.map(obj => obj.obj);
-  // map com blocos da parede mais prox da tela
-var totalParedeTranslucida = aux.concat(paredeTranslucida);
-  totalParedeTranslucida = totalParedeTranslucida.map(obj => obj.obj);
+export var totalTetos = teto.map(obj => obj.obj);
+// map com blocos da parede mais prox da tela
+export var totalParedeTranslucida = paredeTranslucida.map(obj => obj.obj);
 
 // position cubes in the initial area
 for(var i = -40.5; i <= 40.5; i++) {
@@ -271,26 +297,6 @@ for(var i = -40.5; i <= 40.5; i++) {
 //     k = Math.floor(Math.random() * 30);
 //   }
 // }
-
-// NÃO TA PRONTO
-function criaCuboSelecionavelA3(){
-  let pos = new THREE.Vector3(5,0.5,0);
-  let pos2 = new THREE.Vector3(60,-5,5,-8);
-  let material = new THREE.MeshPhongMaterial({
-    shininess: "200",
-    specular: "white",
-    color: "gray",
-  });
-  let cubeA3 = new BlocoSelecionavel(pos);
-  let cubes = [];
-  cubes.push(cubeA3);
-  let totalCubes = objects.concat(cubeA3)
-
-  //objects.push(cubeA3);
-  scene.add(cubeA3);
-  //cube2.position.set(60,-5.5,-8);
-}
-criaCuboSelecionavelA3();
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );

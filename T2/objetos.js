@@ -26,9 +26,6 @@ export class LuminousButton extends THREE.Mesh{
         scene.add(this.bbHelper);
         this.bbHelper.visible = false;
     }
-    activeteLight(){
-        this.spotlight.visibility = true;
-    }
     activateBBHelper(){
         this.bbHelper.visible = true;
     }
@@ -36,13 +33,13 @@ export class LuminousButton extends THREE.Mesh{
 
 // NÃO TA PRONTO
 export class BlocoSelecionavel extends THREE.Mesh{
-    constructor(position){
-        let geometry  = new THREE.BoxGeometry(1, 1, 1);
-        let material = new THREE.MeshPhongMaterial({
-            shininess: "200",
-            specular: "white",
-            color: "gray",
-        });
+    constructor(position, geometry, material){
+        // let geometry  = new THREE.BoxGeometry(1, 1, 1);
+        // let material = new THREE.MeshPhongMaterial({
+        //     shininess: "200",
+        //     specular: "white",
+        //     color: "gray",
+        // });
         super(geometry, material);
         this.position.copy(position);
         this.selected = false;
