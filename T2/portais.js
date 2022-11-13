@@ -1,10 +1,37 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
-import { scene } from './trabalho02.js';
+import { createBBHelper, objects, scene } from './trabalho02.js';
+
+export class Portal extends THREE.Object3D{
+   constructor(x, y, z, direction){
+       super();
+       this.translateX(x);
+       this.translateY(y);
+       this.translateZ(z);
+       let rightSideBox, leftSideBox;
+
+      if(direction == "z"){
+         rightSideBox = new THREE.Box3(new THREE.Vector3(x - 3.5, y - 5, z - 0.5), new THREE.Vector3(x - 2.5, y + 2, z + 0.5));
+         createBBHelper(rightSideBox, "yellow");
+         leftSideBox = new THREE.Box3(new THREE.Vector3(x + 2.5, y - 5, z - 0.5), new THREE.Vector3(x + 3.5, y + 2, z + 0.5));
+         createBBHelper(leftSideBox, "red");
+      }
+      else if(direction == "x"){
+         this.rotateY(Math.PI * 0.5);
+         rightSideBox = new THREE.Box3(new THREE.Vector3(x - 0.5, y - 5, z - 3.5), new THREE.Vector3(x + 0.5, y + 2, z - 2.5));
+         createBBHelper(rightSideBox, "yellow");
+         leftSideBox = new THREE.Box3(new THREE.Vector3(x - 0.5, y - 5, z + 2.5), new THREE.Vector3(x + 0.5, y + 2, z + 3.5));
+         createBBHelper(leftSideBox, "red");
+      }
+
+      objects.push({bb: rightSideBox}, {bb: leftSideBox});
+      this.add(createPortals());
+   }
+}
 
 export function createPortals(){
 
-    let mesh1, mesh2, mesh3, mesh4;
+    let mesh;
     //let rectangle
     let auxMat = new THREE.Matrix4();
    
@@ -25,21 +52,18 @@ export function createPortals(){
    cylinder2CSG = CSG.fromMesh(cylinder2Mesh)
    externalRectangleCSG = CSG.fromMesh(externalRectangleMesh)
    csgObject = externalRectangleCSG.union(cylinder2CSG)
-   mesh1 = CSG.toMesh(csgObject, auxMat)
 
    //subtrai retângulo menor
    internalRectangleMesh.position.set(0, -1.5, 0)
    updateObject(internalRectangleMesh) // update internal coords
    internalRectangleCSG = CSG.fromMesh(internalRectangleMesh)     
    csgObject = csgObject.subtract(internalRectangleCSG) // Execute subtraction
-   mesh2 = CSG.toMesh(csgObject, auxMat)
 
    //subtrai cilindro 
    cylinderMesh.position.set(0, 0, 0)
    updateObject(cylinderMesh)
    cylinderCSG = CSG.fromMesh(cylinderMesh)
    csgObject = csgObject.subtract(cylinderCSG)
-   mesh3 = CSG.toMesh(csgObject, auxMat)
 
    //subtrai restos do cilindro externo
    subRectangle1Mesh.position.set(-4, 0, 0)
@@ -49,11 +73,11 @@ export function createPortals(){
    subRectangle1CSG = CSG.fromMesh(subRectangle1Mesh)  
    subRectangle2CSG = CSG.fromMesh(subRectangle2Mesh)   
    csgObject = csgObject.subtract(subRectangle1CSG).subtract(subRectangle2CSG) // Execute subtraction
-   mesh4 = CSG.toMesh(csgObject, auxMat)
+   mesh = CSG.toMesh(csgObject, auxMat)
 
-   mesh4.material = new THREE.MeshPhongMaterial({color: 'lightgreen'})
-   mesh4.position.set(0, 3, 20)
-   scene.add(mesh4)
+   mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(182,144,95)'})
+   mesh.position.set(0, 0, 0)
+   return mesh;
 }
 
 function updateObject(mesh)
