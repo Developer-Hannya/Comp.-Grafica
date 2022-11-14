@@ -1,7 +1,10 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede } from './trabalho02.js';
-import { camera} from './camera.js';
+import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene } from './trabalho02.js';
+import { camera, cameraHolder} from './camera.js';
 import {BlocoSelecionavel} from './objetos.js';
+
+var isHoldingBlock = false;
+var objectHolded = null;
 
 export function onDocumentMouseDown( event ) 
 {
@@ -20,14 +23,29 @@ export function onDocumentMouseDown( event )
 
     let boxes = objects.map(box => box.obj);
     
+
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);
-    if(intersects.length==0) return;
     //intersercts cria um vetor a partir da câmera na direção do mouse e identifica os objetos nessa reta
     //no console.log(intersects) vi que ta criando um array pegando o plano também, então usamos a posição [0].
-    if(isSameMaterial(intersects[0].object.material, cubeMaterial)) {
+    if(isHoldingBlock === true && intersects.length==0){
+        console.log(objectHolded);
+        cameraHolder.remove(objectHolded);
+        scene.add(objectHolded);
+        objectHolded.material=cubeMaterial;
+        objectHolded.position.copy(cameraHolder.position);
+        objectHolded = null;
+        isHoldingBlock = false;
+    }
+    else if(intersects.length==0) return;
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterial || isHoldingBlock === false)) {
         intersects[0].object.material=cubeMaterialSelected;
         console.log("cubeMaterialSelected");
+        cameraHolder.add(intersects[0].object);
+        intersects[0].object.position.set(0,5,0);
+        isHoldingBlock = true;
+        objectHolded = intersects[0].object;
+        console.log(objectHolded);
     }
     else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected)) {
         intersects[0].object.material=cubeMaterial;

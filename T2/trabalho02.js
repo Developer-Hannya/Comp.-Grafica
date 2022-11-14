@@ -131,8 +131,6 @@ for(var i=0; i<75; i++) {
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
   color: "rgb(182,144,95)",
-  shininess: "200",
-  specular: "white",
 });
 export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
@@ -221,18 +219,18 @@ function createArea3(){
       if(i === 0)
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       else
-        cubeA3.position.copy(new THREE.Vector3(76, -5.5, 8));
-      let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
-      let boxA3 = {
-        obj: cubeA3,
-        bb: cubeBbA3,
-        selected: false
-      };
-      cubeA3.castShadow = true;
-      cubeA3.receiveShadow = true;
-      scene.add(cubeA3);
-      objects.push(boxA3);
-    }
+        cubeA3.position.copy(new THREE.Vector3(0, 5, 0));
+        let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
+        let boxA3 = {
+          obj: cubeA3,
+          bb: cubeBbA3,
+          selected: false
+        };
+        cubeA3.castShadow = true;
+        cubeA3.receiveShadow = true;
+        scene.add(cubeA3);
+        objects.push(boxA3);
+      }
   }
   criaCubosSelecionaveisA3();
 }
