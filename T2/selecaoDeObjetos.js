@@ -1,10 +1,11 @@
 import * as THREE from  'three';
 import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene } from './trabalho02.js';
 import { camera, cameraHolder} from './camera.js';
-import {BlocoSelecionavel} from './objetos.js';
+import {SelectableCube} from './objetos.js';
 
-var isHoldingBlock = false;
-var objectHolded = null;
+export var isHoldingBlock = false;
+export var objectHolded = null;
+export var lastPlaced = null;
 
 export function onDocumentMouseDown( event ) 
 {
@@ -21,8 +22,11 @@ export function onDocumentMouseDown( event )
     //let boxes = objects.concat(parede);
     //boxes = boxes.map(box => box.obj);
 
-    let boxes = objects.map(box => box.obj);
-    
+    let boxes = objects.map(box => box);
+    //let boxes2 = objects.map(box => box);
+    // boxes2.forEach(box => {
+    //     box.bb
+    // });
 
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);
@@ -30,24 +34,31 @@ export function onDocumentMouseDown( event )
     //no console.log(intersects) vi que ta criando um array pegando o plano também, então usamos a posição [0].
     if(isHoldingBlock === true && intersects.length==0){
         console.log(objectHolded);
+        let auxPos = objectHolded.position
         cameraHolder.remove(objectHolded);
-        scene.add(objectHolded);
         objectHolded.material=cubeMaterial;
-        objectHolded.position.copy(cameraHolder.position);
+        scene.add(objectHolded);
+        objectHolded.position.x = Math.round(auxPos.x+cameraHolder.position.x);
+        objectHolded.position.z = Math.round(auxPos.z+cameraHolder.position.z);
+        objectHolded.position.y = cameraHolder.position.y + 0.5;
+        objectHolded.updateBlockBB();
+        console.log(objectHolded.position);
+        lastPlaced = objectHolded;
         objectHolded = null;
         isHoldingBlock = false;
     }
     else if(intersects.length==0) return;
-    else if(isSameMaterial(intersects[0].object.material, cubeMaterial || isHoldingBlock === false)) {
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterialSelected;
         console.log("cubeMaterialSelected");
         cameraHolder.add(intersects[0].object);
         intersects[0].object.position.set(0,5,0);
+        intersects[0].object.updateBlockBB();
         isHoldingBlock = true;
         objectHolded = intersects[0].object;
         console.log(objectHolded);
     }
-    else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected)) {
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterial;
         console.log("cubeMaterial");
     }

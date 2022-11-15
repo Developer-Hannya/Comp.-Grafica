@@ -11,7 +11,7 @@ import {initRenderer,
         createGroundPlaneWired} from "../libs/util/util.js";
 import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
-import { onDocumentMouseDown } from './selecaoDeObjetos.js';
+import { lastPlaced, objectHolded, onDocumentMouseDown } from './selecaoDeObjetos.js';
 import {changeProjection,
         updateCamera,
         camera,
@@ -21,7 +21,7 @@ import {loadLights,
         directlight,
         spotLight,
         lightDowngrade} from './luz.js';
-import {BlocoSelecionavel, LuminousButton} from './objetos.js';
+import {SelectableCube, LuminousButton, PressurePlate} from './objetos.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -140,6 +140,7 @@ export let parede = [];             // vetor para guardar blocos da parede
 export let teto = [];               // vetor para guardar blocos do teto
 export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
 export var LButtons = [];           // vetor de botões iluminados
+export var pressPlates = [];        // vetor de placas de pressão
 export var spotlights = [];         // vetor de spotlights
 
 function createArea3(){
@@ -212,27 +213,58 @@ function createArea3(){
     }
   }
   loadA3Objects();
+  // function criaCubosSelecionaveisA3(){
+    //   for(let i = 0; i <=1; i ++){  
+      //     let cubeA3 = new THREE.Mesh(cubeGeometry,cubeMaterial);
+      //     if(i === 0)
+      //       cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
+      //     else
+      //       cubeA3.position.copy(new THREE.Vector3(2, 0.5, 2));
+      //       let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
+      //       let boxA3 = {
+        //         obj: cubeA3,
+        //         bb: cubeBbA3,
+        //         selected: false
+        //       };
+        //       cubeA3.castShadow = true;
+        //       cubeA3.receiveShadow = true;
+        //       scene.add(cubeA3);
+        //       let cubeBrabo = new BlocoSelecionavel(new THREE.Vector3(3,0.5,3), cubeGeometry, cubeMaterial);
+        //       objects.push(cubeBrabo);
+        //     }
+        // }
   // cria os cubos selecionaveis da A3
-  function criaCubosSelecionaveisA3(){
+  function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
-      let cubeA3 = new THREE.Mesh(cubeGeometry,cubeMaterial);
-      if(i === 0)
+      let cubeA3 = new SelectableCube(new THREE.Vector3(3,0.5,3), cubeGeometry, cubeMaterial);
+      if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
-      else
-        cubeA3.position.copy(new THREE.Vector3(0, 5, 0));
-        let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
-        let boxA3 = {
-          obj: cubeA3,
-          bb: cubeBbA3,
-          selected: false
-        };
-        cubeA3.castShadow = true;
-        cubeA3.receiveShadow = true;
+        cubeA3.updateBlockBB();
+      }
+      else{
+        cubeA3.position.copy(new THREE.Vector3(2, 0.5, 2));
+        cubeA3.updateBlockBB();
+      }
         scene.add(cubeA3);
-        objects.push(boxA3);
+        objects.push(cubeA3);
       }
   }
-  criaCubosSelecionaveisA3();
+  createSelectableCubesA3();
+  // crias as placas de pressão da A3
+  function createPressurePlatesA3(){
+    let pressPlateA3Material = new THREE.MeshPhongMaterial({
+      color: "grey",
+      specular: "white",
+      shininess: "200"
+    });
+    let pressPlateA3Geometry = new THREE.BoxGeometry(2,1,2);
+    for(let i = 0; i <=0; i ++){  
+      let pressPlateA3 = new PressurePlate(new THREE.Vector3(-3,0,-3), pressPlateA3Geometry, pressPlateA3Material);
+      scene.add(pressPlateA3);
+      pressPlates.push(pressPlateA3);
+    }
+  }
+  createPressurePlatesA3();
 }
 createArea3();
 
@@ -245,6 +277,24 @@ totalSpotlights.forEach(obj => {obj.loadLight()});
 export var totalTetos = teto.map(obj => obj.obj);
 // map com blocos da parede mais prox da tela
 export var totalParedeTranslucida = paredeTranslucida.map(obj => obj.obj);
+// map com placas de pressão
+export var totalPressPlates= pressPlates.map(obj => obj);
+
+function creckPress(){
+  if(lastPlaced != null){
+    totalPressPlates.forEach(obj =>{
+      if (checkCollisions(obj.bb, lastPlaced.bb)){
+        obj.add(lastPlaced);
+        lastPlaced.position.set(0, 0.95 , 0);
+        lastPlaced.updateBlockBB();
+        obj.position.lerp(new THREE.Vector3(obj.position.x, -0.45, obj.position.z), 0.03);
+      }
+      else{
+        obj.position.lerp(new THREE.Vector3(obj.position.x, 0, obj.position.z), 0.03);
+      }
+    })
+  }
+}
 
 // position cubes in the initial area
 for(var i = -40.5; i <= 40.5; i++) {
@@ -425,6 +475,7 @@ function paredeTranslucidaVisibility(){
 function render()
 {
   updatePlayer();
+  creckPress();
   lightsUpdate();
   stats.update();
   var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.

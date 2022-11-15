@@ -3,6 +3,7 @@ import {scene} from './trabalho02.js';
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 
+// objeto botão iluminado
 export class LuminousButton extends THREE.Mesh{
     constructor(position, spotlight){
         let geometry  = new THREE.BoxGeometry(0.25, 0.15, 0.1);
@@ -31,8 +32,8 @@ export class LuminousButton extends THREE.Mesh{
     }
 }
 
-// NÃO TA PRONTO
-export class BlocoSelecionavel extends THREE.Mesh{
+// objeto cubo selecionavel
+export class SelectableCube extends THREE.Mesh{
     constructor(position, geometry, material){
         // let geometry  = new THREE.BoxGeometry(1, 1, 1);
         // let material = new THREE.MeshPhongMaterial({
@@ -55,6 +56,22 @@ export class BlocoSelecionavel extends THREE.Mesh{
     isSelected(){
         this.material.color("green");
     }
+    updateBlockBB(){
+        this.bb.setFromObject(this); 
+    }
 }
 
-
+export class PressurePlate extends THREE.Mesh{
+    constructor(position, geometry, material){
+        super(geometry, material);
+        this.position.copy(position);
+        this.castShadow = true;
+        this.receiveShadow = true;
+        this.bb = new THREE.Box3().setFromObject(this);
+        this.bbSize = new THREE.Vector3(1.1, 1.1, 1.1);
+        this.bb.setFromCenterAndSize( this.position, this.bbSize );
+        this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
+        this.bbHelper.visible = false;
+        scene.add(this.bbHelper);
+    }
+}
