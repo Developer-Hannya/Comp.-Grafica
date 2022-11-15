@@ -11,7 +11,7 @@ import {initRenderer,
         createGroundPlaneWired} from "../libs/util/util.js";
 import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
-import { lastPlaced, objectHolded, onDocumentMouseDown } from './selecaoDeObjetos.js';
+import {objectHolded, onDocumentMouseDown } from './selecaoDeObjetos.js';
 import {changeProjection,
         updateCamera,
         camera,
@@ -142,6 +142,8 @@ export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais 
 export var LButtons = [];           // vetor de botões iluminados
 export var pressPlates = [];        // vetor de placas de pressão
 export var spotlights = [];         // vetor de spotlights
+export var selectableCubes = [];    // vetor de cubos selecionaveis
+export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
 
 function createArea3(){
   // position cubes in the area A3 like a "house"
@@ -236,21 +238,22 @@ function createArea3(){
   // cria os cubos selecionaveis da A3
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
-      let cubeA3 = new SelectableCube(new THREE.Vector3(3,0.5,3), cubeGeometry, cubeMaterial);
+      let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
-        cubeA3.updateBlockBB();
       }
       else{
-        cubeA3.position.copy(new THREE.Vector3(2, 0.5, 2));
-        cubeA3.updateBlockBB();
+        cubeA3.position.copy(new THREE.Vector3(55, -5.5, 8));
       }
-        scene.add(cubeA3);
-        objects.push(cubeA3);
-      }
+      cubeA3.updateBlockBB();
+      scene.add(cubeA3);
+      objects.push(cubeA3);
+      selectableCubes.push(cubeA3);
+    }
   }
   createSelectableCubesA3();
   // crias as placas de pressão da A3
+
   function createPressurePlatesA3(){
     let pressPlateA3Material = new THREE.MeshPhongMaterial({
       color: "grey",
@@ -258,10 +261,18 @@ function createArea3(){
       shininess: "200"
     });
     let pressPlateA3Geometry = new THREE.BoxGeometry(2,1,2);
-    for(let i = 0; i <=0; i ++){  
-      let pressPlateA3 = new PressurePlate(new THREE.Vector3(-3,0,-3), pressPlateA3Geometry, pressPlateA3Material);
+    for(let i = 0; i <=1; i ++){  
+      let pressPlateA3 = new PressurePlate(new THREE.Vector3(-3, 0, -3), pressPlateA3Geometry, pressPlateA3Material);
+      if(i === 0)
+        pressPlateA3.position.set(55, -6, -8);
+      else{
+        pressPlateA3.position.set(76, -6, 8);
+      }
+      pressPlateA3.updatePressPlateBB();
       scene.add(pressPlateA3);
       pressPlates.push(pressPlateA3);
+      objects.push(pressPlateA3);
+
     }
   }
   createPressurePlatesA3();
@@ -278,22 +289,54 @@ export var totalTetos = teto.map(obj => obj.obj);
 // map com blocos da parede mais prox da tela
 export var totalParedeTranslucida = paredeTranslucida.map(obj => obj.obj);
 // map com placas de pressão
-export var totalPressPlates= pressPlates.map(obj => obj);
+export var totalPressPlates = pressPlates.map(obj => obj);
+// map com cubos selecionaveis
+export var totalSelectableCubes = selectableCubes.map(obj => obj);
 
-function creckPress(){
-  if(lastPlaced != null){
-    totalPressPlates.forEach(obj =>{
-      if (checkCollisions(obj.bb, lastPlaced.bb)){
-        obj.add(lastPlaced);
-        lastPlaced.position.set(0, 0.95 , 0);
-        lastPlaced.updateBlockBB();
-        obj.position.lerp(new THREE.Vector3(obj.position.x, -0.45, obj.position.z), 0.03);
+// checa se as placas de pressão estão sendo pressionadas por algum cubo selecionavel
+function creckAnyPlateIsPressed(placas, cubos){
+  placas.forEach(placa =>{
+    cubos.forEach(cube => {
+      // se a placa for precisonada por algum cubo, desce e salva o cubo que esta pressionando ela
+      if(checkCollisions(placa.bb, cube.bb)){
+        placa.add(cube);
+        cube.position.set(0, 0.95 , 0);
+        cube.updateBlockBB();
+        placa.position.lerp(new THREE.Vector3(placa.position.x, - 6.45, placa.position.z), 0.03);
+        placa.pressed = true;
+        placa.pressedBy = cube;
       }
-      else{
-        obj.position.lerp(new THREE.Vector3(obj.position.x, 0, obj.position.z), 0.03);
+      // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
+      // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
+      else if (placa.pressedBy!= null && !checkCollisions(placa.bb, placa.pressedBy.bb)){
+        placa.position.lerp(new THREE.Vector3(placa.position.x, -6, placa.position.z), 0.03);
+        placa.pressed = false;
       }
     })
+  })
+  if(checkAllArePressed(totalPressPlates) === true){
+    // FUNÇÃO PARA ABRIR PORTA AQUI
+    doorA3Open = true;
   }
+  else{
+    doorA3Open = false;
+  }
+}
+
+// checa se todas as placas estão pressionadas ('map' como parametro)
+function checkAllArePressed(plates){
+  let qntPressedA3 = 0;
+  plates.forEach(obj =>{
+    if(obj.pressed === true){
+      qntPressedA3++;
+    }
+  });
+  if(qntPressedA3 === plates.length){
+    qntPressedA3 = 0;
+      return true;
+  }
+  qntPressedA3 = 0;
+    return false;
 }
 
 // position cubes in the initial area
@@ -429,17 +472,17 @@ function lightsUpdate(){
   lightSensor();
 }
 
-// sensor de proximidade dos botões iluminados
+// sensor de proximidade dos botões iluminados (se a porta A3 estiver aberta acende todas sporlights)
 function lightSensor(){
-  totalButtons.forEach(obj => {
-    if(checkCollisions(obj.bb, player.bb)){
-      obj.spotlight.visibilityTrue();
-    }
-    else if(obj.spotlight.loaded === true)
-    {
-      obj.spotlight.visibilityFalse();
-    }
-  });
+    totalButtons.forEach(obj => {
+      if(checkCollisions(obj.bb, player.bb) || doorA3Open === true){
+        obj.spotlight.visibleTrue();
+      }
+      else if(obj.spotlight.loaded === true && doorA3Open === false)
+      {
+        obj.spotlight.visibleFalse();
+      }
+    });
 }
 
 // muda a visibilidade do teto de acordo com a posição do personagem
@@ -475,7 +518,7 @@ function paredeTranslucidaVisibility(){
 function render()
 {
   updatePlayer();
-  creckPress();
+  creckAnyPlateIsPressed(totalPressPlates, totalSelectableCubes);
   lightsUpdate();
   stats.update();
   var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.

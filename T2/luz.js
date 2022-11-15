@@ -57,10 +57,11 @@ export class spotLight extends THREE.SpotLight{
         this.shadow.mapSize.width = 512;
         this.shadow.mapSize.height = 512;
         this.shadow.camera.near = 0.1;
-        this.shadow.camera.far = 10;
+        this.shadow.camera.far = 50;
         this.position.copy(position);
         this.visible = true;
         this.loaded = false;
+        this.doorOpen = false;
         this.target.position.copy(this.position);
         this.target.position.y = this.position.y - 6;
         this.target.updateMatrixWorld();
@@ -76,10 +77,10 @@ export class spotLight extends THREE.SpotLight{
         return this.intensity = value;
     }
     // usando intensity e não visible, pois assim as luzes carregam logo no inicio
-    visibilityTrue(){
+    visibleTrue(){
         return this.intensity = 0.8;
     }
-    visibilityFalse(){
+    visibleFalse(){
         return this.intensity = 0;
     }
     loadLight(){
