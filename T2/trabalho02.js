@@ -96,10 +96,11 @@ const gridHelper1 = new THREE.GridHelper(40, 40, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelper1.translateX(20);
 scene.add( gridHelper1 );
 
-// var groundPlaneA1 = createGroundPlane(80, 40, 75, 75, "rgb(0,184,0)"); // (width, height, width segments, height segments, color)
-// groundPlaneA1.translateX(77);
-// groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
-// scene.add(groundPlaneA1);
+var groundPlaneA2 = createGroundPlane(50, 25, 75, 75, "rgb(110,110,184)"); // (width, height, width segments, height segments, color)
+groundPlaneA2.translateY(2);
+groundPlaneA2.translateX(-70);
+groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlaneA2);
 
 var matriz = [];
 for(var i=0; i<75; i++) {
@@ -137,6 +138,26 @@ for(var i = -40; i <= 40; i++) {
         selected: false
       };
       parede.push(box);
+    }
+  }
+}
+
+let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
+for(var i = -95; i <= -45; i++) {
+  for(var j= -12.5; j <= 12.5; j++) {
+    let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
+    if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
+      cubeArea2.position.set(i, 2.5, j);
+      cubeArea2.castShadow = true;
+      cubeArea2.receiveShadow = true;
+      scene.add(cubeArea2);
+      let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
+      let boxArea2 = {
+        obj: cubeArea2,
+        bb: cubeBbArea2,
+        selected: false
+      };
+      parede.push(boxArea2);
     }
   }
 }
