@@ -17,7 +17,12 @@ export function onDocumentMouseDown( event )
     //let boxes = objects.concat(parede);
     //boxes = boxes.map(box => box.obj);
 
-    let boxes = objects.map(box => box.obj);
+    let boxes = [];
+    objects.forEach(box => {
+        if(box.obj){
+            boxes.push(box.obj);
+        }
+    });
     
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);

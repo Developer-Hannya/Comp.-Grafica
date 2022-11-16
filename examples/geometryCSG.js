@@ -52,7 +52,7 @@ import {initRenderer,
         createGroundPlane,
         onWindowResize} from "../libs/util/util.js";
 
-import { CSG } from '../libs/other/CSGMesh.js'        
+import { CSG } from '../libs/other/CSGMesh.js'     
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
@@ -88,7 +88,8 @@ function buildObjects()
    // Base objects
    let cubeMesh = new THREE.Mesh(new THREE.BoxGeometry(2, 2, 2))
    let sphereMesh = new THREE.Mesh( new THREE.SphereGeometry(1.45, 20, 20) )
-   let cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(0.85, 0.85, 2, 20))
+   let cylinderMesh = new THREE.Mesh( new THREE.CylinderGeometry(2.5, 2.5, 1, 64))
+   
    let torusMesh = new THREE.Mesh( new THREE.TorusGeometry(0.8, 0.2, 20, 20))   
 
    // CSG holders

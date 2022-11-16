@@ -17,6 +17,9 @@ import {changeProjection,
         updateCamera,
         camera,
         cameraHolder} from './camera.js';
+import { Staircase } from './escadas.js';
+import { createPortals, Portal } from './portais.js';
+import { Door } from './porta.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -28,6 +31,11 @@ export var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 scene.add(cameraHolder);
 
+export let objects = [];
+export let portas = [];
+
+createPortals();
+
 //-------------------------------------------------------------------------------
 // Light
 //-------------------------------------------------------------------------------
@@ -36,7 +44,7 @@ const light = new initDefaultBasicLight(scene, true, new THREE.Vector3(100,150,-
 //-------------------------------------------------------------------------------
 // Player
 //-------------------------------------------------------------------------------
-var player = {
+export var player = {
   object: null,
   loaded: false,
   bb: new THREE.Box3(),
@@ -52,6 +60,18 @@ var firstRender = false;
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
+let escada = new Staircase();
+scene.add(escada);
+escada.translateZ(+20 + 3*0.8 + 0.4);
+escada.translateY(-1.6)
+
+let portal = new Portal(0, 3, 20, "z");
+scene.add(portal);
+
+let porta = new Door(0, 3, 20, "z");
+scene.add(porta);
+
+
 //-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
@@ -63,7 +83,7 @@ scene.add(groundPlane);
 
 // secondary ground plane
 var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
-groundPlane2.translateY(-0.5);
+groundPlane2.translateY(-6);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane2);
 
@@ -102,7 +122,6 @@ export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
-export let objects = [];
 export let parede = [];
 for(var i = -40; i <= 40; i++) {
   for(var j= -20; j <= 20; j++) {
@@ -255,6 +274,7 @@ function render()
     for(var i = 0; i<mixer.length; i++)
       mixer[i].update( delta );
   }
+  Door.openDoors();
 }
 
 function updatePlayer()
@@ -280,7 +300,7 @@ export default function checkCollisions(object, playerBb)
 }
 
 // deixa a bb visivel
-function createBBHelper(bb, color)
+export function createBBHelper(bb, color)
 {
    let helper = new THREE.Box3Helper( bb, color );
    scene.add( helper );
