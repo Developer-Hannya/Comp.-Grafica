@@ -39,6 +39,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(0, 3, 4), 0.3);
       }
+
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
       player.object.quaternion.slerp(quaternion,0.1);  
     }

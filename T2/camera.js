@@ -10,6 +10,7 @@ var message = new SecondaryBox("press 'C' to change camera type - Orthographic")
   var camUp   = new THREE.Vector3(0, 1, 0);
   var aspect = window.innerWidth / window.innerHeight;
   var d = 6.8;
+import {SecondaryBox} from "../libs/util/util.js";
   export var camera = new THREE.OrthographicCamera(- d * aspect, d * aspect, d, - d, 0.1, 1000);
   export var cameraHolder = new THREE.Object3D();
   cameraHolder.position.set(0,0,0);
@@ -58,7 +59,6 @@ export function updateCamera()
   // message.changeMessage("Pos: {" + pos.x + ", " + pos.y + ", " + pos.z + "} " + 
   //                        "/ Quaternion: {" + quaternion.w + "} ");
 }
-
 // Responde as mudanças de proporção da janela
 window.addEventListener( 'resize', function(){
   if (camera instanceof THREE.PerspectiveCamera)
