@@ -1,6 +1,10 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede } from './trabalho02.js';
-import { camera} from './camera.js';
+import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene } from './trabalho02.js';
+import { camera, cameraHolder} from './camera.js';
+import {SelectableCube} from './objetos.js';
+
+export var isHoldingBlock = false;
+export var objectHolded = null;
 
 export function onDocumentMouseDown( event ) 
 {
@@ -17,25 +21,41 @@ export function onDocumentMouseDown( event )
     //let boxes = objects.concat(parede);
     //boxes = boxes.map(box => box.obj);
 
-    let boxes = [];
-    objects.forEach(box => {
-        if(box.obj){
-            boxes.push(box.obj);
-        }
-    });
-    
+    let boxes = objects.map(box => box);
+
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);
-    if(intersects.length==0) return;
+    
     //intersercts cria um vetor a partir da câmera na direção do mouse e identifica os objetos nessa reta
     //no console.log(intersects) vi que ta criando um array pegando o plano também, então usamos a posição [0].
-    if(isSameMaterial(intersects[0].object.material, cubeMaterial)) {
-        intersects[0].object.material=cubeMaterialSelected;
-        console.log("cubeMaterialSelected");
+    if(isHoldingBlock === true && intersects.length==0){
+        //console.log(objectHolded);
+        let auxPos = objectHolded.position
+        cameraHolder.remove(objectHolded);
+        objectHolded.material=cubeMaterial;
+        scene.add(objectHolded);
+        objectHolded.position.x = Math.round(auxPos.x+cameraHolder.position.x);
+        objectHolded.position.z = Math.round(auxPos.z+cameraHolder.position.z);
+        objectHolded.position.y = cameraHolder.position.y + 0.5;
+        objectHolded.updateBlockBB();
+        //console.log(objectHolded.position);
+        objectHolded = null;
+        isHoldingBlock = false;
     }
-    else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected)) {
+    else if(intersects.length==0) return;
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
+        intersects[0].object.material=cubeMaterialSelected;
+        //console.log("cubeMaterialSelected");
+        cameraHolder.add(intersects[0].object);
+        intersects[0].object.position.set(0,5,0);
+        intersects[0].object.updateBlockBB();
+        isHoldingBlock = true;
+        objectHolded = intersects[0].object;
+        //console.log(objectHolded);
+    }
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterial;
-        console.log("cubeMaterial");
+        //console.log("cubeMaterial");
     }
 }
 
