@@ -17,12 +17,12 @@ export class Door extends THREE.Object3D{
         this.add(createDoor());
 
         this.bBox = new THREE.Box3().setFromObject(this);
-        createBBHelper(this.bBox, "green")
+        //createBBHelper(this.bBox, "green")
         
         this.openingBox = new THREE.Box3();
         let size = new THREE.Vector3(5, 5, 5);
         this.openingBox.setFromCenterAndSize(this.position, size);
-        createBBHelper(this.openingBox, "blue")
+        //createBBHelper(this.openingBox, "blue")
 
         objects.push({bb: this.bBox});
         closedDoors.push(this);
@@ -67,7 +67,7 @@ export function createDoor(){
    let csgObject, internalRectangleCSG, cylinderCSG;
 
    //adiciona cilindro externo
-   cylinderMesh.position.set(0, 2, 0)
+   cylinderMesh.position.set(0, 1.5, 0)
    updateObject(cylinderMesh)
    cylinderCSG = CSG.fromMesh(cylinderMesh)
    internalRectangleCSG = CSG.fromMesh(internalRectangleMesh)
@@ -75,7 +75,7 @@ export function createDoor(){
    mesh = CSG.toMesh(csgObject, auxMat)
 
    mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(115,89,49)'})
-   mesh.position.set(0, -2, 0)
+   mesh.position.set(0, -1.5, 0)
    return mesh;
 }
 

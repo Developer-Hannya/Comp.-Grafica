@@ -65,6 +65,11 @@ scene.add(escada);
 escada.translateZ(+20 + 3*0.8 + 0.4);
 escada.translateY(-1.6)
 
+escada.staircaseBox = new THREE.Box3();
+let size = new THREE.Vector3(5.6, 5.6, 5.6);
+escada.staircaseBox.setFromCenterAndSize(escada.position, size);
+
+
 let portal = new Portal(0, 3, 20, "z");
 scene.add(portal);
 

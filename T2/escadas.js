@@ -1,7 +1,7 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
 import { setDefaultMaterial } from '../libs/util/util.js';
-import { scene } from './trabalho02.js';
+import { createBBHelper, player } from './trabalho02.js';
 
 function updateObject(mesh)
 {
@@ -9,22 +9,22 @@ function updateObject(mesh)
    mesh.updateMatrix();
 }
 
-export function createLadder() {
+export function createStaircase() {
     
     // ÁREAS 1 E 2
     //degraus
     const geometry = new THREE.BoxGeometry( 5, 0.8, 0.8 );
-    const ladderMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
+    const staircaseMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
 
     //ÁREA 1
     let stepHeight1 = -1.2;
     let stepPlaneHeight1 = -0.8;
-    let centerStep = new THREE.Mesh(geometry, ladderMaterial);
+    let centerStep = new THREE.Mesh(geometry, staircaseMaterial);
     let centerStepCSG = CSG.fromMesh(centerStep);
 
     for(let i = -2.8; i <= 2.8; i += 0.8){
         if(i !== 0){
-            let step = new THREE.Mesh( geometry, ladderMaterial );
+            let step = new THREE.Mesh( geometry, staircaseMaterial );
             step.position.set(0, stepHeight1, i);
             step.castShadow = true;
             step.receiveShadow = true;
@@ -52,6 +52,13 @@ export function createLadder() {
 export class Staircase extends THREE.Object3D{
     constructor(){
         super();
-        this.add(createLadder());
+        this.add(createStaircase());
+
+        
     }
+}
+
+export function moveCharacterY(){
+    if(player.bb.intersectsBox())
+        player.ySpeed = 0.1;
 }
