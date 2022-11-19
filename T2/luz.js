@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene} from './trabalho02.js';
+import {scene, doorA3Open} from './trabalho02.js';
 import {cameraHolder} from './camera.js';
 import { color } from '../libs/util/dat.gui.module.js';
 import { SpotLightHelper } from '../build/three.module.js';
@@ -93,21 +93,28 @@ export class spotLight extends THREE.SpotLight{
 
 // diminui a intensidade da luz de acordo com a posição do personagem (entrada area A3)
 export function lightDowngrade(){
-    if(cameraHolder.position.y < 0){
+    if(cameraHolder.position.y < 0 && cameraHolder.position.x > 40){
         let auxDirec = 0.8 + 0.132 * cameraHolder.position.y;
         let auxAmbient = 0.45 + 0.074 * cameraHolder.position.y;
-        let auxSpot = 0.01 - 0.15 * cameraHolder.position.y;
+        let auxSpot = 0 - 0.15 * cameraHolder.position.y;
         if (auxDirec >= 0.03)
             directlight.setIntensity(auxDirec);
         else 
             directlight.setIntensity(0);
-        if (auxAmbient >= 0.02) {
+        if(doorA3Open === true)
+            ambientlight.setIntensity(0.2);
+        else if (auxAmbient >= 0.02) {
             ambientlight.setIntensity(auxAmbient);
         }
         if(cameraHolder.position.y < -5.8)
             spotlightEscada.setIntensity(auxSpot);
-        }if(cameraHolder.position.y > -5.8)
-        spotlightEscada.setIntensity(0.01);
+        else if(cameraHolder.position.y > -5.8)
+            spotlightEscada.setIntensity(0);
+    }
+    else{
+        directlight.setIntensity(0.8);
+        ambientlight.setIntensity(0.45);
+    }
 }
 
 // cria luz ambiente
@@ -116,7 +123,7 @@ export var ambientlight = new ambientLight('white', 0.45);
 export var directlight = new directionalLight('white', 0.8);
 // cria luz spotlight
 
-export var spotlightEscada = new spotLight('white', 0.01, 20, 0.5, 0.9, 0.8, new THREE.Vector3(38, 8, 0), 0);
+export var spotlightEscada = new spotLight('white', 0, 20, 0.5, 0.9, 0.8, new THREE.Vector3(38, 8, 0), 0);
 //var spotLightHelperEscada = new SpotLightHelper(spotlightEscada);
 
 // adiciona as luzes na cena
