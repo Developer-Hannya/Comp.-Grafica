@@ -9,8 +9,9 @@ function updateObject(mesh)
    mesh.matrixAutoUpdate = false;
    mesh.updateMatrix();
 }
-
 export function createStaircase() {
+import { scene } from './trabalho02.js';
+export function createLadder() {
     
     const geometry = new THREE.BoxGeometry( 5, 0.8, 0.8 );
     const staircaseMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
@@ -34,18 +35,77 @@ export function createStaircase() {
             stepHeight1 += 0.4;
             stepPlaneHeight1 += 0.4;
         }
+    const ladderMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
+    //plano em cima do degrau
+    const stepPlaneGeometry = new THREE.BoxGeometry( 5, 0.02, 0.8 );
+    const stepMaterial = new THREE.MeshBasicMaterial( {color: "rgb(222,184,135)"} );
+
+    //ÁREA 1
+    let stepHeight1 = 0.0;
+    let stepPlaneHeight1 = 0.4;
+
+    for(let i = -20.4; i >= -20 - 5; i -= 0.8){
+        const step = new THREE.Mesh( geometry, ladderMaterial );
+        step.position.set(0, stepHeight1, i);
+        step.castShadow = true;
+        step.receiveShadow = true;
+
+        const stepPlane = new THREE.Mesh( stepPlaneGeometry, stepMaterial );
+        stepPlane.position.set(0, stepPlaneHeight1, i);
+        stepPlane.castShadow = true;
+        stepPlane.receiveShadow = true;
+        
+        scene.add(step);
+        stepHeight1 += 0.4;
+        scene.add(stepPlane);
+        stepPlaneHeight1 += 0.4;
     }
 
-    let auxMat = new THREE.Matrix4();
-    centerStep = CSG.toMesh(centerStepCSG, auxMat);
-    centerStep.material = setDefaultMaterial("rgb(222,184,135)");
-    centerStep.receiveShadow = true;
-    centerStep.rotateY(Math.PI);
-    // scene.add(centerStep);
-    return(centerStep);
+    //ÁREA 3 E ÁREA FINAL
+    //degraus
+    const geometry3 = new THREE.BoxGeometry( 0.8, 0.8, 5 );
+    //const ladderMaterial3 = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
+    const ladderMaterial3 = new THREE.MeshLambertMaterial({
+        color: "rgb(182,144,95)",
+    });
+
+    //plano em cima do degrau
+    const stepPlaneGeometry3 = new THREE.BoxGeometry( 0.8, 0.05, 5 );
+    const stepMaterial3 = new THREE.MeshLambertMaterial({
+        color: "rgb(222,184,135)",
+    });
+
+
+    //ÁREA 3
+    let stepHeight3 = -0.4;
+    let stepPlaneHeight3 = 0;
     
-   
-}
+    for(let i = +39.6; i <= 40 + 10; i += 0.8){
+        const step = new THREE.Mesh( geometry3, ladderMaterial3 );
+        step.position.set(i, stepHeight3, 0);
+        step.castShadow = true;
+        step.receiveShadow = true;
+
+        const stepPlane = new THREE.Mesh( stepPlaneGeometry3, stepMaterial3 );
+        stepPlane.position.set(i, stepPlaneHeight3, 0);
+        stepPlane.castShadow = true;
+        stepPlane.receiveShadow = true;
+        
+        scene.add(step);
+        stepHeight3 -= 0.8;
+        scene.add(stepPlane);
+        stepPlaneHeight3 -= 0.8;
+    }
+
+    //ÁREA final
+    let stepHeight4 = 0;
+    let stepPlaneHeight4 = 0.4;
+    
+    for(let i = -40.4; i >= -40 - 5; i -= 0.8){
+        const step = new THREE.Mesh( geometry3, ladderMaterial3 );
+        step.position.set(i, stepHeight4, 0);
+        step.castShadow = true;
+        step.receiveShadow = true;
 
 export class Staircase extends THREE.Object3D{
     constructor(x, y, z, direction){
@@ -126,10 +186,17 @@ export class Staircase extends THREE.Object3D{
             cameraHolder.translateY(yDiff);
         }     
     }
-
     static updatePlayerY(){
         escadas.forEach( escada => {
             escada.setPlayerYPos();
         });
+        const stepPlane = new THREE.Mesh( stepPlaneGeometry3, stepMaterial3 );
+        stepPlane.position.set(i, stepPlaneHeight4, 0);
+        stepPlane.castShadow = true;
+        stepPlane.receiveShadow = true;
+        scene.add(step);
+        stepHeight4 += 0.4;
+        scene.add(stepPlane);
+        stepPlaneHeight4 += 0.4;
     }
 }
