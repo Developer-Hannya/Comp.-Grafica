@@ -57,6 +57,8 @@ loadLights();
 //-------------------------------------------------------------------------------
 export let objects = [];            // vetor de objetos
 export let portas = [];
+export let escadas = [];
+
 createPortals();
 export var player = {
   object: null,
@@ -66,32 +68,58 @@ export var player = {
   zSpeed: 0
 }
 
+//área 
+let escada = new Staircase(0, -1.6, +21 + 3*0.8, "n");
+scene.add(escada);
+
+let portal = new Portal(0, 3, 20.5, "z");
+scene.add(portal);
+
+let porta = new Door(0, 3, 20.5, "z");
+scene.add(porta);
+
+//área 2
+let escada2 = new Staircase(0, 1.2, -21 - 4*0.8, "n");
+scene.add(escada2);
+
+let portal2 = new Portal(0, 3, -20.5, "z", "blue");
+scene.add(portal2);
+
+let porta2 = new Door(0, 3, -20.5, "z");
+scene.add(porta2);
+
+//área 
+let escada3 = new Staircase(-41 - 4*0.8, 1.2, 0, "w");
+scene.add(escada3);
+
+let portal3 = new Portal(-40.5, 3, 0, "x");
+scene.add(portal3);
+
+let porta3 = new Door(-40.5, 3, 0, "x");
+scene.add(porta3);
+
+//área 
+let escada4 = new Staircase(41 + 3*0.8 + 5.6, -1.6 - 2.8, 0, "w");
+scene.add(escada4);
+let escada5 = new Staircase(41 + 3*0.8, -1.6, 0, "w");
+scene.add(escada5);
+
+let portal4 = new Portal(40.5, 3, 0, "x");
+scene.add(portal4);
+
+let porta4 = new Door(40.5, 3, 0, "x");
+scene.add(porta4);
+
  //createBBHelper(player.bb, 'yellow');
 // Control the appearence of first object loaded
 var firstRender = false;
-
-let escada = new Staircase();
-scene.add(escada);
-escada.translateZ(+20 + 3*0.8 + 0.4);
-escada.translateY(-1.6)
-
-let escadaA2 = new Staircase();
-scene.add(escadaA2);
-escadaA2.translateZ(-26 + 3*0.8 + 0.4);
-escadaA2.translateY(1.6)
-
-let portal = new Portal(0, 3, 20, "z");
-scene.add(portal);
-
-let porta = new Door(0, 3, 20, "z");
-scene.add(porta);
 
 //-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(80, 40, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(82, 42, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
@@ -125,14 +153,6 @@ gridHelper2A3.translateX(75);
 gridHelper2A3.translateY(-6);
 scene.add( gridHelper2A3 );
 
-// ramp/stairs to A3
-var escadaTesteA3 = createGroundPlane(10, 6, 75, 75, "rgb(182,144,95)"); // (width, height, width segments, height segments, color)
-escadaTesteA3.translateX(43.5);
-escadaTesteA3.translateY(-3.5);
-escadaTesteA3.rotateX(THREE.MathUtils.degToRad(-90));
-escadaTesteA3.rotateY(THREE.MathUtils.degToRad(45));
-//escadaTesteA3.castShadow = true;
-scene.add(escadaTesteA3);
 const gridHelperA3_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
 gridHelperA3_1.translateX(-15);
 scene.add( gridHelperA3_1 );
@@ -146,13 +166,6 @@ groundPlaneA2.translateY(2.8);
 groundPlaneA2.translateX(-70);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
-
-var escadaTesteA2 = createGroundPlane(6, 6, 75, 75, "rgb(50,50,95)"); // (width, height, width segments, height segments, color)
-escadaTesteA2.translateX(-42.5);
-escadaTesteA2.translateY(1);
-escadaTesteA2.rotateX(THREE.MathUtils.degToRad(-90));
-escadaTesteA2.rotateY(THREE.MathUtils.degToRad(20));
-scene.add(escadaTesteA2);
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
@@ -578,6 +591,8 @@ function render()
       mixer[i].update( delta );
   }
   Door.openDoors();
+
+  Staircase.updatePlayerY();
 }
 
 function updatePlayer()
