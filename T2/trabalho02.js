@@ -33,6 +33,7 @@ scene.add(cameraHolder);
 
 export let objects = [];
 export let portas = [];
+export let escadas = [];
 
 createPortals();
 
@@ -61,7 +62,7 @@ var firstRender = false;
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //área 3
-let escada = new Staircase(0, -1.6, +17 + 3*0.8 + 0.4, "s");
+let escada = new Staircase(0, -1.6, +17 + 3*0.8 + 0.4, "n");
 scene.add(escada);
 
 let portal = new Portal(0, 3, 17, "z");
@@ -71,8 +72,7 @@ let porta = new Door(0, 3, 17, "z");
 scene.add(porta);
 
 //área final
-let escada2 = new Staircase(0, -1.6, -18 - 3*0.8 - 0.4, "n");
-escada2.translateY(2.8);
+let escada2 = new Staircase(0, 1.2, -18 - 3*0.8 - 0.4, "n");
 scene.add(escada2);
 
 let portal2 = new Portal(0, 3, -17, "z");
@@ -80,6 +80,27 @@ scene.add(portal2);
 
 let porta2 = new Door(0, 3, -17, "z");
 scene.add(porta2);
+
+//área 2
+let escada3 = new Staircase(-23 - 3*0.8 - 0.4 , 1.2, 0, "w");
+//escada3.rotateY(Math.PI * 0.5);
+scene.add(escada3);
+
+let portal3 = new Portal(-22, 3, 0, "x");
+scene.add(portal3);
+
+let porta3 = new Door(-22, 3, 0, "x");
+scene.add(porta3);
+
+//área 1
+let escada4 = new Staircase(22 + 3*0.8 + 0.4, -1.6, 0, "w");
+scene.add(escada4);
+
+let portal4 = new Portal(22, 3, 0, "x");
+scene.add(portal4);
+
+let porta4 = new Door(22, 3, 0, "x");
+scene.add(porta4);
 
 
 //-------------------------------------------------------------------------------
@@ -239,28 +260,10 @@ function keyboardUpdate() {
   updateCamera();
 }
 
-function render()
-{
-  updatePlayer();
-  stats.update();
-  var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
-  keyboardUpdate(); 
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
-  // Animation control
-  if (playAction)
-  {
-    for(var i = 0; i<mixer.length; i++)
-      mixer[i].update( delta );
-  }
-  Door.openDoors();
-
-  escada.setPlayerYPos();
-}
 
 function updatePlayer()
 {
-   if(player.loaded)
+  if(player.loaded)
    {
       let playerPos = new THREE.Vector3();
       player.object.localToWorld(playerPos);
@@ -286,4 +289,22 @@ export function createBBHelper(bb, color)
    let helper = new THREE.Box3Helper( bb, color );
    scene.add( helper );
    return helper;
+}
+function render()
+{
+  updatePlayer();
+  stats.update();
+  var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
+  keyboardUpdate(); 
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
+  // Animation control
+  if (playAction)
+  {
+    for(var i = 0; i<mixer.length; i++)
+      mixer[i].update( delta );
+  }
+  Door.openDoors();
+
+  Staircase.updatePlayerY();
 }

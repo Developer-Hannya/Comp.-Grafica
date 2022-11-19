@@ -15,6 +15,10 @@ export class Door extends THREE.Object3D{
         this.openPosition = new THREE.Vector3(this.position.x, this.position.y - 6, this.position.z);
 
         this.add(createDoor());
+        
+        if(direction == "x"){
+            this.rotateY(Math.PI * 0.5);
+        }
 
         this.bBox = new THREE.Box3().setFromObject(this);
         //createBBHelper(this.bBox, "green")
