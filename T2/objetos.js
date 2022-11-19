@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene, objects} from './trabalho02.js';
+import {scene, objects, player} from './trabalho02.js';
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 
@@ -58,7 +58,7 @@ export class SelectableCube extends THREE.Mesh{
         this.material.color("green");
     }
     updateBlockBB(){
-        this.bb.setFromObject(this); 
+        this.bb.setFromObject(this);
     }
 }
 
