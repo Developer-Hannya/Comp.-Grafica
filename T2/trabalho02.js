@@ -60,14 +60,26 @@ var firstRender = false;
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-let escada = new Staircase(0, -1.6, +20 + 3*0.8 + 0.4, "s");
+//área 3
+let escada = new Staircase(0, -1.6, +17 + 3*0.8 + 0.4, "s");
 scene.add(escada);
 
-let portal = new Portal(0, 3, 20, "z");
+let portal = new Portal(0, 3, 17, "z");
 scene.add(portal);
 
-let porta = new Door(0, 3, 20, "z");
+let porta = new Door(0, 3, 17, "z");
 scene.add(porta);
+
+//área final
+let escada2 = new Staircase(0, -1.6, -18 - 3*0.8 - 0.4, "n");
+escada2.translateY(2.8);
+scene.add(escada2);
+
+let portal2 = new Portal(0, 3, -17, "z");
+scene.add(portal2);
+
+let porta2 = new Door(0, 3, -17, "z");
+scene.add(porta2);
 
 
 //-------------------------------------------------------------------------------
@@ -75,7 +87,7 @@ scene.add(porta);
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(60, 30, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
@@ -121,10 +133,10 @@ export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 // position the cube
 export let parede = [];
-for(var i = -40; i <= 40; i++) {
-  for(var j= -20; j <= 20; j++) {
+for(var i = -22; i <= 22; i++) {
+  for(var j= -17; j <= 17; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i == -40 || i == 40 || j == -20 || j == 20) && (((i < -3)||(i > 3)) && ((j < -3)||(j > 3)))) {
+    if((i == -22 || i == 22 || j == -17 || j == 17) && (((i < -3)||(i > 3)) && ((j < -3)||(j > 3)))) {
       cube.position.set(i, 0.5, j);
       cube.castShadow = true;
       cube.receiveShadow = true;
@@ -159,37 +171,6 @@ for(var i = -95; i <= -45; i++) {
     }
   }
 }
-
-//adicionando blocos do meio
-/*
-for(var i = -33; i <= 33; i++) {
-  for(var j= -33; j <= 33; j++) {
-    var k = Math.floor(Math.random() * 30);
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i != 0 && j != 0) && k == 1) {
-      if(matriz[i-2+37][j+37] === 0 && matriz[i-2+37][j+1+37] === 0 && matriz[i-2+37][j-1+37] === 0 && matriz[i-2+37][j+2+37] === 0 && matriz[i-2+37][j-2+37] === 0 &&
-        matriz[i+2+37][j+37] === 0 && matriz[i+2+37][j+1+37] === 0 && matriz[i+2+37][j-1+37] === 0 && matriz[i+2+37][j+2+37] === 0 && matriz[i+2+37][j-2+37] === 0 &&
-        matriz[i+37][j-2+37] === 0 && matriz[i-1+37][j-2+37] === 0 && matriz[i+1+37][j-2+37] === 0 &&
-        matriz[i+37][j+2+37] === 0 && matriz[i-1+37][j+2+37] === 0 && matriz[i+1+37][j+2+37] === 0){
-        cube.position.set(i, 0.5, j);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        matriz[i+37][j+37] = 1;
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
-          obj: cube,
-          bb: cubeBb,
-          selected: false
-        };
-        objects.push(box);
-        k = Math.floor(Math.random() * 30);
-      }
-    }
-    k = Math.floor(Math.random() * 30);
-  }
-}
-*/
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
