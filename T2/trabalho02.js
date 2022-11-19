@@ -101,8 +101,10 @@ scene.add(escada);
 let portal = new Portal(0, 3, 17, "z");
 scene.add(portal);
 
-let porta = new Door(0, 3, 17, "z");
-scene.add(porta);
+let escadaA2 = new Staircase();
+scene.add(escadaA2);
+escadaA2.translateZ(-26 + 3*0.8 + 0.4);
+escadaA2.translateY(1.6)
 
 //área final
 let escada2 = new Staircase(0, 1.2, -18 - 3*0.8 - 0.4, "n");
@@ -174,19 +176,34 @@ gridHelper2A3.translateX(75);
 gridHelper2A3.translateY(-6);
 scene.add( gridHelper2A3 );
 
-const gridHelperA2_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
-gridHelperA2_1.translateX(-15);
-scene.add( gridHelperA2_1 );
+// ramp/stairs to A3
+var escadaTesteA3 = createGroundPlane(10, 6, 75, 75, "rgb(182,144,95)"); // (width, height, width segments, height segments, color)
+escadaTesteA3.translateX(43.5);
+escadaTesteA3.translateY(-3.5);
+escadaTesteA3.rotateX(THREE.MathUtils.degToRad(-90));
+escadaTesteA3.rotateY(THREE.MathUtils.degToRad(45));
+//escadaTesteA3.castShadow = true;
+scene.add(escadaTesteA3);
+const gridHelperA3_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
+gridHelperA3_1.translateX(-15);
+scene.add( gridHelperA3_1 );
 
-const gridHelperA2_2 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2_2.translateX(15);
-scene.add( gridHelperA2_2 );
+const gridHelperA3_2 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA3_2.translateX(15);
+scene.add( gridHelperA3_2 );
 
 var groundPlaneA2 = createGroundPlane(50, 25, 75, 75, "rgb(110,110,184)"); // (width, height, width segments, height segments, color)
-groundPlaneA2.translateY(2);
+groundPlaneA2.translateY(2.8);
 groundPlaneA2.translateX(-70);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
+
+var escadaTesteA2 = createGroundPlane(6, 6, 75, 75, "rgb(50,50,95)"); // (width, height, width segments, height segments, color)
+escadaTesteA2.translateX(-42.5);
+escadaTesteA2.translateY(1);
+escadaTesteA2.rotateX(THREE.MathUtils.degToRad(-90));
+escadaTesteA2.rotateY(THREE.MathUtils.degToRad(20));
+scene.add(escadaTesteA2);
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
@@ -421,20 +438,22 @@ for(var i = -22; i <= 22; i++) {
 let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
 for(var i = -95; i <= -45; i++) {
   for(var j= -12.5; j <= 12.5; j++) {
-    let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
-    if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
-      cubeArea2.position.set(i, 2.5, j);
-      cubeArea2.castShadow = true;
-      cubeArea2.receiveShadow = true;
-      scene.add(cubeArea2);
-      let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
-      let boxArea2 = {
-        obj: cubeArea2,
-        bb: cubeBbArea2,
-        selected: false
-      };
-      parede.push(boxArea2);
-    }
+    for(var k = 3.3; k <= 25; k++) {
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
+      if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
+        cubeArea2.position.set(i, k, j);
+        cubeArea2.castShadow = true;
+        cubeArea2.receiveShadow = true;
+        scene.add(cubeArea2);
+        let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
+        let boxArea2 = {
+          obj: cubeArea2,
+          bb: cubeBbArea2,
+          selected: false
+        };
+        parede.push(boxArea2);
+      }
+    }  
   }
 }
 
