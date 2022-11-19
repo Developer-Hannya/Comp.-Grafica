@@ -43,9 +43,11 @@ export function createLadder() {
     let centerStep2 = new THREE.Mesh(geometry, ladderMaterial);
     let centerStepCSG2 = CSG.fromMesh(centerStep2);
 
-    for(let i = -0.8; i <= 2.8; i += 0.8){
+    for(let i = 0.8; i <= 2.8; i += 0.8){
         if(i !== 0){
             let step = new THREE.Mesh( geometry, ladderMaterial );
+            step.translateX(-10);
+            step.rotateX(90);
             step.position.set(0, stepHeight2, i);
             step.castShadow = true;
             step.receiveShadow = true;

@@ -137,7 +137,7 @@ gridHelperA3_2.translateX(15);
 scene.add( gridHelperA3_2 );
 
 var groundPlaneA2 = createGroundPlane(50, 25, 75, 75, "rgb(110,110,184)"); // (width, height, width segments, height segments, color)
-groundPlaneA2.translateY(2);
+groundPlaneA2.translateY(2.8);
 groundPlaneA2.translateX(-70);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
@@ -380,7 +380,7 @@ for(var i = -40.5; i <= 40.5; i++) {
 let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
 for(var i = -95; i <= -45; i++) {
   for(var j= -12.5; j <= 12.5; j++) {
-    for(var k = 2.5; k <= 25; k++) {
+    for(var k = 3.3; k <= 25; k++) {
       let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
       if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
         cubeArea2.position.set(i, k, j);
