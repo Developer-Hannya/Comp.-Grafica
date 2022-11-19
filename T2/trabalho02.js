@@ -128,19 +128,26 @@ escadaTesteA3.rotateX(THREE.MathUtils.degToRad(-90));
 escadaTesteA3.rotateY(THREE.MathUtils.degToRad(45));
 //escadaTesteA3.castShadow = true;
 scene.add(escadaTesteA3);
-const gridHelperA2_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
-gridHelperA2_1.translateX(-15);
-scene.add( gridHelperA2_1 );
+const gridHelperA3_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
+gridHelperA3_1.translateX(-15);
+scene.add( gridHelperA3_1 );
 
-const gridHelperA2_2 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2_2.translateX(15);
-scene.add( gridHelperA2_2 );
+const gridHelperA3_2 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA3_2.translateX(15);
+scene.add( gridHelperA3_2 );
 
 var groundPlaneA2 = createGroundPlane(50, 25, 75, 75, "rgb(110,110,184)"); // (width, height, width segments, height segments, color)
 groundPlaneA2.translateY(2);
 groundPlaneA2.translateX(-70);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
+
+var escadaTesteA2 = createGroundPlane(6, 6, 75, 75, "rgb(50,50,95)"); // (width, height, width segments, height segments, color)
+escadaTesteA2.translateX(-42.5);
+escadaTesteA2.translateY(1);
+escadaTesteA2.rotateX(THREE.MathUtils.degToRad(-90));
+escadaTesteA2.rotateY(THREE.MathUtils.degToRad(20));
+scene.add(escadaTesteA2);
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
@@ -373,20 +380,22 @@ for(var i = -40.5; i <= 40.5; i++) {
 let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
 for(var i = -95; i <= -45; i++) {
   for(var j= -12.5; j <= 12.5; j++) {
-    let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
-    if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
-      cubeArea2.position.set(i, 2.5, j);
-      cubeArea2.castShadow = true;
-      cubeArea2.receiveShadow = true;
-      scene.add(cubeArea2);
-      let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
-      let boxArea2 = {
-        obj: cubeArea2,
-        bb: cubeBbArea2,
-        selected: false
-      };
-      parede.push(boxArea2);
-    }
+    for(var k = 2.5; k <= 25; k++) {
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
+      if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
+        cubeArea2.position.set(i, k, j);
+        cubeArea2.castShadow = true;
+        cubeArea2.receiveShadow = true;
+        scene.add(cubeArea2);
+        let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
+        let boxArea2 = {
+          obj: cubeArea2,
+          bb: cubeBbArea2,
+          selected: false
+        };
+        parede.push(boxArea2);
+      }
+    }  
   }
 }
 

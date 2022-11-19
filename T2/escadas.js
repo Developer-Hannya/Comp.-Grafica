@@ -38,6 +38,27 @@ export function createLadder() {
         }
     }
 
+    let stepHeight2 = 1.2;
+    let stepPlaneHeight2 = 0.8;
+    let centerStep2 = new THREE.Mesh(geometry, ladderMaterial);
+    let centerStepCSG2 = CSG.fromMesh(centerStep2);
+
+    for(let i = -0.8; i <= 2.8; i += 0.8){
+        if(i !== 0){
+            let step = new THREE.Mesh( geometry, ladderMaterial );
+            step.position.set(0, stepHeight2, i);
+            step.castShadow = true;
+            step.receiveShadow = true;
+            
+            updateObject(step);
+            let stepCSG2 = CSG.fromMesh(step);
+            centerStepCSG2 = centerStepCSG2.union(stepCSG2);
+
+            stepHeight2 += 0.4;
+            stepPlaneHeight2 += 0.4;
+        }
+    }
+
     let auxMat = new THREE.Matrix4();
     centerStep = CSG.toMesh(centerStepCSG, auxMat);
     centerStep.material = setDefaultMaterial("rgb(222,184,135)");
