@@ -75,6 +75,11 @@ scene.add(escada);
 escada.translateZ(+20 + 3*0.8 + 0.4);
 escada.translateY(-1.6)
 
+let escadaA2 = new Staircase();
+scene.add(escadaA2);
+escadaA2.translateZ(-26 + 3*0.8 + 0.4);
+escadaA2.translateY(1.6)
+
 let portal = new Portal(0, 3, 20, "z");
 scene.add(portal);
 
