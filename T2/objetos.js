@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene} from './trabalho02.js';
+import {scene, objects} from './trabalho02.js';
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 
@@ -51,6 +51,7 @@ export class SelectableCube extends THREE.Mesh{
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
         this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
         this.bbHelper.visible = false;
+        objects.push({bb:this.bb});
         scene.add(this.bbHelper);
     }
     isSelected(){
@@ -74,6 +75,7 @@ export class PressurePlate extends THREE.Mesh{
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
         this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
         this.bbHelper.visible = false;
+        objects.push({bb:this.bb});
         scene.add(this.bbHelper);
     }
     updatePressPlateBB(){

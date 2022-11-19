@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene } from './trabalho02.js';
+import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes } from './trabalho02.js';
 import { camera, cameraHolder} from './camera.js';
 import {SelectableCube} from './objetos.js';
 
@@ -21,7 +21,8 @@ export function onDocumentMouseDown( event )
     //let boxes = objects.concat(parede);
     //boxes = boxes.map(box => box.obj);
 
-    let boxes = objects.map(box => box);
+    let boxes = selectableCubes.map(box => box);
+    //let boxes = objects.map(box => box);
 
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);

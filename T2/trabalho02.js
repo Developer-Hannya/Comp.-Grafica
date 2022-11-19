@@ -31,7 +31,7 @@ export var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
 var quaternion = new THREE.Quaternion();      //cria um quaternion
-  quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
+quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 
 //-------------------------------------------------------------------------------
 // Renderer
@@ -39,22 +39,23 @@ var quaternion = new THREE.Quaternion();      //cria um quaternion
 export var renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
 });    // View function in util/utils
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
-  renderer.shadowMapsoft = true;
-  // VSM/PCF/PCFSoft
-  renderer.setPixelRatio(window.innerWidth/window.innerHeight); 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  document.getElementById("webgl-output").appendChild(renderer.domElement);
-  renderer.setClearColor("rgb(30, 30, 42)");
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
+renderer.shadowMapsoft = true;
+// VSM/PCF/PCFSoft
+renderer.setPixelRatio(window.innerWidth/window.innerHeight); 
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.getElementById("webgl-output").appendChild(renderer.domElement);
+renderer.setClearColor("rgb(30, 30, 42)");
 
 scene.add(cameraHolder);
 
 loadLights();
 
-  //-------------------------------------------------------------------------------
-  // Player
-  //-------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------
+// Player
+//-------------------------------------------------------------------------------
+export let objects = [];            // vetor de objetos
 export let portas = [];
 createPortals();
 export var player = {
@@ -149,7 +150,6 @@ export let cubeMaterial = new MeshLambertMaterial({
 export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-export let objects = [];            // vetor de objetos
 export let parede = [];             // vetor para guardar blocos da parede
 export let teto = [];               // vetor para guardar blocos do teto
 export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
@@ -261,7 +261,6 @@ function createArea3(){
       }
       cubeA3.updateBlockBB();
       scene.add(cubeA3);
-      objects.push(cubeA3);
       selectableCubes.push(cubeA3);
     }
   }
@@ -285,8 +284,6 @@ function createArea3(){
       pressPlateA3.updatePressPlateBB();
       scene.add(pressPlateA3);
       pressPlates.push(pressPlateA3);
-      objects.push(pressPlateA3);
-
     }
   }
   createPressurePlatesA3();
