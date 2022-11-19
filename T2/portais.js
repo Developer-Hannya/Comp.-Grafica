@@ -12,16 +12,16 @@ export class Portal extends THREE.Object3D{
 
       if(direction == "z"){
          rightSideBox = new THREE.Box3(new THREE.Vector3(x - 3.5, y - 5, z - 0.5), new THREE.Vector3(x - 2.5, y + 2, z + 0.5));
-         createBBHelper(rightSideBox, "yellow");
+         //createBBHelper(rightSideBox, "yellow");
          leftSideBox = new THREE.Box3(new THREE.Vector3(x + 2.5, y - 5, z - 0.5), new THREE.Vector3(x + 3.5, y + 2, z + 0.5));
-         createBBHelper(leftSideBox, "red");
+         //createBBHelper(leftSideBox, "red");
       }
       else if(direction == "x"){
          this.rotateY(Math.PI * 0.5);
          rightSideBox = new THREE.Box3(new THREE.Vector3(x - 0.5, y - 5, z - 3.5), new THREE.Vector3(x + 0.5, y + 2, z - 2.5));
-         createBBHelper(rightSideBox, "yellow");
+         //createBBHelper(rightSideBox, "yellow");
          leftSideBox = new THREE.Box3(new THREE.Vector3(x - 0.5, y - 5, z + 2.5), new THREE.Vector3(x + 0.5, y + 2, z + 3.5));
-         createBBHelper(leftSideBox, "red");
+         //createBBHelper(leftSideBox, "red");
       }
 
       objects.push({bb: rightSideBox}, {bb: leftSideBox});

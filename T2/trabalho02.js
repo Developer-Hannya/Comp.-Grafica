@@ -1,4 +1,4 @@
-import * as THREE from  'three';
+import * as THREE from 'three';
 import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import KeyboardState from '../libs/util/KeyboardState.js'
@@ -30,8 +30,17 @@ export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
-export var quaternion = new THREE.Quaternion();      //cria um quaternion
+var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
+export var renderer = initRenderer();    // View function in util/utils
+renderer.setClearColor("rgb(30, 30, 42)");
+scene.add(cameraHolder);
+
+export let objects = [];
+export let portas = [];
+export let escadas = [];
+
+createPortals();
 
 //-------------------------------------------------------------------------------
 // Renderer
@@ -80,23 +89,58 @@ export var player = {
 // Control the appearence of first object loaded
 var firstRender = false;
 
-// let escada = new Staircase();
-// scene.add(escada);
+// Listen window size changes
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+
+//área 3
+let escada = new Staircase(0, -1.6, +17 + 3*0.8 + 0.4, "n");
+scene.add(escada);
 // escada.translateZ(+20 + 3*0.8 + 0.4);
 // escada.translateY(-1.6)
 
-let portal = new Portal(0, 3, 20, "z");
+let portal = new Portal(0, 3, 17, "z");
 scene.add(portal);
 
-let porta = new Door(0, 3, 20, "z");
+let porta = new Door(0, 3, 17, "z");
 scene.add(porta);
+
+//área final
+let escada2 = new Staircase(0, 1.2, -18 - 3*0.8 - 0.4, "n");
+scene.add(escada2);
+
+let portal2 = new Portal(0, 3, -17, "z");
+scene.add(portal2);
+
+let porta2 = new Door(0, 3, -17, "z");
+scene.add(porta2);
+
+//área 2
+let escada3 = new Staircase(-23 - 3*0.8 - 0.4 , 1.2, 0, "w");
+//escada3.rotateY(Math.PI * 0.5);
+scene.add(escada3);
+
+let portal3 = new Portal(-22, 3, 0, "x");
+scene.add(portal3);
+
+let porta3 = new Door(-22, 3, 0, "x");
+scene.add(porta3);
+
+//área 1
+let escada4 = new Staircase(22 + 3*0.8 + 0.4, -1.6, 0, "w");
+scene.add(escada4);
+
+let portal4 = new Portal(22, 3, 0, "x");
+scene.add(portal4);
+
+let porta4 = new Door(22, 3, 0, "x");
+scene.add(porta4);
 
 //-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(80, 40, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
@@ -107,12 +151,12 @@ groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane2);
 
 // add a grid in ground so it look like it has tiles
-const gridHelper = new THREE.GridHelper(40, 40, "rgb(30,7,130)", "rgb(120,66,7)");
-gridHelper.translateX(-20);
+const gridHelper = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
+gridHelper.translateX(-15);
 scene.add( gridHelper );
 
-const gridHelper1 = new THREE.GridHelper(40, 40, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper1.translateX(20);
+const gridHelper1 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelper1.translateX(15);
 scene.add( gridHelper1 );
 
 var groundPlaneA3 = createGroundPlane(40, 20, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
@@ -349,11 +393,16 @@ function checkAllArePressed(plates){
     return false;
 }
 
-// position cubes in the initial area
-for(var i = -40.5; i <= 40.5; i++) {
-  for(var j= -20.5; j <= 20.5; j++) {
+// create a cube
+export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
+export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
+let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+// position the cube
+export let parede = [];
+for(var i = -22; i <= 22; i++) {
+  for(var j= -17; j <= 17; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i == -40.5 || i == 40.5 || j == -20.5 || j == 20.5) && (((i < -2.5)||(i > 2.5)) && ((j < -2.5)||(j > 2.5)))) {
+    if((i == -22 || i == 22 || j == -17 || j == 17) && (((i < -3)||(i > 3)) && ((j < -3)||(j > 3)))) {
       cube.position.set(i, 0.5, j);
       cube.castShadow = true;
       cube.receiveShadow = true;
@@ -388,37 +437,6 @@ for(var i = -95; i <= -45; i++) {
     }
   }
 }
-
-//adicionando blocos do meio
-/*
-for(var i = -33; i <= 33; i++) {
-  for(var j= -33; j <= 33; j++) {
-    var k = Math.floor(Math.random() * 30);
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i != 0 && j != 0) && k == 1) {
-      if(matriz[i-2+37][j+37] === 0 && matriz[i-2+37][j+1+37] === 0 && matriz[i-2+37][j-1+37] === 0 && matriz[i-2+37][j+2+37] === 0 && matriz[i-2+37][j-2+37] === 0 &&
-        matriz[i+2+37][j+37] === 0 && matriz[i+2+37][j+1+37] === 0 && matriz[i+2+37][j-1+37] === 0 && matriz[i+2+37][j+2+37] === 0 && matriz[i+2+37][j-2+37] === 0 &&
-        matriz[i+37][j-2+37] === 0 && matriz[i-1+37][j-2+37] === 0 && matriz[i+1+37][j-2+37] === 0 &&
-        matriz[i+37][j+2+37] === 0 && matriz[i-1+37][j+2+37] === 0 && matriz[i+1+37][j+2+37] === 0){
-        cube.position.set(i, 0.5, j);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        matriz[i+37][j+37] = 1;
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
-          obj: cube,
-          bb: cubeBb,
-          selected: false
-        };
-        objects.push(box);
-        k = Math.floor(Math.random() * 30);
-      }
-    }
-    k = Math.floor(Math.random() * 30);
-  }
-}
-*/
 
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
@@ -564,10 +582,9 @@ function render()
   }
   Door.openDoors();
 }
-
 function updatePlayer()
 {
-   if(player.loaded)
+  if(player.loaded)
    {
       let playerPos = new THREE.Vector3();
       player.object.localToWorld(playerPos);
@@ -593,4 +610,22 @@ export function createBBHelper(bb, color)
    let helper = new THREE.Box3Helper( bb, color );
    scene.add( helper );
    return helper;
+}
+function render()
+{
+  updatePlayer();
+  stats.update();
+  var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
+  keyboardUpdate(); 
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
+  // Animation control
+  if (playAction)
+  {
+    for(var i = 0; i<mixer.length; i++)
+      mixer[i].update( delta );
+  }
+  Door.openDoors();
+
+  Staircase.updatePlayerY();
 }
