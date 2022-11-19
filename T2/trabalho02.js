@@ -315,12 +315,15 @@ function creckAnyPlateIsPressed(placas, cubos){
         placa.position.lerp(new THREE.Vector3(placa.position.x, - 6.45, placa.position.z), 0.03);
         placa.pressed = true;
         placa.pressedBy = cube;
+        cube.pressing = true;
+        cube.isPressing = placa;
       }
       // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
       // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
       else if (placa.pressedBy!= null && !checkCollisions(placa.bb, placa.pressedBy.bb)){
         placa.position.lerp(new THREE.Vector3(placa.position.x, -6, placa.position.z), 0.03);
         placa.pressed = false;
+        placa.pressedBy.pressing = false;
       }
     })
   })

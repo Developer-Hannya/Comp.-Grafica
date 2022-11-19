@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion } from './trabalho02.js';
+import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion, player } from './trabalho02.js';
 import { camera, cameraHolder} from './camera.js';
 import {SelectableCube} from './objetos.js';
 
@@ -27,7 +27,7 @@ export function onDocumentMouseDown( event )
 
     var intersects = raycaster.intersectObjects(boxes);
     console.log(intersects);
-    
+        
     //intersercts cria um vetor a partir da câmera na direção do mouse e identifica os objetos nessa reta
     //no console.log(intersects) vi que ta criando um array pegando o plano também, então usamos a posição [0].
     if(isHoldingBlock === true && intersects.length==0){
@@ -40,12 +40,12 @@ export function onDocumentMouseDown( event )
         objectHolded.position.z = Math.round(auxPos.z+cameraHolder.position.z);
         objectHolded.position.y = cameraHolder.position.y + 0.5;
         objectHolded.updateBlockBB();
-        //console.log(objectHolded.position);
+        console.log(objectHolded.position);
         objectHolded = null;
         isHoldingBlock = false;
     }
     else if(intersects.length==0) return;
-    else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
+    else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false && player.bb.distanceToPoint(intersects[0].object.position) <3 || intersects[0].object.pressing === true && player.bb.distanceToPoint(intersects[0].object.isPressing.position)<3.5 && isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterialSelected;
         //console.log("cubeMaterialSelected");
         cameraHolder.add(intersects[0].object);
@@ -53,7 +53,7 @@ export function onDocumentMouseDown( event )
         intersects[0].object.updateBlockBB();
         isHoldingBlock = true;
         objectHolded = intersects[0].object;
-        //console.log(objectHolded);
+        console.log(player.bb.distanceToPoint(intersects[0].object.position));
     }
     else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterial;

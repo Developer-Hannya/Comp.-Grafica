@@ -46,6 +46,8 @@ export class SelectableCube extends THREE.Mesh{
         this.selected = false;
         this.castShadow = true;
         this.receiveShadow = true;
+        this.pressing = false;
+        this.isPressing = null;
         this.bb = new THREE.Box3().setFromObject(this);
         this.bbSize = new THREE.Vector3(1.1, 1.1, 1.1);
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
