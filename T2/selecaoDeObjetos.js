@@ -1,10 +1,11 @@
 import * as THREE from  'three';
-import { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes } from './trabalho02.js';
+import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion } from './trabalho02.js';
 import { camera, cameraHolder} from './camera.js';
 import {SelectableCube} from './objetos.js';
 
 export var isHoldingBlock = false;
 export var objectHolded = null;
+var quaternionAux = new THREE.Quaternion();
 
 export function onDocumentMouseDown( event ) 
 {
@@ -48,7 +49,7 @@ export function onDocumentMouseDown( event )
         intersects[0].object.material=cubeMaterialSelected;
         //console.log("cubeMaterialSelected");
         cameraHolder.add(intersects[0].object);
-        intersects[0].object.position.set(0,5,0);
+        intersects[0].object.position.copy(cubeSide());
         intersects[0].object.updateBlockBB();
         isHoldingBlock = true;
         objectHolded = intersects[0].object;
@@ -66,4 +67,26 @@ function isSameMaterial(material1, material2){
         return true;
     }
     return false;
+}
+
+function cubeSide(){
+    if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90))))
+        return new THREE.Vector3(2,3,-2);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0))))
+        return new THREE.Vector3(0, 3, 4);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270))))
+        return new THREE.Vector3(-4, 3, 0);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180))))
+        return new THREE.Vector3(0, 3, -4);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315))))
+        return new THREE.Vector3(-2, 3, 2);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135))))
+        return new THREE.Vector3(2, 3, -2);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225))))
+        return new THREE.Vector3(-2, 3, -2);
+    else if(quaternion.equals(quaternionAux.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(45))))
+        return new THREE.Vector3(2, 3, 2);
+    else 
+        return new THREE.Vector3(0, 3, 0);
+
 }

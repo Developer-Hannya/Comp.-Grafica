@@ -1,7 +1,7 @@
 import * as THREE from  'three';
 import checkCollisions from "./trabalho02.js";
 import { keyboard } from './trabalho02.js';
-import {isHoldingBlock, objectHolded} from './selecaoDeObjetos.js'
+import {isHoldingBlock, objectHolded} from './selecaoDeObjetos.js';
 
 export function moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede){
     // codigo para mover o personagem, a camera e colidir com objetos
@@ -22,6 +22,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(4, 3, 0), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x > 40.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y > -6) {
         cameraHolder.translateY(-0.07);
@@ -38,6 +39,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(0, 3, 4), 0.3);
+        objectHolded.updateBlockBB();
       }
 
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
@@ -52,6 +54,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(-4, 3, 0), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x <46.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y < 0) {
         cameraHolder.translateY(0.07);
@@ -68,6 +71,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(0, 3, -4), 0.3);
+        objectHolded.updateBlockBB();
       }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
       player.object.quaternion.slerp(quaternion,0.1);
@@ -84,6 +88,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(-2, 3, 2), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x <46.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y < 0) {
         cameraHolder.translateY(0.05);
@@ -104,6 +109,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(2, 3, -2), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x > 40.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y > -6) {
         cameraHolder.translateY(-0.05);
@@ -123,6 +129,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(-2, 3, -2), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x <46.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y < 0) {
         cameraHolder.translateY(0.05);
@@ -142,6 +149,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       }
       if(isHoldingBlock === true){
         objectHolded.position.lerp(new THREE.Vector3(2, 3, 2), 0.3);
+        objectHolded.updateBlockBB();
       }
       if (cameraHolder.position.x > 40.5 && cameraHolder.position.z < 3 && cameraHolder.position.z > -3 && cameraHolder.position.y > -6) {
         cameraHolder.translateY(-0.05);

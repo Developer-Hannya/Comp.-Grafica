@@ -22,7 +22,7 @@ import {loadLights,
         spotLight,
         lightDowngrade} from './luz.js';
 import {SelectableCube, LuminousButton, PressurePlate} from './objetos.js';
-import { Staircase } from './escadas.js';
+import { createLadder} from './escadas.js';
 import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 
@@ -30,7 +30,7 @@ export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
-var quaternion = new THREE.Quaternion();      //cria um quaternion
+export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 
 //-------------------------------------------------------------------------------
@@ -50,14 +50,24 @@ renderer.setClearColor("rgb(30, 30, 42)");
 
 scene.add(cameraHolder);
 
+export let objects = [];            // vetor de objetos
+export let portas = [];             // vetor de portas
+export let parede = [];             // vetor para guardar blocos da parede
+export let teto = [];               // vetor para guardar blocos do teto
+export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
+export var LButtons = [];           // vetor de botões iluminados
+export var pressPlates = [];        // vetor de placas de pressão
+export var spotlights = [];         // vetor de spotlights
+export var selectableCubes = [];    // vetor de cubos selecionaveis
+export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
+
 loadLights();
+createLadder();
+createPortals();
 
 //-------------------------------------------------------------------------------
 // Player
 //-------------------------------------------------------------------------------
-export let objects = [];            // vetor de objetos
-export let portas = [];
-createPortals();
 export var player = {
   object: null,
   loaded: false,
@@ -70,10 +80,10 @@ export var player = {
 // Control the appearence of first object loaded
 var firstRender = false;
 
-let escada = new Staircase();
-scene.add(escada);
-escada.translateZ(+20 + 3*0.8 + 0.4);
-escada.translateY(-1.6)
+// let escada = new Staircase();
+// scene.add(escada);
+// escada.translateZ(+20 + 3*0.8 + 0.4);
+// escada.translateY(-1.6)
 
 let portal = new Portal(0, 3, 20, "z");
 scene.add(portal);
@@ -86,7 +96,7 @@ scene.add(porta);
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(60, 30, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(80, 40, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
@@ -120,14 +130,6 @@ gridHelper2A3.translateX(75);
 gridHelper2A3.translateY(-6);
 scene.add( gridHelper2A3 );
 
-// ramp/stairs to A3
-var escadaTesteA3 = createGroundPlane(10, 6, 75, 75, "rgb(182,144,95)"); // (width, height, width segments, height segments, color)
-escadaTesteA3.translateX(43.5);
-escadaTesteA3.translateY(-3.5);
-escadaTesteA3.rotateX(THREE.MathUtils.degToRad(-90));
-escadaTesteA3.rotateY(THREE.MathUtils.degToRad(45));
-//escadaTesteA3.castShadow = true;
-scene.add(escadaTesteA3);
 const gridHelperA2_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
 gridHelperA2_1.translateX(-15);
 scene.add( gridHelperA2_1 );
@@ -147,17 +149,14 @@ scene.add(groundPlaneA2);
 export let cubeMaterial = new MeshLambertMaterial({
   color: "rgb(182,144,95)",
 });
-export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
+//export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
+export let cubeMaterialSelected = new MeshLambertMaterial({
+  color: "rgb(100,255,100)",
+  emissive: "rgb(100,255,100)",
+  emissiveIntensity: 0.1
+});
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-export let parede = [];             // vetor para guardar blocos da parede
-export let teto = [];               // vetor para guardar blocos do teto
-export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
-export var LButtons = [];           // vetor de botões iluminados
-export var pressPlates = [];        // vetor de placas de pressão
-export var spotlights = [];         // vetor de spotlights
-export var selectableCubes = [];    // vetor de cubos selecionaveis
-export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
 
 function createArea3(){
   // position cubes in the area A3 like a "house"
