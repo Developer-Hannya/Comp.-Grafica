@@ -120,7 +120,6 @@ export class Staircase extends THREE.Object3D{
     setPlayerYPos(){
         if(this.staircaseBox && player.bb.intersectsBox(this.staircaseBox)){
             //player.object.position seria a posição em relação ao cameraHolder(sempre 0, 0, 0)
-            //local to world pega a posição do jogador, world to local pega a posição em relação à escada
             let playerGlobalPos = new THREE.Vector3();
             player.object.getWorldPosition(playerGlobalPos);
             let staircaseStartPos = this.position.clone();
