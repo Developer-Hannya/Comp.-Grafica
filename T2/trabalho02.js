@@ -22,7 +22,7 @@ import {loadLights,
         spotLight,
         lightDowngrade} from './luz.js';
 import {SelectableCube, LuminousButton, PressurePlate} from './objetos.js';
-import { createLadder} from './escadas.js';
+import { Staircase } from './escadas.js';
 import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 
@@ -37,7 +37,7 @@ quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os e
 // Renderer
 //-------------------------------------------------------------------------------
 export var renderer = new THREE.WebGLRenderer({
-  powerPreference: "high-performance",
+  powerPreference: "default",
 });    // View function in util/utils
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
@@ -50,24 +50,27 @@ renderer.setClearColor("rgb(30, 30, 42)");
 
 scene.add(cameraHolder);
 
-export let objects = [];            // vetor de objetos
-export let portas = [];             // vetor de portas
-export let parede = [];             // vetor para guardar blocos da parede
-export let teto = [];               // vetor para guardar blocos do teto
-export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
-export var LButtons = [];           // vetor de botões iluminados
-export var pressPlates = [];        // vetor de placas de pressão
-export var spotlights = [];         // vetor de spotlights
-export var selectableCubes = [];    // vetor de cubos selecionaveis
-export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
-
 loadLights();
-createLadder();
-createPortals();
 
 //-------------------------------------------------------------------------------
 // Player
 //-------------------------------------------------------------------------------
+export let objects = [];            // vetor de objetos (para colisão)
+export let portas = [];             // vetor de portas
+export let escadas = [];            // vetor de escadas
+export let parede = [];             // vetor para guardar blocos da parede
+export let teto = [];               // vetor para guardar blocos do teto
+export let paredeTranslucida = [];  // vetor apra guardar blocos da parede mais prox da tela
+export var LButtons = [];           // vetor de botões iluminados
+export var pressPlates = [];        // vetor com todas as placas de pressão
+export var pressPlatesA2 = [];      // vetor de placas de pressão da Area 2
+export var pressPlatesA3 = [];      // vetor de placas de pressão da Area 3
+export var spotlights = [];         // vetor de spotlights
+export var selectableCubes = [];    // vetor de cubos selecionaveis
+export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
+export var doorA2Open = false;      // variavel para saber se a porta A2 esta aberta
+
+createPortals();
 export var player = {
   object: null,
   loaded: false,
@@ -76,28 +79,67 @@ export var player = {
   zSpeed: 0
 }
 
+//área 
+let escada = new Staircase(+13, -1.6, +17 + 3*0.8 + 0.4, "n");
+scene.add(escada);
+
+let portal = new Portal(+13, 3, 17, "z");
+scene.add(portal);
+
+let porta = new Door(+13, 3, 17, "z");
+scene.add(porta);
+
+//área 2
+let escada2 = new Staircase(+13, 1.2, -18 - 3*0.8 - 0.4, "n");
+scene.add(escada2);
+
+let portal2 = new Portal(+13, 3, -17, "z");
+scene.add(portal2);
+
+let porta2 = new Door(+13, 3, -17, "z");
+scene.add(porta2);
+
+//área 
+let escada3 = new Staircase(-23 - 3*0.8 - 0.4 +13, 1.2, 0, "w");
+scene.add(escada3);
+
+let portal3 = new Portal(-22 +13, 3, 0, "x");
+scene.add(portal3);
+
+let porta3 = new Door(-22 +13, 3, 0, "x");
+scene.add(porta3);
+
+//área 
+let escada4 = new Staircase(22 + 3*0.8 + 0.4 +13, -1.6, 0, "w");
+scene.add(escada4);
+let escada5 = new Staircase(22 + 3*0.8 + 0.4 + 5.6 +13, -1.6 - 2.8, 0, "w");
+scene.add(escada5);
+escada5.staircaseBox.max.x += 1;
+
+let portal4 = new Portal(22 +13, 3, 0, "x");
+scene.add(portal4);
+
+let porta4 = new Door(22 +13, 3, 0, "x");
+scene.add(porta4);
+
+let portaA2 = new Door(-49.60, 5.8, 0, "x");
+scene.add(portaA2);
+let portaA3 = new Door(86, -3, 0, "x");
+scene.add(portaA3);
+
+
  //createBBHelper(player.bb, 'yellow');
 // Control the appearence of first object loaded
 var firstRender = false;
-
-// let escada = new Staircase();
-// scene.add(escada);
-// escada.translateZ(+20 + 3*0.8 + 0.4);
-// escada.translateY(-1.6)
-
-let portal = new Portal(0, 3, 20, "z");
-scene.add(portal);
-
-let porta = new Door(0, 3, 20, "z");
-scene.add(porta);
 
 //-------------------------------------------------------------------------------
 // Setting ground plane
 //-------------------------------------------------------------------------------
 
 // primary ground plane
-var groundPlane = createGroundPlane(80, 40, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
+groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
@@ -105,14 +147,15 @@ var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane2);
+groundPlane2.castShadow = false;
 
 // add a grid in ground so it look like it has tiles
-const gridHelper = new THREE.GridHelper(40, 40, "rgb(30,7,130)", "rgb(120,66,7)");
-gridHelper.translateX(-20);
+const gridHelper = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelper.translateX(8);
 scene.add( gridHelper );
 
-const gridHelper1 = new THREE.GridHelper(40, 40, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper1.translateX(20);
+const gridHelper1 = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelper1.translateX(18);
 scene.add( gridHelper1 );
 
 var groundPlaneA3 = createGroundPlane(40, 20, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
@@ -120,6 +163,12 @@ groundPlaneA3.translateX(65);
 groundPlaneA3.translateY(-6);
 groundPlaneA3.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA3);
+
+var groundPlaneA3_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+groundPlaneA3_2.translateX(88);
+groundPlaneA3_2.translateY(-6);
+groundPlaneA3_2.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlaneA3_2);
 
 const gridHelperA3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelperA3.translateX(55);
@@ -129,34 +178,43 @@ const gridHelper2A3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelper2A3.translateX(75);
 gridHelper2A3.translateY(-6);
 scene.add( gridHelper2A3 );
+const gridHelperA3_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA3_2.translateX(88);
+gridHelperA3_2.translateY(-6);
+scene.add( gridHelperA3_2 );
 
-const gridHelperA2_1 = new THREE.GridHelper(30, 30, "rgb(30,7,130)", "rgb(120,66,7)");
-gridHelperA2_1.translateX(-15);
-scene.add( gridHelperA2_1 );
-
-const gridHelperA2_2 = new THREE.GridHelper(30, 30, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2_2.translateX(15);
-scene.add( gridHelperA2_2 );
-
-var groundPlaneA2 = createGroundPlane(50, 25, 75, 75, "rgb(110,110,184)"); // (width, height, width segments, height segments, color)
-groundPlaneA2.translateY(2);
-groundPlaneA2.translateX(-70);
+var groundPlaneA2 = createGroundPlane(35, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+groundPlaneA2.translateY(2.8);
+groundPlaneA2.translateX(-32);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
+
+const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA2.translateX(-28);
+gridHelperA2.translateY(2.8);
+scene.add( gridHelperA2 );
+const gridHelper2A2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelper2A2.translateX(-37);
+gridHelper2A2.translateY(2.8);
+scene.add( gridHelper2A2 );
+const gridHelperA2_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA2_2.translateX(-52.5);
+gridHelperA2_2.translateY(2.8);
+scene.add( gridHelperA2_2 );
+
+var groundPlaneA2_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+groundPlaneA2_2.translateX(-52.5);
+groundPlaneA2_2.translateY(2.8);
+groundPlaneA2_2.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlaneA2_2);
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
   color: "rgb(182,144,95)",
 });
-//export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
-export let cubeMaterialSelected = new MeshLambertMaterial({
-  color: "rgb(100,255,100)",
-  emissive: "rgb(100,255,100)",
-  emissiveIntensity: 0.1
-});
+export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-
 
 function createArea3(){
   // position cubes in the area A3 like a "house"
@@ -208,6 +266,24 @@ function createArea3(){
       }
     }
   }
+  for(var x = 85.5; x <= 91.5; x++) {
+    for(var z= -3; z <= 3; z++) {
+      if(x == 91.5 || z == 3 || z == -3) {
+        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.set(x, -5.5, z);
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+        scene.add(cube);
+        let cubeBb  = new THREE.Box3().setFromObject(cube);
+        let box = {
+          obj: cube,
+          bb: cubeBb,
+          selected: false,
+        };
+        parede.push(box);
+      }
+    }
+  }
   // load the luminous buttons on area A3 and theirs spotlights
   function loadA3Objects(){
     for (let i = 0; i <= 7; i++) {
@@ -228,26 +304,7 @@ function createArea3(){
     }
   }
   loadA3Objects();
-  // function criaCubosSelecionaveisA3(){
-    //   for(let i = 0; i <=1; i ++){  
-      //     let cubeA3 = new THREE.Mesh(cubeGeometry,cubeMaterial);
-      //     if(i === 0)
-      //       cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
-      //     else
-      //       cubeA3.position.copy(new THREE.Vector3(2, 0.5, 2));
-      //       let cubeBbA3  = new THREE.Box3().setFromObject(cubeA3);
-      //       let boxA3 = {
-        //         obj: cubeA3,
-        //         bb: cubeBbA3,
-        //         selected: false
-        //       };
-        //       cubeA3.castShadow = true;
-        //       cubeA3.receiveShadow = true;
-        //       scene.add(cubeA3);
-        //       let cubeBrabo = new BlocoSelecionavel(new THREE.Vector3(3,0.5,3), cubeGeometry, cubeMaterial);
-        //       objects.push(cubeBrabo);
-        //     }
-        // }
+
   // cria os cubos selecionaveis da A3
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
@@ -274,7 +331,7 @@ function createArea3(){
     });
     let pressPlateA3Geometry = new THREE.BoxGeometry(2,1,2);
     for(let i = 0; i <=1; i ++){  
-      let pressPlateA3 = new PressurePlate(new THREE.Vector3(-3, 0, -3), pressPlateA3Geometry, pressPlateA3Material);
+      let pressPlateA3 = new PressurePlate(new THREE.Vector3(0, -6, 0), pressPlateA3Geometry, pressPlateA3Material);
       if(i === 0)
         pressPlateA3.position.set(55, -6, -8);
       else{
@@ -283,6 +340,7 @@ function createArea3(){
       pressPlateA3.updatePressPlateBB();
       scene.add(pressPlateA3);
       pressPlates.push(pressPlateA3);
+      pressPlatesA3.push(pressPlateA3);
     }
   }
   createPressurePlatesA3();
@@ -299,9 +357,6 @@ export var totalTetos = teto.map(obj => obj.obj);
 // map com blocos da parede mais prox da tela
 export var totalParedeTranslucida = paredeTranslucida.map(obj => obj.obj);
 // map com placas de pressão
-export var totalPressPlates = pressPlates.map(obj => obj);
-// map com cubos selecionaveis
-export var totalSelectableCubes = selectableCubes.map(obj => obj);
 
 // checa se as placas de pressão estão sendo pressionadas por algum cubo selecionavel
 function creckAnyPlateIsPressed(placas, cubos){
@@ -312,7 +367,7 @@ function creckAnyPlateIsPressed(placas, cubos){
         placa.add(cube);
         cube.position.set(0, 0.95 , 0);
         cube.updateBlockBB();
-        placa.position.lerp(new THREE.Vector3(placa.position.x, - 6.45, placa.position.z), 0.03);
+        placa.position.lerp(new THREE.Vector3(placa.position.x, placa.getYPressed(), placa.position.z), 0.03);
         placa.pressed = true;
         placa.pressedBy = cube;
         cube.pressing = true;
@@ -321,18 +376,25 @@ function creckAnyPlateIsPressed(placas, cubos){
       // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
       // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
       else if (placa.pressedBy!= null && !checkCollisions(placa.bb, placa.pressedBy.bb)){
-        placa.position.lerp(new THREE.Vector3(placa.position.x, -6, placa.position.z), 0.03);
+        placa.position.lerp(new THREE.Vector3(placa.position.x, placa.getYNotPressed(), placa.position.z), 0.03);
         placa.pressed = false;
         placa.pressedBy.pressing = false;
       }
     })
   })
-  if(checkAllArePressed(totalPressPlates) === true){
+  if(checkAllArePressed(totalPressPlatesA3) === true){
     // FUNÇÃO PARA ABRIR PORTA AQUI
     doorA3Open = true;
   }
   else{
     doorA3Open = false;
+  }
+  if(checkAllArePressed(totalPressPlatesA2) === true){
+    // FUNÇÃO PARA ABRIR PORTA AQUI
+    doorA2Open = true;
+  }
+  else{
+    doorA2Open = false;
   }
 }
 
@@ -353,10 +415,10 @@ function checkAllArePressed(plates){
 }
 
 // position cubes in the initial area
-for(var i = -40.5; i <= 40.5; i++) {
-  for(var j= -20.5; j <= 20.5; j++) {
+for(var i = -22+13; i <= 22+13; i++) {
+  for(var j= -17; j <= 17; j++) {
     let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i == -40.5 || i == 40.5 || j == -20.5 || j == 20.5) && (((i < -2.5)||(i > 2.5)) && ((j < -2.5)||(j > 2.5)))) {
+    if((i == -22+13 || i == 22+13 || j == -17 || j == 17) && (((i < -3+13)||(i > 3+13)) && ((j < -3)||(j > 3)))) {
       cube.position.set(i, 0.5, j);
       cube.castShadow = true;
       cube.receiveShadow = true;
@@ -372,25 +434,115 @@ for(var i = -40.5; i <= 40.5; i++) {
   }
 }
 
-let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
-for(var i = -95; i <= -45; i++) {
-  for(var j= -12.5; j <= 12.5; j++) {
-    let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterialArea2);
-    if((i == -95 || i == -45 || j == -12.5 || j == 12.5) && ((j < -3)||(j > 3))) {
-      cubeArea2.position.set(i, 2.5, j);
-      cubeArea2.castShadow = true;
-      cubeArea2.receiveShadow = true;
-      scene.add(cubeArea2);
-      let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
-      let boxArea2 = {
-        obj: cubeArea2,
-        bb: cubeBbArea2,
-        selected: false
-      };
-      parede.push(boxArea2);
+cameraHolder.position.set(-48 ,2.8, 0);
+
+function createArea2(){
+  //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
+  for(var x = -50; x <= -15; x++) {
+    for(var z= -12.5;z <= 12.5; z++) {
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      if((x == -50 || x == -15 || z == -12.5 || z == 12.5) && ((z < -3)||(z > 3))) {
+        cubeArea2.position.set(x, 3.3, z);
+        cubeArea2.castShadow = true;
+        cubeArea2.receiveShadow = true;
+        scene.add(cubeArea2);
+        let cubeBbArea2  = new THREE.Box3().setFromObject(cubeArea2);
+        let boxArea2 = {
+          obj: cubeArea2,
+          bb: cubeBbArea2,
+          selected: false
+        };
+        parede.push(boxArea2);
+      }
+    }  
+  }
+  for(var x = -56; x <= -50; x++) {
+    for(var z= -3.5; z <= 3.5; z++) {
+      if(x == -56 || z == 3.5 || z == -3.5) {
+        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.set(x, 3.3, z);
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+        scene.add(cube);
+        let cubeBb  = new THREE.Box3().setFromObject(cube);
+        let box = {
+          obj: cube,
+          bb: cubeBb,
+          selected: false,
+        };
+        parede.push(box);
+      }
     }
   }
+
+  function createSelectableCubesA2(){
+    for(let i = 0; i <= 5; i ++){  
+      let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      switch (i){
+        case 0:
+          cubeA2.position.copy(new THREE.Vector3(-23, 3.3, -9));
+          break;
+        case 1:
+          cubeA2.position.copy(new THREE.Vector3(-30, 3.3, -9));
+          break;
+
+        case 2:
+          cubeA2.position.copy(new THREE.Vector3(-37, 3.3, -9));
+          break;
+        case 3:
+          cubeA2.position.copy(new THREE.Vector3(-21, 3.3, 6));
+          break;
+        case 4:
+          cubeA2.position.copy(new THREE.Vector3(-32, 3.3, 3));
+        break;
+        case 5:
+          cubeA2.position.copy(new THREE.Vector3(-35, 3.3, 8));
+        break;
+      }
+      cubeA2.updateBlockBB();
+      scene.add(cubeA2);
+      selectableCubes.push(cubeA2);
+    }
+  }
+  createSelectableCubesA2();
+  // crias as placas de pressão da A3
+
+  function createPressurePlatesA2(){
+    let pressPlateA2Material = new THREE.MeshPhongMaterial({
+      color: "grey",
+      specular: "white",
+      shininess: "200"
+    });
+    let pressPlateA2Geometry = new THREE.BoxGeometry(2,1,2);
+    for(let i = 0; i <=2; i ++){  
+      let pressPlateA2 = new PressurePlate(new THREE.Vector3(0, 2.8, 0), pressPlateA2Geometry, pressPlateA2Material);
+      switch (i){
+        case 0:
+          pressPlateA2.position.set(-45, 2.8, -7);
+          break;
+        case 1:
+          pressPlateA2.position.set(-45, 2.8, 0);
+          break;
+        case 2:
+          pressPlateA2.position.set(-45, 2.8, 7);
+          break;
+      } 
+      pressPlateA2.updatePressPlateBB();
+      scene.add(pressPlateA2);
+      pressPlates.push(pressPlateA2);
+      pressPlatesA2.push(pressPlateA2);
+    }
+  }
+  createPressurePlatesA2();
 }
+createArea2();
+
+export var totalPressPlates = pressPlates.map(obj => obj);
+export var totalPressPlatesA3 = pressPlatesA3.map(obj => obj);
+export var totalPressPlatesA2 = pressPlatesA2.map(obj => obj);
+
+// map com cubos selecionaveis
+export var totalSelectableCubes = selectableCubes.map(obj => obj);
 
 //adicionando blocos do meio
 /*
@@ -522,12 +674,12 @@ function lightSensor(){
 // muda a visibilidade do teto de acordo com a posição do personagem
 function tetoVisibility(){
   // [...totalTetos][0] -> seleciona o primeiro elemento do map
-  if([...totalTetos][0].visible  === true && cameraHolder.position.y < -5.7){
+  if([...totalTetos][0].visible  === true && cameraHolder.position.y < -5){
     totalTetos.forEach(obj => {
       obj.visible = false;
     });
   }
-  else if([...totalTetos][0].visible === false && cameraHolder.position.y > -5.7){
+  else if([...totalTetos][0].visible === false && cameraHolder.position.y > -5){
     totalTetos.forEach(obj => {
       obj.visible = true;
     });
@@ -537,12 +689,12 @@ function tetoVisibility(){
 // muda a visibilidade da parede mais próxima da tela de acordo com a posição do personagem
 function paredeTranslucidaVisibility(){
   // [...totalParedeTranslucida][0] -> seleciona o primeiro elemento do map
-  if([...totalParedeTranslucida][0].visible  === true && cameraHolder.position.y < -5.7){
+  if([...totalParedeTranslucida][0].visible  === true && cameraHolder.position.y < -5){
     totalParedeTranslucida.forEach(obj => {
       obj.visible = false;
     });
   }
-  else if([...totalParedeTranslucida][0].visible  === false && cameraHolder.position.y > -5.7){
+  else if([...totalParedeTranslucida][0].visible  === false && cameraHolder.position.y > -5){
     totalParedeTranslucida.forEach(obj => {
       obj.visible = true;
     });
@@ -566,6 +718,8 @@ function render()
       mixer[i].update( delta );
   }
   Door.openDoors();
+
+  Staircase.updatePlayerY();
 }
 
 function updatePlayer()

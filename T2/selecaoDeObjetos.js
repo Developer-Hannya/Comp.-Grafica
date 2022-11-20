@@ -36,28 +36,23 @@ export function onDocumentMouseDown( event )
         cameraHolder.remove(objectHolded);
         objectHolded.material=cubeMaterial;
         scene.add(objectHolded);
-        objectHolded.position.x = Math.round(auxPos.x+cameraHolder.position.x);
-        objectHolded.position.z = Math.round(auxPos.z+cameraHolder.position.z);
-        objectHolded.position.y = cameraHolder.position.y + 0.5;
+        let newPos = new THREE.Vector3(Math.round(auxPos.x+cameraHolder.position.x), cameraHolder.position.y + 0.5 , Math.round(auxPos.z+cameraHolder.position.z));
+        objectHolded.position.copy(newPos);
         objectHolded.updateBlockBB();
-        console.log(objectHolded.position);
         objectHolded = null;
         isHoldingBlock = false;
     }
     else if(intersects.length==0) return;
     else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false && player.bb.distanceToPoint(intersects[0].object.position) <3 || intersects[0].object.pressing === true && player.bb.distanceToPoint(intersects[0].object.isPressing.position)<3.5 && isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterialSelected;
-        //console.log("cubeMaterialSelected");
         cameraHolder.add(intersects[0].object);
         intersects[0].object.position.copy(cubeSide());
         intersects[0].object.updateBlockBB();
         isHoldingBlock = true;
         objectHolded = intersects[0].object;
-        console.log(player.bb.distanceToPoint(intersects[0].object.position));
     }
     else if(isSameMaterial(intersects[0].object.material, cubeMaterialSelected) && isHoldingBlock === false) {
         intersects[0].object.material=cubeMaterial;
-        //console.log("cubeMaterial");
     }
 }
 

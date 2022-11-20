@@ -93,23 +93,25 @@ export class spotLight extends THREE.SpotLight{
 
 // diminui a intensidade da luz de acordo com a posição do personagem (entrada area A3)
 export function lightDowngrade(){
-    if(cameraHolder.position.y < 0 && cameraHolder.position.x > 40){
-        let auxDirec = 0.8 + 0.132 * cameraHolder.position.y;
-        let auxAmbient = 0.45 + 0.074 * cameraHolder.position.y;
+    if(cameraHolder.position.y < 0 && cameraHolder.position.x > 35){
+        let auxDirec = 0.8 + 0.17 * cameraHolder.position.y;
+        let auxAmbient = 0.45 + 0.1 * cameraHolder.position.y;
         let auxSpot = 0 - 0.15 * cameraHolder.position.y;
-        if (auxDirec >= 0.03)
+        if (auxDirec >= 0.01)
             directlight.setIntensity(auxDirec);
         else 
             directlight.setIntensity(0);
         if(doorA3Open === true)
             ambientlight.setIntensity(0.2);
-        else if (auxAmbient >= 0.02) {
+        else if (auxAmbient >= 0.01) {
             ambientlight.setIntensity(auxAmbient);
         }
-        if(cameraHolder.position.y < -5.8)
+        if(cameraHolder.position.y < -1){
             spotlightEscada.setIntensity(auxSpot);
-        else if(cameraHolder.position.y > -5.8)
+        }
+        else if(cameraHolder.position.y > -1){
             spotlightEscada.setIntensity(0);
+        }
     }
     else{
         directlight.setIntensity(0.8);
@@ -123,7 +125,7 @@ export var ambientlight = new ambientLight('white', 0.45);
 export var directlight = new directionalLight('white', 0.8);
 // cria luz spotlight
 
-export var spotlightEscada = new spotLight('white', 0, 20, 0.5, 0.9, 0.8, new THREE.Vector3(38, 8, 0), 0);
+export var spotlightEscada = new spotLight('white', 0, 20, 0.5, 0.9, 0.8, new THREE.Vector3(35.5, 8, 0), 0);
 //var spotLightHelperEscada = new SpotLightHelper(spotlightEscada);
 
 // adiciona as luzes na cena
