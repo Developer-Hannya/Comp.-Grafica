@@ -33,7 +33,7 @@ export class Key extends THREE.Mesh{
 function loadKeyModel(key)
 {
   var loader = new GLTFLoader( );
-  loader.load( '../assets/objects/key/scene.gltf', function ( gltf ) {
+  loader.load( 'assets/key/scene.gltf', function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child ) {

@@ -41,6 +41,9 @@ quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os e
 export var renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
 });    // View function in util/utils
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.LinearToneMapping;
+renderer.toneMappingExposure = 0.8
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 renderer.shadowMapsoft = true;
@@ -277,7 +280,7 @@ for(var i = 8; i <= 18; i++) {
     for(let i = 0; i < 3; i++){
       for(let j = 0; j < 2; j++){
         let boxPosition = new THREE.Vector3(12 + j, -3.3, 48.6 + i);
-        let colliderPosition = new THREE.Vector3(12.5 + j, -2.3, 48.6 + i);
+        let colliderPosition = new THREE.Vector3(12 + j, -2.3, 48.6 + i);
         let box = new THREE.Box3().setFromCenterAndSize(boxPosition, new THREE.Vector3(1, 1.5, 1));
         let helper = new THREE.Box3().setFromCenterAndSize(boxPosition, new THREE.Vector3(1, 1, 1));
         let collider = new THREE.Box3().setFromCenterAndSize(colliderPosition, new THREE.Vector3(1, 1, 1));
@@ -286,6 +289,14 @@ for(var i = 8; i <= 18; i++) {
         area1BridgeSlots.push({"space": box, "collider": collider, "helper": helper});
       }
     }
+
+    let wall1 = new THREE.Box3();
+    wall1.setFromCenterAndSize(new THREE.Vector3(11, -2.3, 49.6), new THREE.Vector3(1, 1, 5));
+    parede.push({bb: wall1});
+
+    let wall2 = new THREE.Box3();
+    wall2.setFromCenterAndSize(new THREE.Vector3(14, -2.3, 49.6), new THREE.Vector3(1, 1, 5));
+    parede.push({bb: wall2});
   }
 
 
@@ -589,40 +600,6 @@ for(var i = -25.6; i <= -15.6; i++) {
   }
 }
 
-
-
-
-//adicionando blocos do meio
-/*
-for(var i = -33; i <= 33; i++) {
-  for(var j= -33; j <= 33; j++) {
-    var k = Math.floor(Math.random() * 30);
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-    if((i != 0 && j != 0) && k == 1) {
-      if(matriz[i-2+37][j+37] === 0 && matriz[i-2+37][j+1+37] === 0 && matriz[i-2+37][j-1+37] === 0 && matriz[i-2+37][j+2+37] === 0 && matriz[i-2+37][j-2+37] === 0 &&
-        matriz[i+2+37][j+37] === 0 && matriz[i+2+37][j+1+37] === 0 && matriz[i+2+37][j-1+37] === 0 && matriz[i+2+37][j+2+37] === 0 && matriz[i+2+37][j-2+37] === 0 &&
-        matriz[i+37][j-2+37] === 0 && matriz[i-1+37][j-2+37] === 0 && matriz[i+1+37][j-2+37] === 0 &&
-        matriz[i+37][j+2+37] === 0 && matriz[i-1+37][j+2+37] === 0 && matriz[i+1+37][j+2+37] === 0){
-        cube.position.set(i, 0.5, j);
-        cube.castShadow = true;
-        cube.receiveShadow = true;
-        scene.add(cube);
-        matriz[i+37][j+37] = 1;
-        let cubeBb  = new THREE.Box3().setFromObject(cube);
-        let box = {
-          obj: cube,
-          bb: cubeBb,
-          selected: false
-        };
-        objects.push(box);
-        k = Math.floor(Math.random() * 30);
-      }
-    }
-    k = Math.floor(Math.random() * 30);
-  }
-}
-*/
-
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 2 );
   axesHelper.visible = false;
@@ -639,7 +616,7 @@ var time = 0;
 var mixer = new Array();
 
 // Load animated files
-loadGLTFFile('../assets/objects/walkingMan.glb');
+loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
@@ -657,6 +634,9 @@ function loadGLTFFile(modelName)
     });
 
     // create the man animated object  
+    obj.scale.x = 0.1;
+    obj.scale.y = 0.1;
+    obj.scale.z = 0.1;
     player.object = obj;
     
     scene.add ( obj );
@@ -666,6 +646,7 @@ function loadGLTFFile(modelName)
 
     // Create animationMixer and push it in the array of mixers
     var mixerLocal = new THREE.AnimationMixer(obj);
+    mixerLocal.timeScale = 3.8;
     mixerLocal.clipAction( gltf.animations[0] ).play();
     mixer.push(mixerLocal);
     }, onProgress, onError);
