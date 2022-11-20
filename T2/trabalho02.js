@@ -709,6 +709,25 @@ function createArea2(){
       }  
     }
   }
+  for(var x = 9.5; x <= 16.5; x++) {
+    for(var z= -64; z <= -58; z++) {
+      if(x == 9.5 || z == -64 || x == 16.5) {
+        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.set(x, 3.3, z);
+        cube.castShadow = true;
+        cube.receiveShadow = true;
+        scene.add(cube);
+        let cubeBb  = new THREE.Box3().setFromObject(cube);
+        let box = {
+          obj: cube,
+          bb: cubeBb,
+          selected: false,
+        };
+        parede.push(box);
+      }
+    }
+  }
+
   function createSelectableCubesA2(){
     for(let i = 0; i <= 5; i ++){  
       let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
