@@ -340,7 +340,7 @@ function createArea1(){
     for(var j= 51.6; j <= 61.6; j++) {
       let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
       //console.log(j);
-      if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 13)||(j == 61.6))) {
+      if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 14)||(j == 61.6))) {
         cubeArea1.position.set(i, -2.3, j);
         cubeArea1.castShadow = true;
         cubeArea1.receiveShadow = true;
