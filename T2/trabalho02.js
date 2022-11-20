@@ -570,6 +570,7 @@ function createArea3(){
         pressPlateA3.position.set(76, -6, 8);
       }
       pressPlateA3.updatePressPlateBB();
+      pressPlateA3.bb.max.y += 1;
       scene.add(pressPlateA3);
       pressPlates.push(pressPlateA3);
       pressPlatesA3.push(pressPlateA3);
@@ -780,6 +781,7 @@ function createArea2(){
           break;
       } 
       pressPlateA2.updatePressPlateBB();
+      pressPlateA2.bb.max.y += 1;
       scene.add(pressPlateA2);
       pressPlates.push(pressPlateA2);
       pressPlatesA2.push(pressPlateA2);
