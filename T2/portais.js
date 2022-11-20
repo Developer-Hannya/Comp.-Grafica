@@ -3,12 +3,17 @@ import { CSG } from '../libs/other/CSGMesh.js';
 import { createBBHelper, objects, scene } from './trabalho02.js';
 
 export class Portal extends THREE.Object3D{
-   constructor(x, y, z, direction){
+   constructor(x, y, z, direction, color = "white"){
        super();
        this.translateX(x);
        this.translateY(y);
        this.translateZ(z);
        let rightSideBox, leftSideBox;
+
+       const geometry = new THREE.SphereGeometry( 0.7, 32, 32 );
+       const material = new THREE.MeshLambertMaterial( { color: color } );
+       const sphere = new THREE.Mesh( geometry, material );
+       sphere.translateY(3.5);
 
       if(direction == "z"){
          rightSideBox = new THREE.Box3(new THREE.Vector3(x - 3.5, y - 5, z - 0.5), new THREE.Vector3(x - 2.5, y + 2, z + 0.5));
@@ -26,6 +31,7 @@ export class Portal extends THREE.Object3D{
 
       objects.push({bb: rightSideBox}, {bb: leftSideBox});
       this.add(createPortals());
+      this.add(sphere);
    }
 }
 

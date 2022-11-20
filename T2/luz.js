@@ -22,6 +22,7 @@ export class directionalLight extends THREE.DirectionalLight{
         this.castShadow = true;
         this.shadow.mapSize.width = 1024;
         this.shadow.mapSize.height = 1024;
+
         this.shadow.camera.near = 0.1;
         this.shadow.camera.far = 1000;
         this.shadow.camera.left = -20;
@@ -56,6 +57,7 @@ export class spotLight extends THREE.SpotLight{
         this.castShadow = true;
         this.shadow.mapSize.width = 128;
         this.shadow.mapSize.height = 128;
+
         this.shadow.camera.near = 0.1;
         this.shadow.camera.far = 50;
         this.position.copy(position);
@@ -126,6 +128,7 @@ export var directlight = new directionalLight('white', 0.8);
 // cria luz spotlight
 
 export var spotlightEscada = new spotLight('white', 0, 20, 0.5, 0.9, 0.8, new THREE.Vector3(35.5, 8, 0), 0);
+
 //var spotLightHelperEscada = new SpotLightHelper(spotlightEscada);
 
 // adiciona as luzes na cena

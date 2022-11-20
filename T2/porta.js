@@ -6,11 +6,14 @@ export let closedDoors = [];
 let openingDoors = [];
 
 export class Door extends THREE.Object3D{
-    constructor(x, y, z, direction){
+    constructor(x, y, z, direction, color = undefined){
         super();
         this.translateX(x);
         this.translateY(y);
         this.translateZ(z);
+
+        if(color)
+            this.color = color;
 
         this.openPosition = new THREE.Vector3(this.position.x, this.position.y - 6, this.position.z);
 
@@ -37,6 +40,9 @@ export class Door extends THREE.Object3D{
             const door = closedDoors[index];
             if(player.bb.intersectsBox(door.openingBox)){
                 // door.bBox.max = door.bBox.min;
+                if(door.color && !player[door.color]){
+                    return;
+                }
                 closedDoors.splice(index, 1);
                 index--;
                 openingDoors.push(door);
