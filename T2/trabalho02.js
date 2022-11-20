@@ -122,7 +122,7 @@ scene.add(portal4);
 let porta4 = new Door(22 +13, 3, 0, "x");
 scene.add(porta4);
 
-let portaA2 = new Door(-49.60, 5.8, 0, "x");
+let portaA2 = new Door(13, 5.8, -57.60, "w");
 scene.add(portaA2);
 let portaA3 = new Door(86, -3, 0, "x");
 scene.add(portaA3);
@@ -183,30 +183,37 @@ gridHelperA3_2.translateX(88);
 gridHelperA3_2.translateY(-6);
 scene.add( gridHelperA3_2 );
 
-var groundPlaneA2 = createGroundPlane(35, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+var groundPlaneA2 = createGroundPlane(25, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 groundPlaneA2.translateY(2.8);
-groundPlaneA2.translateX(-32);
+groundPlaneA2.translateX(13);
+groundPlaneA2.translateZ(-40);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
 
 const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2.translateX(-28);
+gridHelperA2.translateX(13);
+gridHelperA2.translateZ(-36.5);
 gridHelperA2.translateY(2.8);
 scene.add( gridHelperA2 );
 const gridHelper2A2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper2A2.translateX(-37);
+gridHelper2A2.translateX(13);
+gridHelper2A2.translateZ(-44.5);
 gridHelper2A2.translateY(2.8);
 scene.add( gridHelper2A2 );
 const gridHelperA2_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2_2.translateX(-52.5);
+gridHelperA2_2.translateX(13);
+gridHelperA2_2.translateZ(-60.5);
 gridHelperA2_2.translateY(2.8);
 scene.add( gridHelperA2_2 );
 
 var groundPlaneA2_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
-groundPlaneA2_2.translateX(-52.5);
+groundPlaneA2_2.translateX(13);
+groundPlaneA2_2.translateZ(-60.5);
 groundPlaneA2_2.translateY(2.8);
 groundPlaneA2_2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2_2);
+
+cameraHolder.position.set(13, 2.8,-50);
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
@@ -434,12 +441,13 @@ for(var i = -22+13; i <= 22+13; i++) {
   }
 }
 
+
 function createArea2(){
   //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
-  for(var x = -50; x <= -15; x++) {
-    for(var z= -12.5;z <= 12.5; z++) {
+  for(var x = 0.5; x <= 25.5; x++) {
+    for(var z= -58;z <= -23; z++) {
       let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      if((x == -50 || x == -15 || z == -12.5 || z == 12.5) && ((z < -3)||(z > 3))) {
+      if((x == 0.5 || x == 25.5 || z == -58 || z == -23) && ((x < 10)||(x > 16))) {
         cubeArea2.position.set(x, 3.3, z);
         cubeArea2.castShadow = true;
         cubeArea2.receiveShadow = true;
@@ -454,9 +462,9 @@ function createArea2(){
       }
     }  
   }
-  for(var x = -56; x <= -50; x++) {
-    for(var z= -3.5; z <= 3.5; z++) {
-      if(x == -56 || z == 3.5 || z == -3.5) {
+  for(var x = 9.5; x <= 16.5; x++) {
+    for(var z= -64; z <= -58; z++) {
+      if(x == 9.5 || z == -64 || x == 16.5) {
         let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
@@ -478,23 +486,22 @@ function createArea2(){
       let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
       switch (i){
         case 0:
-          cubeA2.position.copy(new THREE.Vector3(-23, 3.3, -9));
+          cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
           break;
         case 1:
-          cubeA2.position.copy(new THREE.Vector3(-30, 3.3, -9));
+          cubeA2.position.copy(new THREE.Vector3(4, 3.3, -36));
           break;
-
         case 2:
-          cubeA2.position.copy(new THREE.Vector3(-37, 3.3, -9));
+          cubeA2.position.copy(new THREE.Vector3(4, 3.3, -43));
           break;
         case 3:
-          cubeA2.position.copy(new THREE.Vector3(-21, 3.3, 6));
+          cubeA2.position.copy(new THREE.Vector3(23, 3.3, -28));
           break;
         case 4:
-          cubeA2.position.copy(new THREE.Vector3(-32, 3.3, 3));
+          cubeA2.position.copy(new THREE.Vector3(17, 3.3, -35));
         break;
         case 5:
-          cubeA2.position.copy(new THREE.Vector3(-35, 3.3, 8));
+          cubeA2.position.copy(new THREE.Vector3(20, 3.3, -41));
         break;
       }
       cubeA2.updateBlockBB();
@@ -516,13 +523,13 @@ function createArea2(){
       let pressPlateA2 = new PressurePlate(new THREE.Vector3(0, 2.8, 0), pressPlateA2Geometry, pressPlateA2Material);
       switch (i){
         case 0:
-          pressPlateA2.position.set(-45, 2.8, -7);
+          pressPlateA2.position.set(20, 2.8, -52);
           break;
         case 1:
-          pressPlateA2.position.set(-45, 2.8, 0);
+          pressPlateA2.position.set(13, 2.8, -52);
           break;
         case 2:
-          pressPlateA2.position.set(-45, 2.8, 7);
+          pressPlateA2.position.set(6, 2.8,-52);
           break;
       } 
       pressPlateA2.updatePressPlateBB();
