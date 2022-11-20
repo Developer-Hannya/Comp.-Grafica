@@ -192,12 +192,12 @@ scene.add(groundPlaneA2);
 
 const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelperA2.translateX(13);
-gridHelperA2.translateZ(-36.5);
+gridHelperA2.translateZ(-36);
 gridHelperA2.translateY(2.8);
 scene.add( gridHelperA2 );
 const gridHelper2A2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelper2A2.translateX(13);
-gridHelper2A2.translateZ(-44.5);
+gridHelper2A2.translateZ(-45);
 gridHelper2A2.translateY(2.8);
 scene.add( gridHelper2A2 );
 const gridHelperA2_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
