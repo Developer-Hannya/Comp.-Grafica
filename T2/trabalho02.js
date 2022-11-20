@@ -9,7 +9,7 @@ import {initRenderer,
         setDefaultMaterial,
         getMaxSize,
         createGroundPlaneWired} from "../libs/util/util.js";
-import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget } from '../build/three.module.js';
+import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget, SpotLightHelper } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
 import {objectHolded, onDocumentMouseDown } from './selecaoDeObjetos.js';
 import {changeProjection,
@@ -235,6 +235,10 @@ groundPlaneAf.translateY(2.8);
 groundPlaneAf.translateX(-20.2);
 groundPlaneAf.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneAf);
+const gridHelperAf = new THREE.GridHelper(11, 11, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperAf.translateX(-20.6);
+gridHelperAf.translateY(2.8);
+scene.add( gridHelperAf );
 
 // area 1
 var groundPlaneA1 = createGroundPlane(20, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
@@ -243,6 +247,16 @@ groundPlaneA1.translateX(13);
 groundPlaneA1.translateZ(35.6);
 groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA1);
+const gridHelperA1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA1.translateX(13);
+gridHelperA1.translateZ(34);
+gridHelperA1.translateY(-2.8);
+scene.add( gridHelperA1 );
+const gridHelperA1_1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA1_1.translateX(13);
+gridHelperA1_1.translateZ(38);
+gridHelperA1_1.translateY(-2.8);
+scene.add( gridHelperA1_1 );
 
 // area chave 1
 var groundPlaneAc1 = createGroundPlane(11, 11, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
@@ -251,6 +265,12 @@ groundPlaneAc1.translateX(13);
 groundPlaneAc1.translateZ(56.6);
 groundPlaneAc1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneAc1);
+const gridHelperA1_2 = new THREE.GridHelper(10, 10, "rgb(7,7,7)", "rgb(7,7,7)");
+gridHelperA1_2.translateX(13);
+gridHelperA1_2.translateZ(56);
+gridHelperA1_2.translateY(-2.8);
+scene.add( gridHelperA1_2 );
+
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
@@ -267,19 +287,39 @@ let area1BridgeSlots = [];
 
 function createArea1(){
   function createSelectableCubesA1(){
-
+    
     for(let i = 0; i < 6; i++){
-      let cubeA1 = new SelectableCube(new THREE.Vector3(13, -2.3, 30+i), cubeGeometry, cubeMaterial);
+      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeMaterial);
+      switch (i){
+        case 0:
+          cubeA1.position.copy(new THREE.Vector3(9, -2.3, 29));
+          break;
+        case 1:
+          cubeA1.position.copy(new THREE.Vector3(16, -2.3, 36));
+          break;
+        case 2:
+          cubeA1.position.copy(new THREE.Vector3(20, -2.3, 43));
+          break;
+        case 3:
+          cubeA1.position.copy(new THREE.Vector3(21, -2.3, 27));
+          break;
+        case 4:
+          cubeA1.position.copy(new THREE.Vector3(7, -2.3, 35));
+        break;
+        case 5:
+          cubeA1.position.copy(new THREE.Vector3(13, -2.3, 41));
+        break;
+      }
       cubeA1.updateBlockBB();
       scene.add(cubeA1);
       selectableCubes.push(cubeA1);
       area1Boxes.push(cubeA1);
     }
   }
-
+  
   //parede da area 1
-for(var i = 3; i <= 23; i++) {
-  for(var j= 23.6; j <= 47.6; j++) {
+  for(var i = 3; i <= 23; i++) {
+    for(var j= 23.6; j <= 47.6; j++) {
       let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
       //console.log(j);
       if((i == 3 || i == 23 || j == 23.6 || j == 47.6) && ((i <= 10)||(i > 15)||(j == 47.6 && (i == 11 || i == 15 || i == 14)))) {
@@ -295,11 +335,11 @@ for(var i = 3; i <= 23; i++) {
         };
         parede.push(boxArea1);
       }  
+    }
   }
-}
-//area da chave da area 1
-for(var i = 8; i <= 18; i++) {
-  for(var j= 51.6; j <= 61.6; j++) {
+  //area da chave da area 1
+  for(var i = 8; i <= 18; i++) {
+    for(var j= 51.6; j <= 61.6; j++) {
       let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
       //console.log(j);
       if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 13)||(j == 61.6))) {
@@ -315,9 +355,9 @@ for(var i = 8; i <= 18; i++) {
         };
         parede.push(boxArea1);
       }  
+    }
   }
-}
-
+  
   function createBridge(){
     for(let i = 0; i < 3; i++){
       for(let j = 0; j < 2; j++){
@@ -352,7 +392,7 @@ function buildArea1Bridge(){
     const box = area1Boxes[k];
     let possibleSpaces = [];
     box.updateBlockBB();
-
+    
     for(let i = 0; i < area1BridgeSlots.length; i++) {
       const slot = area1BridgeSlots[i];
       if(box.bb.intersectsBox(slot.space)){
@@ -362,9 +402,9 @@ function buildArea1Bridge(){
         possibleSpaces.push({"position": new THREE.Vector3(x, y, z), "index": i});
       }
     }
-
+    
     let closestPosition = {"position": undefined, "index": -1};
-
+    
     if(possibleSpaces.length != 0){
       for(let i = 0; i < possibleSpaces.length; i++){
         let pos = possibleSpaces[i].position;
@@ -374,14 +414,14 @@ function buildArea1Bridge(){
           closestPosition.index = possibleSpaces[i].index;
         }
       }
-
+      
       area1BridgeSlots[closestPosition.index].collider.max.x = area1BridgeSlots[closestPosition.index].collider.min.x;
       area1BridgeSlots[closestPosition.index].collider.max.y = area1BridgeSlots[closestPosition.index].collider.min.y;
       area1BridgeSlots[closestPosition.index].collider.max.z = area1BridgeSlots[closestPosition.index].collider.min.z;
       area1BridgeSlots[closestPosition.index].helper.max.x = area1BridgeSlots[closestPosition.index].helper.min.x;
       area1BridgeSlots[closestPosition.index].helper.max.y = area1BridgeSlots[closestPosition.index].helper.min.y;
       area1BridgeSlots[closestPosition.index].helper.max.z = area1BridgeSlots[closestPosition.index].helper.min.z;
-  
+      
       area1BridgeSlots.splice(closestPosition.index, 1);
       area1Boxes.splice(k, 1);
       k--;
@@ -392,11 +432,11 @@ function buildArea1Bridge(){
       box.position.x = closestPosition.position.x;
       box.position.y = closestPosition.position.y;
       box.position.z = closestPosition.position.z;
-  
+      
       box.bb.max.x = box.bb.min.x;
       box.bb.max.y = box.bb.min.y;
       box.bb.max.z = box.bb.min.z;
-  
+      
       console.log(area1BridgeSlots);
     }
   };
@@ -433,12 +473,12 @@ function createArea3(){
           scene.add(cube);
           let cubeBb  = new THREE.Box3().setFromObject(cube);
           let box = {
-          obj: cube,
-          bb: cubeBb,
-          selected: false,
-        };
-        teto.push(box);
-        //parede.push(box);
+            obj: cube,
+            bb: cubeBb,
+            selected: false,
+          };
+          teto.push(box);
+          //parede.push(box);
         }
         if (y > -5 && z === 10.5){
           cube.position.set(x, y, z);
@@ -447,9 +487,9 @@ function createArea3(){
           scene.add(cube);
           let cubeBb  = new THREE.Box3().setFromObject(cube);
           let box = {
-          obj: cube,
-          bb: cubeBb,
-          selected: false,
+            obj: cube,
+            bb: cubeBb,
+            selected: false,
           };
           paredeTranslucida.push(box);
         }
@@ -492,6 +532,11 @@ function createArea3(){
         scene.add(button);
       }
     }
+    let spotlightChaveA3 = new spotLight('white', 1, 20, 0.5, 0.9, 0.8, new THREE.Vector3(88, 0, 0));
+    var spotLightHelperA3 = new SpotLightHelper(spotlightChaveA3);
+    spotLightHelperA3.update();
+
+    scene.add(spotlightChaveA3);
   }
   loadA3Objects();
   // cria os cubos selecionaveis da A3
@@ -831,13 +876,6 @@ function keyboardUpdate() {
   playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
   if ( keyboard.down("C"))  {
     changeProjection();
-  }
-  // fixa a camera na entrada A3 (TESTE)
-  if(keyboard.pressed("Q")){
-    var obj123 = new Object3D();
-    obj123.position.set(50,0,0);
-    scene.add(obj123);
-    camera.lookAt(obj123.position);
   }
   updateCamera();
 }
