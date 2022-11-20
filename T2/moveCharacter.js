@@ -1,6 +1,7 @@
 import * as THREE from  'three';
 import checkCollisions from "./trabalho02.js";
 import { keyboard } from './trabalho02.js';
+import {isHoldingBlock, objectHolded} from './selecaoDeObjetos.js'
 
 export function moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede){
     // codigo para mover o personagem, a camera e colidir com objetos
@@ -16,6 +17,12 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       player.bb.max.x += 0.2;
       playAction = true;
       player.xSpeed = 0.07;
+      if(keyboard.pressed("shift")){
+        player.xSpeed = 0.14;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(4, 3, 0), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -23,6 +30,13 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       player.bb.max.z += 0.2;
       playAction = true;
       player.zSpeed = 0.07;
+      if(keyboard.pressed("shift")){
+        player.zSpeed = 0.14;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(0, 3, 4), 0.3);
+      }
+
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
       player.object.quaternion.slerp(quaternion,0.1);  
     }
@@ -30,6 +44,12 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       player.bb.min.x -= 0.2;
       playAction = true;
       player.xSpeed = -0.07;
+      if(keyboard.pressed("shift")){
+        player.xSpeed = -0.14;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(-4, 3, 0), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -37,6 +57,12 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       player.bb.min.z -= 0.2
       playAction = true;
       player.zSpeed = -0.07;
+      if(keyboard.pressed("shift")){
+        player.zSpeed = -0.14;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(0, 3, -4), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -46,6 +72,13 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       playAction = true;
       player.zSpeed = 0.05;
       player.xSpeed = -0.05;
+      if(keyboard.pressed("shift")){
+        player.zSpeed = 0.1;
+        player.xSpeed = -0.1;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(-2, 3, 2), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -55,6 +88,14 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       playAction = true;
       player.zSpeed = -0.05;
       player.xSpeed = 0.05;
+      // faz o boneco correr (deixei para teste)
+      if(keyboard.pressed("shift")){
+        player.zSpeed = -0.1;
+        player.xSpeed = 0.1;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(2, 3, -2), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -64,6 +105,13 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       playAction = true;
       player.zSpeed = -0.05;
       player.xSpeed = -0.05;
+      if(keyboard.pressed("shift")){
+        player.zSpeed = -0.1;
+        player.xSpeed = -0.1;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(-2, 3, -2), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225));
       player.object.quaternion.slerp(quaternion,0.1);
     }
@@ -73,6 +121,13 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       playAction = true;
       player.zSpeed = 0.05;
       player.xSpeed = 0.05;
+      if(keyboard.pressed("shift")){
+        player.zSpeed = 0.1;
+        player.xSpeed = 0.1;
+      }
+      if(isHoldingBlock === true){
+        objectHolded.position.lerp(new THREE.Vector3(2, 3, 2), 0.3);
+      }
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(45));
       player.object.quaternion.slerp(quaternion,0.1);
     }
