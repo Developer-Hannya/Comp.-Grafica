@@ -39,8 +39,11 @@ quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os e
 // Renderer
 //-------------------------------------------------------------------------------
 export var renderer = new THREE.WebGLRenderer({
-  powerPreference: "default",
+  powerPreference: "high-performance",
 });    // View function in util/utils
+// renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.LinearToneMapping;
+renderer.toneMappingExposure = 0.8
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap; 
 renderer.shadowMapsoft = true;
@@ -255,7 +258,7 @@ export let cubeMaterial = new MeshLambertMaterial({
   color: "rgb(182,144,95)",
 });
 export let cubeMaterialSelected = new MeshLambertMaterial({
-  color: "rgb(182,144,95)",
+  color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
 });
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -328,7 +331,16 @@ for(var i = 8; i <= 18; i++) {
         area1BridgeSlots.push({"space": box, "collider": collider, "helper": helper});
       }
     }
+
+    let wall1 = new THREE.Box3();
+    wall1.setFromCenterAndSize(new THREE.Vector3(11, -2.3, 49.6), new THREE.Vector3(1, 1, 5));
+    parede.push({bb: wall1});
+
+    let wall2 = new THREE.Box3();
+    wall2.setFromCenterAndSize(new THREE.Vector3(14, -2.3, 49.6), new THREE.Vector3(1, 1, 5));
+    parede.push({bb: wall2});
   }
+
 
 
   createSelectableCubesA1();
@@ -405,7 +417,6 @@ function createArea3(){
           if (y == -5.5){
             //console.log(y);
             cubeBb.setFromObject(cube);
-            createBBHelper(cubeBb, "yellow");
           }
           let box = {
             obj: cube,
@@ -770,7 +781,7 @@ var time = 0;
 var mixer = new Array();
 
 // Load animated files
-loadGLTFFile('../assets/objects/walkingMan.glb');
+loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
@@ -788,6 +799,9 @@ function loadGLTFFile(modelName)
     });
 
     // create the man animated object  
+    obj.scale.x = 0.1;
+    obj.scale.y = 0.1;
+    obj.scale.z = 0.1;
     player.object = obj;
     
     scene.add ( obj );
@@ -797,6 +811,7 @@ function loadGLTFFile(modelName)
 
     // Create animationMixer and push it in the array of mixers
     var mixerLocal = new THREE.AnimationMixer(obj);
+    mixerLocal.timeScale = 3.8;
     mixerLocal.clipAction( gltf.animations[0] ).play();
     mixer.push(mixerLocal);
     }, onProgress, onError);
@@ -902,7 +917,7 @@ console.log(endingMessage);
 function endGame(){
   if(checkCollisions(pressPlateBb, player.bb)){
     console.log('a');
-    pressPlateAf.position.set(-20.6, 2.4, 0);
+    pressPlateAf.position.lerp(new THREE.Vector3(pressPlateAf.position.x, 2.4, pressPlateAf.position.z), 0.03);
     pressPlateAf.updatePressPlateBB();
 
     endingMessage.style.display = '';
