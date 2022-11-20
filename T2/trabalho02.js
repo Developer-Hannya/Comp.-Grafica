@@ -190,12 +190,22 @@ groundPlaneA1.translateZ(35.6);
 groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA1);
 
+// area chave 1
+var groundPlaneAc1 = createGroundPlane(11, 11, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+groundPlaneAc1.translateY(-2.8);
+groundPlaneAc1.translateX(13);
+groundPlaneAc1.translateZ(56.6);
+groundPlaneAc1.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlaneAc1);
+
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
   color: "rgb(182,144,95)",
 });
-export let cubeMaterialSelected = setDefaultMaterial("rgb(100,255,100)");
+export let cubeMaterialSelected = new MeshLambertMaterial({
+  color: "rgb(182,144,95)",
+});
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
 export let parede = [];             // vetor para guardar blocos da parede
@@ -206,6 +216,138 @@ export var pressPlates = [];        // vetor de placas de pressão
 export var spotlights = [];         // vetor de spotlights
 export var selectableCubes = [];    // vetor de cubos selecionaveis
 export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
+
+let area1Boxes = [];
+let area1BridgeSlots = [];
+
+function createArea1(){
+  function createSelectableCubesA1(){
+
+    for(let i = 0; i < 6; i++){
+      let cubeA1 = new SelectableCube(new THREE.Vector3(13, -2.3, 30+i), cubeGeometry, cubeMaterial);
+      cubeA1.updateBlockBB();
+      scene.add(cubeA1);
+      selectableCubes.push(cubeA1);
+      area1Boxes.push(cubeA1);
+    }
+  }
+
+  //parede da area 1
+for(var i = 3; i <= 23; i++) {
+  for(var j= 23.6; j <= 47.6; j++) {
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      //console.log(j);
+      if((i == 3 || i == 23 || j == 23.6 || j == 47.6) && ((i <= 10)||(i > 15)||(j == 47.6 && (i == 11 || i == 15 || i == 14)))) {
+        cubeArea1.position.set(i, -2.3, j);
+        cubeArea1.castShadow = true;
+        cubeArea1.receiveShadow = true;
+        scene.add(cubeArea1);
+        let cubeBbArea1  = new THREE.Box3().setFromObject(cubeArea1);
+        let boxArea1 = {
+          obj: cubeArea1,
+          bb: cubeBbArea1,
+          selected: false
+        };
+        parede.push(boxArea1);
+      }  
+  }
+}
+//area da chave da area 1
+for(var i = 8; i <= 18; i++) {
+  for(var j= 51.6; j <= 61.6; j++) {
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      //console.log(j);
+      if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 13)||(j == 61.6))) {
+        cubeArea1.position.set(i, -2.3, j);
+        cubeArea1.castShadow = true;
+        cubeArea1.receiveShadow = true;
+        scene.add(cubeArea1);
+        let cubeBbArea1  = new THREE.Box3().setFromObject(cubeArea1);
+        let boxArea1 = {
+          obj: cubeArea1,
+          bb: cubeBbArea1,
+          selected: false
+        };
+        parede.push(boxArea1);
+      }  
+  }
+}
+
+  function createBridge(){
+    for(let i = 0; i < 3; i++){
+      for(let j = 0; j < 2; j++){
+        let boxPosition = new THREE.Vector3(12 + j, -3.3, 48.6 + i);
+        let colliderPosition = new THREE.Vector3(12.5 + j, -2.3, 48.6 + i);
+        let box = new THREE.Box3().setFromCenterAndSize(boxPosition, new THREE.Vector3(1, 1.5, 1));
+        let helper = new THREE.Box3().setFromCenterAndSize(boxPosition, new THREE.Vector3(1, 1, 1));
+        let collider = new THREE.Box3().setFromCenterAndSize(colliderPosition, new THREE.Vector3(1, 1, 1));
+        parede.push({bb: collider});
+        createBBHelper(helper, "white");
+        area1BridgeSlots.push({"space": box, "collider": collider, "helper": helper});
+      }
+    }
+  }
+
+
+  createSelectableCubesA1();
+  createBridge();
+}
+
+function buildArea1Bridge(){
+  for(let k = 0; k < area1Boxes.length; k++){
+    const box = area1Boxes[k];
+    let possibleSpaces = [];
+    box.updateBlockBB();
+    console.log(box.bb.max.x);
+
+    for(let i = 0; i < area1BridgeSlots.length; i++) {
+      const slot = area1BridgeSlots[i];
+      if(box.bb.intersectsBox(slot.space)){
+        let x = (slot.space.min.x + slot.space.max.x)/2;
+        let y = (slot.space.min.y + slot.space.max.y)/2;
+        let z = (slot.space.min.z + slot.space.max.z)/2;
+        possibleSpaces.push({"position": new THREE.Vector3(x, y, z), "index": i});
+      }
+    }
+
+    let closestPosition = {"position": undefined, "index": -1};
+
+    if(possibleSpaces.length != 0){
+      for(let i = 0; i < possibleSpaces.length; i++){
+        let pos = possibleSpaces[i].position;
+        // console.log(pos);
+        if(!closestPosition.position || box.position.distanceTo(pos) < box.position.distanceTo(closestPosition.position)){
+          closestPosition.position = pos;
+          closestPosition.index = possibleSpaces[i].index;
+        }
+      }
+
+      area1BridgeSlots[closestPosition.index].collider.max.x = area1BridgeSlots[closestPosition.index].collider.min.x;
+      area1BridgeSlots[closestPosition.index].collider.max.y = area1BridgeSlots[closestPosition.index].collider.min.y;
+      area1BridgeSlots[closestPosition.index].collider.max.z = area1BridgeSlots[closestPosition.index].collider.min.z;
+      area1BridgeSlots[closestPosition.index].helper.max.x = area1BridgeSlots[closestPosition.index].helper.min.x;
+      area1BridgeSlots[closestPosition.index].helper.max.y = area1BridgeSlots[closestPosition.index].helper.min.y;
+      area1BridgeSlots[closestPosition.index].helper.max.z = area1BridgeSlots[closestPosition.index].helper.min.z;
+  
+      area1BridgeSlots.splice(closestPosition.index, 1);
+      area1Boxes.splice(k, 1);
+      k--;
+      console.log(closestPosition);
+      
+      selectableCubes = selectableCubes.filter(cube => cube.uuid != box.uuid);
+  
+      box.position.x = closestPosition.position.x;
+      box.position.y = closestPosition.position.y;
+      box.position.z = closestPosition.position.z;
+  
+      box.bb.max.x = box.bb.min.x;
+      box.bb.max.y = box.bb.min.y;
+      box.bb.max.z = box.bb.min.z;
+  
+      console.log(area1BridgeSlots);
+    }
+  };
+}
 
 function createArea3(){
   // position cubes in the area A3 like a "house"
@@ -342,6 +484,8 @@ function createArea3(){
   }
   createPressurePlatesA3();
 }
+
+createArea1();
 createArea3();
 
 // map com as spotlights
@@ -445,46 +589,7 @@ for(var i = -25.6; i <= -15.6; i++) {
   }
 }
 
-//parede da area 1
-for(var i = 3; i <= 23; i++) {
-  for(var j= 23.6; j <= 48.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      //console.log(j);
-      if((i == 3 || i == 23 || j == 23.6 || j == 48.6) && ((i <= 10)||(i > 15)||(j == 48.6 && (i == 11 || i == 15)))) {
-        cubeArea1.position.set(i, -2.3, j);
-        cubeArea1.castShadow = true;
-        cubeArea1.receiveShadow = true;
-        scene.add(cubeArea1);
-        let cubeBbArea1  = new THREE.Box3().setFromObject(cubeArea1);
-        let boxArea1 = {
-          obj: cubeArea1,
-          bb: cubeBbArea1,
-          selected: false
-        };
-        parede.push(boxArea1);
-      }  
-  }
-}
-//area da chave da area 1
-for(var i = 10; i <= 20; i++) {
-  for(var j= 55.6; j <= 65.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-      //console.log(j);
-      if((i == 10 || i == 20 || j == 55.6 || j == 65.6) && ((i <= 12)||(i > 15)||(j == 65.6))) {
-        cubeArea1.position.set(i, -2.3, j);
-        cubeArea1.castShadow = true;
-        cubeArea1.receiveShadow = true;
-        scene.add(cubeArea1);
-        let cubeBbArea1  = new THREE.Box3().setFromObject(cubeArea1);
-        let boxArea1 = {
-          obj: cubeArea1,
-          bb: cubeBbArea1,
-          selected: false
-        };
-        parede.push(boxArea1);
-      }  
-  }
-}
+
 
 
 //adicionando blocos do meio
@@ -696,6 +801,7 @@ function render()
   Staircase.updatePlayerY();
   Key.collectKeys();
   endGame();
+  buildArea1Bridge();
 }
 
 function updatePlayer()
