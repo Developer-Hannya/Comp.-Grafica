@@ -80,16 +80,20 @@ export var player = {
   loaded: false,
   bb: new THREE.Box3(),
   xSpeed: 0,
-  zSpeed: 0
+  zSpeed: 0,
+  //blue: true, //para testes
+  //red: true, //para testes
+  //yellow: true //para testes
 }
 
-let key = new Key(5, 0, 7, "blue");
+//chaves em suas areas:
+let key = new Key(12.5, -2.7, 56.5, "blue");
 scene.add(key);
 
-let key1 = new Key(5, 0, 5, "red");
+let key1 = new Key(12.9, 2.9, -60.5, "red");
 scene.add(key1);
 
-let key2 = new Key(7, 0, 5, "yellow");
+let key2 = new Key(88,-6, 0.5, "yellow");
 scene.add(key2);
 
 //área inicial
