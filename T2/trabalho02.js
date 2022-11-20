@@ -434,8 +434,6 @@ for(var i = -22+13; i <= 22+13; i++) {
   }
 }
 
-cameraHolder.position.set(-48 ,2.8, 0);
-
 function createArea2(){
   //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
   for(var x = -50; x <= -15; x++) {

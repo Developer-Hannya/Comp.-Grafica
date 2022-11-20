@@ -20,8 +20,8 @@ export class directionalLight extends THREE.DirectionalLight{
     constructor(color, intensity){
         super(color, intensity);
         this.castShadow = true;
-        this.shadow.mapSize.width = 2048;
-        this.shadow.mapSize.height = 2048;
+        this.shadow.mapSize.width = 1024;
+        this.shadow.mapSize.height = 1024;
         this.shadow.camera.near = 0.1;
         this.shadow.camera.far = 1000;
         this.shadow.camera.left = -20;
@@ -54,8 +54,8 @@ export class spotLight extends THREE.SpotLight{
     constructor(color, intensity, distance, angle, penumbra, decay, position, type){
         super(color, intensity, distance, angle, penumbra, decay);
         this.castShadow = true;
-        this.shadow.mapSize.width = 512;
-        this.shadow.mapSize.height = 512;
+        this.shadow.mapSize.width = 128;
+        this.shadow.mapSize.height = 128;
         this.shadow.camera.near = 0.1;
         this.shadow.camera.far = 50;
         this.position.copy(position);
