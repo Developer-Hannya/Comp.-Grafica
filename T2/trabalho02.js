@@ -41,7 +41,7 @@ quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os e
 export var renderer = new THREE.WebGLRenderer({
   powerPreference: "high-performance",
 });    // View function in util/utils
-// renderer.outputEncoding = THREE.sRGBEncoding;
+//renderer.outputEncoding = THREE.sRGBEncoding; //se precisar deixar mais claro pra testar a area 3
 renderer.toneMapping = THREE.LinearToneMapping;
 renderer.toneMappingExposure = 0.8
 renderer.shadowMap.enabled = true;
@@ -73,8 +73,6 @@ export var pressPlatesA2 = [];      // vetor de placas de pressão da Area 2
 export var pressPlatesA3 = [];      // vetor de placas de pressão da Area 3
 export var spotlights = [];         // vetor de spotlights
 export var selectableCubes = [];    // vetor de cubos selecionaveis
-export var doorA3Open = false;      // variavel para saber se a porta A3 esta aberta
-export var doorA2Open = false;      // variavel para saber se a porta A2 esta aberta
 
 createPortals();
 export var player = {
@@ -137,9 +135,9 @@ scene.add(portal4);
 let porta4 = new Door(22 +13, 3, 0, "x", "red");
 scene.add(porta4);
 
-let portaA2 = new Door(13, 5.8, -57.60, "w", "blue");
+let portaA2 = new Door(13, 5.8, -57.60, "w", "doorA2Open");
 scene.add(portaA2);
-let portaA3 = new Door(86, -3, 0, "x", "red");
+let portaA3 = new Door(86, -3, 0, "x", "doorA3Open");
 scene.add(portaA3);
 
 
@@ -619,17 +617,17 @@ function creckAnyPlateIsPressed(placas, cubos){
   })
   if(checkAllArePressed(totalPressPlatesA3) === true){
     // FUNÇÃO PARA ABRIR PORTA AQUI
-    doorA3Open = true;
+    player.doorA3Open = true;
   }
   else{
-    doorA3Open = false;
+    player.doorA3Open = false;
   }
   if(checkAllArePressed(totalPressPlatesA2) === true){
     // FUNÇÃO PARA ABRIR PORTA AQUI
-    doorA2Open = true;
+    player.doorA2Open = true;
   }
   else{
-    doorA2Open = false;
+    player.doorA2Open = false;
   }
 }
 
@@ -892,10 +890,10 @@ function lightsUpdate(){
 // sensor de proximidade dos botões iluminados (se a porta A3 estiver aberta acende todas sporlights)
 function lightSensor(){
     totalButtons.forEach(obj => {
-      if(checkCollisions(obj.bb, player.bb) || doorA3Open === true){
+      if(checkCollisions(obj.bb, player.bb) || player.doorA3Open === true){
         obj.spotlight.visibleTrue();
       }
-      else if(obj.spotlight.loaded === true && doorA3Open === false)
+      else if(obj.spotlight.loaded === true && player.doorA3Open === false)
       {
         obj.spotlight.visibleFalse();
       }

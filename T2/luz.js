@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene, doorA3Open} from './trabalho02.js';
+import {player, scene} from './trabalho02.js';
 import {cameraHolder} from './camera.js';
 import { color } from '../libs/util/dat.gui.module.js';
 import { SpotLightHelper } from '../build/three.module.js';
@@ -103,7 +103,7 @@ export function lightDowngrade(){
             directlight.setIntensity(auxDirec);
         else 
             directlight.setIntensity(0);
-        if(doorA3Open === true)
+        if(player.doorA3Open === true)
             ambientlight.setIntensity(0.2);
         else if (auxAmbient >= 0.01) {
             ambientlight.setIntensity(auxAmbient);
