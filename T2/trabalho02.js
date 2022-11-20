@@ -71,8 +71,14 @@ export var player = {
   zSpeed: 0
 }
 
-let key = new Key(5, 0, 5, "blue");
+let key = new Key(5, 0, 7, "blue");
 scene.add(key);
+
+let key1 = new Key(5, 0, 5, "red");
+scene.add(key1);
+
+let key2 = new Key(7, 0, 5, "yellow");
+scene.add(key2);
 
 //área inicial
 let escada = new Staircase(+13, -1.6, +17 + 3*0.8 + 0.4, "n");
@@ -653,9 +659,9 @@ pressPlateBb.setFromObject(pressPlateAf);
 pressPlateBb.max.y += 3;
 createBBHelper(pressPlateBb, "yellow");
 
-let controls = null;
-let blocker = null;
-let endingMessage = null;
+const endingMessage = document.getElementById('endingMessage');
+
+console.log(endingMessage);
 
 function endGame(){
   if(checkCollisions(pressPlateBb, player.bb)){
@@ -663,28 +669,7 @@ function endGame(){
     pressPlateAf.position.set(-20.6, 2.4, 0);
     pressPlateAf.updatePressPlateBB();
 
-    // const controls = new PointerLockControls(camera, renderer.domElement);
-
-    // const blocker = document.getElementById('blocker');
-    // const endingMessage = document.getElementById('endingMessage');
-
-    // endingMessage.addEventListener('click', function () {
-
-    //     controls.lock();
-
-    // }, false);
-
-    // controls.addEventListener('lock', function () {
-    //   endingMessage.style.display = 'none';
-    //     blocker.style.display = 'none';
-    // });
-
-    // controls.addEventListener('unlock', function () {
-    //     blocker.style.display = 'block';
-    //     endingMessage.style.display = '';
-    // });
-
-    // scene.add(controls.getObject());
+    endingMessage.style.display = '';
   }
 }
 

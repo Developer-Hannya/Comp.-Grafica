@@ -50,7 +50,7 @@ function loadKeyModel(key)
     obj.scale.z = 0.2;
     obj.translateY(1.5)   
     obj.rotateZ(-Math.PI/2);
-    obj.children[0].children[0].children[0].children[0].material = setDefaultMaterial("blue");
+    obj.children[0].children[0].children[0].children[0].material = setDefaultMaterial(key.color);
     key.add(obj);
     key.bb = new THREE.Box3();
     key.bb.setFromObject(key);
