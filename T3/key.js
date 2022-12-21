@@ -2,6 +2,7 @@ import * as THREE from  'three';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import { setDefaultMaterial } from '../libs/util/util.js';
 import { chaves, createBBHelper, player, scene } from './trabalho02.js';
+import { keySoundEffect } from './sons.js';
 
 export class Key extends THREE.Mesh{
     constructor(x, y, z, color){
@@ -24,6 +25,7 @@ export class Key extends THREE.Mesh{
                 scene.remove(key);
                 chaves.splice(i, 1);
                 i--;
+                keySoundEffect.play();
             }
             
         }

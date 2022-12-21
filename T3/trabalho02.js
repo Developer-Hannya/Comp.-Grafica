@@ -27,6 +27,7 @@ import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import {Key} from './key.js';
+import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect } from './sons.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -34,6 +35,7 @@ var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
 export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
+export var textureLoader = new THREE.TextureLoader;
 
 //-------------------------------------------------------------------------------
 // Renderer
@@ -81,9 +83,6 @@ export var player = {
   bb: new THREE.Box3(),
   xSpeed: 0,
   zSpeed: 0,
-  //blue: true, //para testes
-  //red: true, //para testes
-  //yellow: true //para testes
 }
 
 //chaves em suas areas:
@@ -319,10 +318,13 @@ function createArea1(){
     }
   }
   
+  var a1Wall = textureLoader.load('assets/a1-wall.png');
+  var area1WallMaterial = new THREE.MeshLambertMaterial();
+  area1WallMaterial.map = a1Wall;
   //parede da area 1
   for(var i = 3; i <= 23; i++) {
     for(var j= 23.6; j <= 47.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, area1WallMaterial);
       //console.log(j);
       if((i == 3 || i == 23 || j == 23.6 || j == 47.6) && ((i <= 10)||(i > 15)||(j == 47.6 && (i == 11 || i == 15 || i == 14)))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -402,6 +404,7 @@ function buildArea1Bridge(){
         let y = (slot.space.min.y + slot.space.max.y)/2;
         let z = (slot.space.min.z + slot.space.max.z)/2;
         possibleSpaces.push({"position": new THREE.Vector3(x, y, z), "index": i});
+        bridgeSoundEffect.play();
       }
     }
     
@@ -445,11 +448,14 @@ function buildArea1Bridge(){
 }
 
 function createArea3(){
+  var a3Wall = textureLoader.load('assets/a3-wall.png');
+  var Area3WallMaterial = new THREE.MeshLambertMaterial();
+  Area3WallMaterial.map = a3Wall;
   // position cubes in the area A3 like a "house"
   for(var y = -5.5; y <= 1; y++){
     for(var x = 45.5; x <= 85.5; x++) {
       for(var z= -10.5; z <= 10.5; z++) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
         if((x == 45.5 || x == 85.5 || z == -10.5 || z == 10.5) && (((x < -2.5)||(x > 2.5)) && ((z < -2.5)||(z > 2.5)))) {
           cube.position.set(x, y, z);
           cube.castShadow = true;
@@ -610,6 +616,7 @@ function creckAnyPlateIsPressed(placas, cubos){
         placa.pressedBy = cube;
         cube.pressing = true;
         cube.isPressing = placa;
+        //platformSoundEffect.play();
       }
       // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
       // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
@@ -653,9 +660,12 @@ function checkAllArePressed(plates){
 }
 
 // position cubes in the initial area
+var iaWall = textureLoader.load('assets/ia-wall.png');
+var initialAreaWallMaterial = new THREE.MeshLambertMaterial();
+initialAreaWallMaterial.map = iaWall;
 for(var i = -22+13; i <= 22+13; i++) {
   for(var j= -17; j <= 17; j++) {
-    let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    let cube = new THREE.Mesh(cubeGeometry, initialAreaWallMaterial);
     if((i == -22+13 || i == 22+13 || j == -17 || j == 17) && (((i < -3+13)||(i > 3+13)) && ((j < -3)||(j > 3)))) {
       cube.position.set(i, 0.5, j);
       cube.castShadow = true;
@@ -674,9 +684,12 @@ for(var i = -22+13; i <= 22+13; i++) {
 
 
 //parede da area final
+var faWall = textureLoader.load('assets/fa-wall.png');
+var finalAreaWallMaterial = new THREE.MeshLambertMaterial();
+finalAreaWallMaterial.map = faWall;
 for(var i = -25.6; i <= -15.6; i++) {
   for(var j= -5; j <= 5; j++) {
-      let cubeAreaf = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeAreaf = new THREE.Mesh(cubeGeometry, finalAreaWallMaterial);
       //console.log(i);
       if((i == -25.6 || i == -15.600000000000001 || j == -5 || j == 5) && ((j <= -3)||(j >= 3)||i == -25.6)) {
         cubeAreaf.position.set(i, 3.3, j);
@@ -695,10 +708,13 @@ for(var i = -25.6; i <= -15.6; i++) {
 }
 
 function createArea2(){
+  var a2Wall = textureLoader.load('assets/a2-wall.png');
+  var Area2WallMaterial = new THREE.MeshLambertMaterial();
+  Area2WallMaterial.map = a2Wall;
   //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
   for(var x = 0.5; x <= 25.5; x++) {
     for(var z= -58;z <= -23; z++) {
-      let cubeArea2 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
       if((x == 0.5 || x == 25.5 || z == -58 || z == -23) && ((x < 10)||(x > 16))) {
         cubeArea2.position.set(x, 3.3, z);
         cubeArea2.castShadow = true;
@@ -900,6 +916,12 @@ function keyboardUpdate() {
   if ( keyboard.down("C"))  {
     changeProjection();
   }
+  //modo de teste
+  if(keyboard.down("T") || keyboard.down("t")){
+    player.blue = true;
+    player.red = true;
+    player.yellow = true;
+  }
   updateCamera();
 }
 
@@ -980,6 +1002,7 @@ function endGame(){
     console.log('a');
     pressPlateAf.position.lerp(new THREE.Vector3(pressPlateAf.position.x, 2.4, pressPlateAf.position.z), 0.03);
     pressPlateAf.updatePressPlateBB();
+    finalSoundEffect.play();
 
     endingMessage.style.display = '';
   }

@@ -1,6 +1,7 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
 import { createBBHelper, objects, player} from './trabalho02.js';
+import { doorSoundEffect } from './sons.js';
 
 export let closedDoors = [];
 let openingDoors = [];
@@ -46,7 +47,7 @@ export class Door extends THREE.Object3D{
                 closedDoors.splice(index, 1);
                 index--;
                 openingDoors.push(door);
-                console.log("a");
+                doorSoundEffect.play();
             } 
         }
     
