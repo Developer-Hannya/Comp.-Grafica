@@ -26,6 +26,17 @@ export class Key extends THREE.Mesh{
                 chaves.splice(i, 1);
                 i--;
                 keySoundEffect.play();
+                // quando uma chave for coletado seu icone irá aparecer no topo da tela
+                if(chaves.length == 2){
+                    const keyBlue = document.getElementById('blue_key'); 
+                    keyBlue.style.display = '';
+                }else if(chaves.length == 1){
+                    const  keyRed = document.getElementById('red_key');
+                    keyRed.style.display = '';
+                }else if(chaves.length == 0){
+                    const  keyYellow = document.getElementById('yellow_key');
+                    keyYellow.style.display = '';
+                }
             }
             
         }
