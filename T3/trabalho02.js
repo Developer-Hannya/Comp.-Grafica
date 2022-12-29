@@ -921,6 +921,12 @@ function keyboardUpdate() {
     player.blue = true;
     player.red = true;
     player.yellow = true;
+    const keyBlue = document.getElementById('blue_key'); 
+    keyBlue.style.display = '';
+    const  keyRed = document.getElementById('red_key');
+    keyRed.style.display = '';
+    const  keyYellow = document.getElementById('yellow_key');
+    keyYellow.style.display = '';
   }
   updateCamera();
 }
