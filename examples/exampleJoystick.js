@@ -132,15 +132,19 @@ function addJoysticks(){
     const turn = data.vector.x
     fwdValue = bkdValue = lftValue = rgtValue = 0;
 
-    if (forward > 0) 
-      fwdValue = Math.abs(forward)
-    else if (forward < 0)
+    if (forward > 0) {
+      fwdValue = Math.abs(forward);
+    }
+    else if (forward < 0){
       bkdValue = Math.abs(forward)
+    }
 
-    if (turn > 0) 
+    if (turn > 0){ 
       rgtValue = Math.abs(turn)
-    else if (turn < 0)
+    }
+    else if (turn < 0){
       lftValue = Math.abs(turn)
+    }
   })
 
   joystickL.on('end', function (evt) {
