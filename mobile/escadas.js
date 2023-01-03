@@ -1,17 +1,17 @@
 import * as THREE from  'three';
+import { Vector3 } from '../build/three.module.js';
 import { CSG } from '../libs/other/CSGMesh.js';
 import { setDefaultMaterial } from '../libs/util/util.js';
 import { cameraHolder } from './camera.js';
-import { createBBHelper, escadas, player } from './trabalho02.js';
+import { createBBHelper, escadas, parede, player } from './appMobile.js';
 
 function updateObject(mesh)
 {
    mesh.matrixAutoUpdate = false;
    mesh.updateMatrix();
 }
+
 export function createStaircase() {
-import { scene } from './trabalho02.js';
-export function createLadder() {
     
     const geometry = new THREE.BoxGeometry( 5, 0.8, 0.8 );
     const staircaseMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
@@ -35,77 +35,18 @@ export function createLadder() {
             stepHeight1 += 0.4;
             stepPlaneHeight1 += 0.4;
         }
-    const ladderMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
-    //plano em cima do degrau
-    const stepPlaneGeometry = new THREE.BoxGeometry( 5, 0.02, 0.8 );
-    const stepMaterial = new THREE.MeshBasicMaterial( {color: "rgb(222,184,135)"} );
-
-    //ÁREA 1
-    let stepHeight1 = 0.0;
-    let stepPlaneHeight1 = 0.4;
-
-    for(let i = -20.4; i >= -20 - 5; i -= 0.8){
-        const step = new THREE.Mesh( geometry, ladderMaterial );
-        step.position.set(0, stepHeight1, i);
-        step.castShadow = true;
-        step.receiveShadow = true;
-
-        const stepPlane = new THREE.Mesh( stepPlaneGeometry, stepMaterial );
-        stepPlane.position.set(0, stepPlaneHeight1, i);
-        stepPlane.castShadow = true;
-        stepPlane.receiveShadow = true;
-        
-        scene.add(step);
-        stepHeight1 += 0.4;
-        scene.add(stepPlane);
-        stepPlaneHeight1 += 0.4;
     }
 
-    //ÁREA 3 E ÁREA FINAL
-    //degraus
-    const geometry3 = new THREE.BoxGeometry( 0.8, 0.8, 5 );
-    //const ladderMaterial3 = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
-    const ladderMaterial3 = new THREE.MeshLambertMaterial({
-        color: "rgb(182,144,95)",
-    });
-
-    //plano em cima do degrau
-    const stepPlaneGeometry3 = new THREE.BoxGeometry( 0.8, 0.05, 5 );
-    const stepMaterial3 = new THREE.MeshLambertMaterial({
-        color: "rgb(222,184,135)",
-    });
-
-
-    //ÁREA 3
-    let stepHeight3 = -0.4;
-    let stepPlaneHeight3 = 0;
+    let auxMat = new THREE.Matrix4();
+    centerStep = CSG.toMesh(centerStepCSG, auxMat);
+    centerStep.material = setDefaultMaterial("rgb(222,184,135)");
+    centerStep.receiveShadow = true;
+    centerStep.rotateY(Math.PI);
+    // scene.add(centerStep);
+    return(centerStep);
     
-    for(let i = +39.6; i <= 40 + 10; i += 0.8){
-        const step = new THREE.Mesh( geometry3, ladderMaterial3 );
-        step.position.set(i, stepHeight3, 0);
-        step.castShadow = true;
-        step.receiveShadow = true;
-
-        const stepPlane = new THREE.Mesh( stepPlaneGeometry3, stepMaterial3 );
-        stepPlane.position.set(i, stepPlaneHeight3, 0);
-        stepPlane.castShadow = true;
-        stepPlane.receiveShadow = true;
-        
-        scene.add(step);
-        stepHeight3 -= 0.8;
-        scene.add(stepPlane);
-        stepPlaneHeight3 -= 0.8;
-    }
-
-    //ÁREA final
-    let stepHeight4 = 0;
-    let stepPlaneHeight4 = 0.4;
-    
-    for(let i = -40.4; i >= -40 - 5; i -= 0.8){
-        const step = new THREE.Mesh( geometry3, ladderMaterial3 );
-        step.position.set(i, stepHeight4, 0);
-        step.castShadow = true;
-        step.receiveShadow = true;
+   
+}
 
 export class Staircase extends THREE.Object3D{
     constructor(x, y, z, direction){
@@ -118,35 +59,67 @@ export class Staircase extends THREE.Object3D{
         this.staircaseBox = new THREE.Box3();
         let size = new THREE.Vector3(5.6, 10, 5.6);
         this.staircaseBox.setFromCenterAndSize(this.position, size);
+        this.paredeBb1 = new THREE.Box3();
+        this.paredeBb2 = new THREE.Box3();
+        let wallSize1 = new THREE.Vector3(1, 10, 7.6);
+        let wallSize2 = new THREE.Vector3(7.6, 10, 1);
 
         if(this.direction == "n"){
             this.staircaseBox.min.z += 1.2;
             // this.staircaseBox.max.z += 1.2;
+            let pos1 = new Vector3(this.position.x - 3.3, this.position.y, this.position.z + 0.5);
+            let pos2 = new Vector3(this.position.x + 3.3, this.position.y, this.position.z + 0.5);
+            this.paredeBb1.setFromCenterAndSize(pos1, wallSize1);
+            this.paredeBb2.setFromCenterAndSize(pos2, wallSize1);
+            //createBBHelper(this.paredeBb1, "green");
+            //createBBHelper(this.paredeBb2, "green");
+            parede.push({bb: this.paredeBb1}, {bb: this.paredeBb2})
+
         }
         if(this.direction == "s"){
             this.children[0].rotateY(Math.PI);
             // this.staircaseBox.min.z -= 1.2;
             this.staircaseBox.max.z -= 1.2;
+            let pos1 = new Vector3(this.position.x - 3.3, this.position.y, this.position.z - 0.5);
+            let pos2 = new Vector3(this.position.x + 3.3, this.position.y, this.position.z - 0.5);
+            this.paredeBb1.setFromCenterAndSize(pos1, wallSize1);
+            this.paredeBb2.setFromCenterAndSize(pos2, wallSize1);
+            //createBBHelper(this.paredeBb1, "green");
+            //createBBHelper(this.paredeBb2, "green");
+            parede.push({bb: this.paredeBb1}, {bb: this.paredeBb2})
         }
         if(this.direction == "w"){
             this.children[0].rotateY(Math.PI/2);
             this.staircaseBox.min.x += 1.2;
             // this.staircaseBox.max.x += 1.2;
+            let pos1 = new Vector3(this.position.x - 0.5, this.position.y, this.position.z - 3.3);
+            let pos2 = new Vector3(this.position.x - 0.5, this.position.y, this.position.z + 3.3);
+            this.paredeBb1.setFromCenterAndSize(pos1, wallSize2);
+            this.paredeBb2.setFromCenterAndSize(pos2, wallSize2);
+            //createBBHelper(this.paredeBb1, "green");
+            //createBBHelper(this.paredeBb2, "green");
+            parede.push({bb: this.paredeBb1}, {bb: this.paredeBb2})
         }
         if(this.direction == "e"){
             this.children[0].rotateY(3*Math.PI/2);
             // this.staircaseBox.min.x -= 1.2;
             this.staircaseBox.max.x -= 1.2;
+            let pos1 = new Vector3(this.position.x - 0.5, this.position.y, this.position.z - 3.3);
+            let pos2 = new Vector3(this.position.x - 0.5, this.position.y, this.position.z + 3.3);
+            this.paredeBb1.setFromCenterAndSize(pos1, wallSize2);
+            this.paredeBb2.setFromCenterAndSize(pos2, wallSize2);
+            //createBBHelper(this.paredeBb1, "green");
+            //createBBHelper(this.paredeBb2, "green");
+            parede.push({bb: this.paredeBb1}, {bb: this.paredeBb2})
         }
        
-        createBBHelper(this.staircaseBox, 'yellow')
+        //createBBHelper(this.staircaseBox, 'yellow')
         escadas.push(this)
     }
 
     setPlayerYPos(){
         if(this.staircaseBox && player.bb.intersectsBox(this.staircaseBox)){
             //player.object.position seria a posição em relação ao cameraHolder(sempre 0, 0, 0)
-            //local to world pega a posição do jogador, world to local pega a posição em relação à escada
             let playerGlobalPos = new THREE.Vector3();
             player.object.getWorldPosition(playerGlobalPos);
             let staircaseStartPos = this.position.clone();
@@ -186,17 +159,10 @@ export class Staircase extends THREE.Object3D{
             cameraHolder.translateY(yDiff);
         }     
     }
+
     static updatePlayerY(){
         escadas.forEach( escada => {
             escada.setPlayerYPos();
         });
-        const stepPlane = new THREE.Mesh( stepPlaneGeometry3, stepMaterial3 );
-        stepPlane.position.set(i, stepPlaneHeight4, 0);
-        stepPlane.castShadow = true;
-        stepPlane.receiveShadow = true;
-        scene.add(step);
-        stepHeight4 += 0.4;
-        scene.add(stepPlane);
-        stepPlaneHeight4 += 0.4;
     }
 }

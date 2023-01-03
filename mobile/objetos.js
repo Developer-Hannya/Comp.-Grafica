@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene, objects, player} from './trabalho02.js';
+import {scene, objects} from './appMobile.js';
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 
@@ -46,6 +46,8 @@ export class SelectableCube extends THREE.Mesh{
         this.selected = false;
         this.castShadow = true;
         this.receiveShadow = true;
+        this.pressing = false;
+        this.isPressing = null;
         this.bb = new THREE.Box3().setFromObject(this);
         this.bbSize = new THREE.Vector3(1.1, 1.1, 1.1);
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
@@ -58,7 +60,7 @@ export class SelectableCube extends THREE.Mesh{
         this.material.color("green");
     }
     updateBlockBB(){
-        this.bb.setFromObject(this);
+        this.bb.setFromObject(this); 
     }
 }
 
@@ -66,6 +68,7 @@ export class PressurePlate extends THREE.Mesh{
     constructor(position, geometry, material){
         super(geometry, material);
         this.position.copy(position);
+        this.Y = position.y;
         this.castShadow = true;
         this.receiveShadow = true;
         this.pressed = false;
@@ -80,5 +83,11 @@ export class PressurePlate extends THREE.Mesh{
     }
     updatePressPlateBB(){
         this.bb.setFromObject(this);
+    }
+    getYNotPressed(){
+        return this.Y;
+    }
+    getYPressed(){
+        return this.Y - 0.45;
     }
 }
