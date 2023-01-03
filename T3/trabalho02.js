@@ -9,7 +9,7 @@ import {initRenderer,
         setDefaultMaterial,
         getMaxSize,
         createGroundPlaneWired} from "../libs/util/util.js";
-import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget, SpotLightHelper } from '../build/three.module.js';
+import { Light, MeshLambertMaterial, MeshPhongMaterial, Object3D, Vector3, WebGLArrayRenderTarget, SpotLightHelper, PlaneGeometry } from '../build/three.module.js';
 import { moveCharacter } from './moveCharacter.js';
 import {objectHolded, onDocumentMouseDown } from './selecaoDeObjetos.js';
 import {changeProjection,
@@ -154,6 +154,17 @@ var firstRender = false;
 
 // primary ground plane
 var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoader0 = new THREE.TextureLoader();
+var a0Ground = groundTextureLoader0.load('assets/glass+prop+clean-1745557365.png');
+var planeGeo0 = new THREE.PlaneGeometry(45, 35);
+var a0GroundMaterial = new THREE.MeshLambertMaterial();
+a0GroundMaterial.map = a0Ground;
+a0GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a0GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a0Ground.repeat.set(45, 35, 75, 75);
+groundPlane = new THREE.Mesh(planeGeo0, a0GroundMaterial);
+
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane.translateX(13);
 scene.add(groundPlane);
@@ -201,11 +212,25 @@ gridHelperA3_2.translateY(-6);
 scene.add( gridHelperA3_2 );
 
 var groundPlaneA2 = createGroundPlane(25, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoader = new THREE.TextureLoader();
+var a2Ground = groundTextureLoader.load('assets/metal_plate_tile_texture_by_i_madethis-d7euvrk-152716083.png');
+var planeGeo = new THREE.PlaneGeometry(25, 35);
+var a2GroundMaterial = new THREE.MeshLambertMaterial();
+a2GroundMaterial.map = a2Ground;
+a2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a2Ground.repeat.set(25, 35, 75, 75);
+groundPlaneA2 = new THREE.Mesh(planeGeo, a2GroundMaterial);
+
 groundPlaneA2.translateY(2.8);
 groundPlaneA2.translateX(13);
 groundPlaneA2.translateZ(-40);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
+
+
 scene.add(groundPlaneA2);
+
 
 const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelperA2.translateX(13);
