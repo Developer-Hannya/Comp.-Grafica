@@ -378,13 +378,17 @@ let area1Boxes = [];
 let area1BridgeSlots = [];
 
 function createArea1(){
-  var a1Wall = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+
+  var cubeA1 = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+  var cubeArea1Material = new THREE.MeshLambertMaterial();
+  cubeArea1Material.map = cubeA1;
+  var a1Wall = textureLoader.load('assets/a1-wall.png');
   var Area1WallMaterial = new THREE.MeshLambertMaterial();
   Area1WallMaterial.map = a1Wall;
   function createSelectableCubesA1(){
     
     for(let i = 0; i < 6; i++){
-      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, Area1WallMaterial);
+      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeArea1Material);
       switch (i){
         case 0:
           cubeA1.position.copy(new THREE.Vector3(9, -2.3, 29));
@@ -414,13 +418,13 @@ function createArea1(){
     }
   }
   
-  var a1Wall = textureLoader.load('assets/a1-wall.png');
-  var area1WallMaterial = new THREE.MeshLambertMaterial();
-  area1WallMaterial.map = a1Wall;
+  var cubeA1 = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+  var cubeArea1Material = new THREE.MeshLambertMaterial();
+  cubeArea1Material.map = cubeA1;
   //parede da area 1
   for(var i = 3; i <= 23; i++) {
     for(var j= 23.6; j <= 47.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, area1WallMaterial);
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, Area1WallMaterial);
       //console.log(j);
       if((i == 3 || i == 23 || j == 23.6 || j == 47.6) && ((i <= 10)||(i > 15)||(j == 47.6 && (i == 11 || i == 15 || i == 14)))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -440,7 +444,7 @@ function createArea1(){
   //area da chave da area 1
   for(var i = 8; i <= 18; i++) {
     for(var j= 51.6; j <= 61.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, Area1WallMaterial);
       //console.log(j);
       if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 14)||(j == 61.6))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -605,7 +609,7 @@ function createArea3(){
   for(var x = 85.5; x <= 91.5; x++) {
     for(var z= -3; z <= 3; z++) {
       if(x == 91.5 || z == 3 || z == -3) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
         cube.position.set(x, -5.5, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -646,9 +650,12 @@ function createArea3(){
   }
   loadA3Objects();
   // cria os cubos selecionaveis da A3
+  var cubeA3 = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+  var cubeArea3Material = new THREE.MeshLambertMaterial();
+  cubeArea3Material.map = cubeA3;
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
-      let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeArea3Material);
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       }
@@ -851,9 +858,13 @@ function createArea2(){
     }
   }
 
+  var cubeA2 = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+  var cubeArea2Material = new THREE.MeshLambertMaterial();
+  cubeArea2Material.map = cubeA2;  
+
   function createSelectableCubesA2(){
     for(let i = 0; i <= 5; i ++){  
-      let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeArea2Material);
       switch (i){
         case 0:
           cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
