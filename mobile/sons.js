@@ -11,11 +11,11 @@ const sound = new THREE.Audio( listener );
 
 // Música
 var audioLoader = new THREE.AudioLoader();
+export const soundtrack = new THREE.PositionalAudio( listener );
 audioLoader.load( 'assets/sounds/soundtrack.mp3', function( buffer ) {
-	sound.setBuffer( buffer );
-	sound.setLoop( true );
+	soundtrack.setBuffer( buffer );
+	soundtrack.setLoop( true );
 	sound.setVolume( 0.01 );
-	sound.play(); // Will play when start button is pressed
 });
 
 // Som da porta    

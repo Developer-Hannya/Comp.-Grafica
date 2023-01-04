@@ -27,7 +27,7 @@ import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import {Key} from './key.js';
-import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect } from './sons.js';
+import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect, soundtrack } from './sons.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -36,7 +36,39 @@ var stats = new Stats();          // To show FPS information
 export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 export var textureLoader = new THREE.TextureLoader;
+//-------------------------------------------------------------------------------
+// Loading Screen
+//-------------------------------------------------------------------------------
+console.log(document);
+const loadingManager = new THREE.LoadingManager( () => {
+  let loadingScreen = document.getElementById("loading-screen");
+  loadingScreen.transition = 0;
+  loadingScreen.style.setProperty('--speed1', '0');  
+  loadingScreen.style.setProperty('--speed2', '0');  
+  loadingScreen.style.setProperty('--speed3', '0');      
 
+  let button  = document.getElementById("loading-button")
+  let loadingImg  = document.getElementById("loading-gif");
+  loadingImg.remove();
+  button.style.backgroundColor = '#7c7e82';
+  button.innerHTML = 'Iniciar';
+  button.addEventListener("click", onStartButtonPressed);
+});
+
+function onStartButtonPressed() {
+  const gameScreen = document.getElementById( 'webgl-output' );
+  const loadingScreen = document.getElementById( 'loading-screen' );
+  const button  = document.getElementById("loading-button")
+  loadingScreen.transition = 0;
+  loadingScreen.classList.add( 'fade-out' );
+  loadingScreen.addEventListener( 'transitionend', (e) => {
+    const element = e.target;
+    element.remove();  
+  });  
+  gameScreen.style.setProperty("display", "block");
+  button.style.setProperty("display", "none");
+  soundtrack.play();
+}
 //-------------------------------------------------------------------------------
 // Renderer
 //-------------------------------------------------------------------------------
@@ -159,7 +191,7 @@ groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
-var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
+var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(13,3,23)"); // (width, height, width segments, height segments, color)
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane2.receiveShadow = false;
@@ -344,7 +376,7 @@ function createArea1(){
   //area da chave da area 1
   for(var i = 8; i <= 18; i++) {
     for(var j= 51.6; j <= 61.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, area1WallMaterial);
       //console.log(j);
       if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 14)||(j == 61.6))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -400,6 +432,7 @@ function buildArea1Bridge(){
     for(let i = 0; i < area1BridgeSlots.length; i++) {
       const slot = area1BridgeSlots[i];
       if(box.bb.intersectsBox(slot.space)){
+        box.pressing = true;
         let x = (slot.space.min.x + slot.space.max.x)/2;
         let y = (slot.space.min.y + slot.space.max.y)/2;
         let z = (slot.space.min.z + slot.space.max.z)/2;
@@ -433,6 +466,7 @@ function buildArea1Bridge(){
       console.log(closestPosition);
       
       selectableCubes = selectableCubes.filter(cube => cube.uuid != box.uuid);
+      console.log(selectableCubes);
   
       box.position.x = closestPosition.position.x;
       box.position.y = closestPosition.position.y;
@@ -507,7 +541,7 @@ function createArea3(){
   for(var x = 85.5; x <= 91.5; x++) {
     for(var z= -3; z <= 3; z++) {
       if(x == 91.5 || z == 3 || z == -3) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
         cube.position.set(x, -5.5, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -616,13 +650,17 @@ function creckAnyPlateIsPressed(placas, cubos){
         placa.pressedBy = cube;
         cube.pressing = true;
         cube.isPressing = placa;
-        //platformSoundEffect.play();
+        if(placa.audioPlayed === false){
+          platformSoundEffect.play();
+          placa.audioPlayed = true;
+        }
       }
       // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
       // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
       else if (placa.pressedBy!= null && !checkCollisions(placa.bb, placa.pressedBy.bb)){
         placa.position.lerp(new THREE.Vector3(placa.position.x, placa.getYNotPressed(), placa.position.z), 0.03);
         placa.pressed = false;
+        placa.audioPlayed = false;
         placa.pressedBy.pressing = false;
       }
     })
@@ -733,7 +771,7 @@ function createArea2(){
   for(var x = 9.5; x <= 16.5; x++) {
     for(var z= -64; z <= -58; z++) {
       if(x == 9.5 || z == -64 || x == 16.5) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -869,7 +907,7 @@ loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
-  var loader = new GLTFLoader( );
+  var loader = new GLTFLoader(loadingManager);
   loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
@@ -907,37 +945,6 @@ function onProgress ( xhr, model ) {
     if ( xhr.lengthComputable ) {
       var percentComplete = xhr.loaded / xhr.total * 100;
     }
-}
-
-function keyboardUpdate() {
-
-  keyboard.update();
-  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
-  if ( keyboard.down("C"))  {
-    changeProjection();
-  }
-  //modo de teste
-  if(keyboard.down("T") || keyboard.down("t")){
-    player.blue = true;
-    player.red = true;
-    player.yellow = true;
-    const keyBlue = document.getElementById('blue_key'); 
-    keyBlue.style.display = '';
-    const  keyRed = document.getElementById('red_key');
-    keyRed.style.display = '';
-    const  keyYellow = document.getElementById('yellow_key');
-    keyYellow.style.display = '';
-  }
-  updateCamera();
-}
-
-// atualiza as luzes
-function lightsUpdate(){
-  directlight.updateLight();
-  lightDowngrade();
-  tetoVisibility();
-  paredeTranslucidaVisibility();
-  lightSensor();
 }
 
 export let fwdValue = 0;
@@ -979,6 +986,37 @@ function addJoystick(){
   })
 }
 addJoystick();
+
+function keyboardUpdate() {
+
+  keyboard.update();
+  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
+  if ( keyboard.down("C"))  {
+    changeProjection();
+  }
+  //modo de teste
+  if(keyboard.down("T") || keyboard.down("t")){
+    player.blue = true;
+    player.red = true;
+    player.yellow = true;
+    const keyBlue = document.getElementById('blue_key'); 
+    keyBlue.style.display = '';
+    const  keyRed = document.getElementById('red_key');
+    keyRed.style.display = '';
+    const  keyYellow = document.getElementById('yellow_key');
+    keyYellow.style.display = '';
+  }
+  updateCamera();
+}
+
+// atualiza as luzes
+function lightsUpdate(){
+  directlight.updateLight();
+  lightDowngrade();
+  tetoVisibility();
+  paredeTranslucidaVisibility();
+  lightSensor();
+}
 
 // sensor de proximidade dos botões iluminados (se a porta A3 estiver aberta acende todas sporlights)
 function lightSensor(){
@@ -1037,7 +1075,7 @@ scene.add(pressPlateAf);
 let pressPlateBb = new THREE.Box3();
 pressPlateBb.setFromObject(pressPlateAf);
 pressPlateBb.max.y += 3;
-createBBHelper(pressPlateBb, "yellow");
+//createBBHelper(pressPlateBb, "yellow");
 
 const endingMessage = document.getElementById('endingMessage');
 

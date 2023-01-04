@@ -1,10 +1,22 @@
 import * as THREE from  'three';
 import checkCollisions from "./appMobile.js";
-import {fwdValue, bkdValue, rgtValue, lftValue} from './appMobile.js';
-import {isHoldingBlock, objectHolded} from './selecaoDeObjetos.js'
+import {fwdValue, bkdValue, rgtValue, lftValue, keyboard} from './appMobile.js';
+import {isHoldingBlock, objectHolded, cubeSide} from './selecaoDeObjetos.js'
 
 export function moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede){
-    // codigo para mover o personagem, a camera e colidir com objetos
+    
+    // codigo para colocar e soltar blocos suavemente
+    if(isHoldingBlock != true && objectHolded != null && objectHolded.pressing === false){
+      objectHolded.position.lerp(objectHolded.newPos,0.3);
+      if(objectHolded.position.y < objectHolded.newPos.y + 0.15){
+        objectHolded.updateBlockBB();
+      }
+      }else if(isHoldingBlock === true ){
+        objectHolded.position.lerp(cubeSide(),0.3);
+        objectHolded.updateBlockBB();
+    }
+
+  // codigo para mover o personagem, a camera e colidir com objetos
     if(!player.loaded) return;
     player.xSpeed = 0;
     player.zSpeed = 0;
@@ -13,7 +25,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
     playAction = false;
 
     //enquanto o personagem anda, aumenta a bb na direção que está andando
-    if (bkdValue > 0 && bkdValue < 0.85 && rgtValue > 0 && rgtValue < 0.85)  {
+    if (bkdValue > 0 && bkdValue < 0.85 && rgtValue > 0 && rgtValue < 0.85 || keyboard.pressed("down") && keyboard.pressed("right") || keyboard.pressed("S") && keyboard.pressed("D"))  {
       player.bb.max.x += 0.2;
       playAction = true;
       player.xSpeed = 0.07;
@@ -23,7 +35,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(90));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (bkdValue > 0 && bkdValue < 0.85 && lftValue > 0 && lftValue < 0.85)  {
+    else if (bkdValue > 0 && bkdValue < 0.85 && lftValue > 0 && lftValue < 0.85 || keyboard.pressed("down") && keyboard.pressed("left") || keyboard.pressed("S") && keyboard.pressed("A"))  {
       player.bb.max.z += 0.2;
       playAction = true;
       player.zSpeed = 0.07;
@@ -34,7 +46,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(0));
       player.object.quaternion.slerp(quaternion,0.1);  
     }
-    else if (fwdValue > 0 && fwdValue < 0.85 && lftValue > 0 && lftValue < 0.85)  {
+    else if (fwdValue > 0 && fwdValue < 0.85 && lftValue > 0 && lftValue < 0.85 || keyboard.pressed("up") && keyboard.pressed("left") || keyboard.pressed("W") && keyboard.pressed("A"))  {
       player.bb.min.x -= 0.2;
       playAction = true;
       player.xSpeed = -0.07;
@@ -44,7 +56,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(270));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (fwdValue > 0 && fwdValue < 0.85 && rgtValue > 0 && rgtValue < 0.85)  {
+    else if (fwdValue > 0 && fwdValue < 0.85 && rgtValue > 0 && rgtValue < 0.85 || keyboard.pressed("up") && keyboard.pressed("right") || keyboard.pressed("W") && keyboard.pressed("D"))  {
       player.bb.min.z -= 0.2
       playAction = true;
       player.zSpeed = -0.07;
@@ -54,7 +66,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(180));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (lftValue >= 0.85 && lftValue <= 1){
+    else if (lftValue >= 0.85 && lftValue <= 1 || keyboard.pressed("left") || keyboard.pressed("A")){
       player.bb.max.z += 0.2;
       player.bb.min.x -= 0.2;
       playAction = true;
@@ -66,7 +78,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(315));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (rgtValue >= 0.85 && rgtValue <= 1)  {
+    else if (rgtValue >= 0.85 && rgtValue <= 1 || keyboard.pressed("right") || keyboard.pressed("D"))  {
       player.bb.min.z -= 0.2;
       player.bb.max.x += 0.2;
       playAction = true;
@@ -78,7 +90,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(135));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (fwdValue >= 0.85 && fwdValue <= 1){
+    else if (fwdValue >= 0.85 && fwdValue <= 1 || keyboard.pressed("up") || keyboard.pressed("W")){
       player.bb.min.x -= 0.2;
       player.bb.min.z -= 0.2;
       playAction = true;
@@ -90,7 +102,7 @@ export function moveCharacter(playAction, quaternion, player, cameraHolder, obje
       quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),THREE.MathUtils.degToRad(225));
       player.object.quaternion.slerp(quaternion,0.1);
     }
-    else if (bkdValue >= 0.85 && bkdValue <= 1)  {
+    else if (bkdValue >= 0.85 && bkdValue <= 1 || keyboard.pressed("down") || keyboard.pressed("S"))  {
       player.bb.max.z += 0.2;
       player.bb.max.x += 0.2;
       playAction = true;
