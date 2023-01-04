@@ -313,7 +313,7 @@ scene.add( gridHelperAf );
 var groundPlaneA1 = createGroundPlane(20, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderA1 = new THREE.TextureLoader();
-var a1Ground = groundTextureLoaderAF.load('assets/067b9e8acdd5d2015d919f8ab7bcf883-1449266962.png');
+var a1Ground = groundTextureLoaderA1.load('assets/067b9e8acdd5d2015d919f8ab7bcf883-1449266962.png');
 var planeGeo1 = new THREE.PlaneGeometry(20, 25);
 var a1GroundMaterial = new THREE.MeshLambertMaterial();
 a1GroundMaterial.map = a1Ground;
@@ -340,11 +340,23 @@ scene.add( gridHelperA1_1 );
 
 // area chave 1
 var groundPlaneAc1 = createGroundPlane(11, 11, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoaderAc1 = new THREE.TextureLoader();
+var ac1Ground = groundTextureLoaderAc1.load('assets/e686e148211fcb0f4c598d1c300d7ca5-3382935121.jpeg');
+var planeGeoAc1 = new THREE.PlaneGeometry(11, 11);
+var ac1GroundMaterial = new THREE.MeshLambertMaterial();
+ac1GroundMaterial.map = ac1Ground;
+ac1GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+ac1GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+ac1Ground.repeat.set(11, 11, 75, 75);
+groundPlaneAc1 = new THREE.Mesh(planeGeoAc1, ac1GroundMaterial);
+
 groundPlaneAc1.translateY(-2.8);
 groundPlaneAc1.translateX(13);
 groundPlaneAc1.translateZ(56.6);
 groundPlaneAc1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneAc1);
+
 const gridHelperA1_2 = new THREE.GridHelper(10, 10, "rgb(7,7,7)", "rgb(7,7,7)");
 gridHelperA1_2.translateX(13);
 gridHelperA1_2.translateZ(56);
