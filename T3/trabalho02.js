@@ -187,12 +187,34 @@ gridHelper1.translateX(18);
 scene.add( gridHelper1 );
 
 var groundPlaneA3 = createGroundPlane(40, 20, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoaderA3 = new THREE.TextureLoader();
+var a3Ground = groundTextureLoaderA3.load('assets/old_grate_png-1550183187.png');
+var planeGeo3 = new THREE.PlaneGeometry(40, 20);
+var a3GroundMaterial = new THREE.MeshLambertMaterial();
+a3GroundMaterial.map = a3Ground;
+a3GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a3GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a3Ground.repeat.set(45, 35, 75, 75);
+groundPlaneA3 = new THREE.Mesh(planeGeo3, a3GroundMaterial);
+
 groundPlaneA3.translateX(65);
 groundPlaneA3.translateY(-6);
 groundPlaneA3.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA3);
 
 var groundPlaneA3_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+//th-3660782532.jpeg
+var groundTextureLoaderA3_2 = new THREE.TextureLoader();
+var a3_2Ground = groundTextureLoaderA3_2.load('assets/th-3660782532.jpeg');
+var planeGeo3_2 = new THREE.PlaneGeometry(6, 6);
+var a3_2GroundMaterial = new THREE.MeshLambertMaterial();
+a3_2GroundMaterial.map = a3_2Ground;
+a3_2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a3_2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a3_2Ground.repeat.set(6, 6, 5, 5);
+groundPlaneA3_2 = new THREE.Mesh(planeGeo3_2, a3_2GroundMaterial);
+
 groundPlaneA3_2.translateX(88);
 groundPlaneA3_2.translateY(-6);
 groundPlaneA3_2.rotateX(THREE.MathUtils.degToRad(-90));
@@ -228,7 +250,6 @@ groundPlaneA2.translateX(13);
 groundPlaneA2.translateZ(-40);
 groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 
-
 scene.add(groundPlaneA2);
 
 
@@ -249,6 +270,17 @@ gridHelperA2_2.translateY(2.8);
 scene.add( gridHelperA2_2 );
 
 var groundPlaneA2_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoaderA2_2 = new THREE.TextureLoader();
+var a2_2Ground = groundTextureLoaderA2_2.load('assets/maroon-marble-99552673.png');
+var planeGeo2_2 = new THREE.PlaneGeometry(6, 6);
+var a2_2GroundMaterial = new THREE.MeshLambertMaterial();
+a2_2GroundMaterial.map = a2_2Ground;
+a2_2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a2_2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a2_2Ground.repeat.set(6, 6, 5, 5);
+groundPlaneA2_2 = new THREE.Mesh(planeGeo2_2, a2_2GroundMaterial);
+
 groundPlaneA2_2.translateX(13);
 groundPlaneA2_2.translateZ(-60.5);
 groundPlaneA2_2.translateY(2.8);
@@ -257,6 +289,17 @@ scene.add(groundPlaneA2_2);
 
 // area final
 var groundPlaneAf = createGroundPlane(10, 10, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoaderAF = new THREE.TextureLoader();
+var aFGround = groundTextureLoaderAF.load('assets/0342c310c6fd5f2c0045945df352d358-848762209.jpeg');
+var planeGeoF = new THREE.PlaneGeometry(10, 10);
+var aFGroundMaterial = new THREE.MeshLambertMaterial();
+aFGroundMaterial.map = aFGround;
+aFGroundMaterial.map.wrapS = THREE.RepeatWrapping;
+aFGroundMaterial.map.wrapT = THREE.RepeatWrapping;
+aFGround.repeat.set(10, 10, 75, 75);
+groundPlaneAf = new THREE.Mesh(planeGeoF, aFGroundMaterial);
+
 groundPlaneAf.translateY(2.8);
 groundPlaneAf.translateX(-20.2);
 groundPlaneAf.rotateX(THREE.MathUtils.degToRad(-90));
@@ -268,6 +311,17 @@ scene.add( gridHelperAf );
 
 // area 1
 var groundPlaneA1 = createGroundPlane(20, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
+
+var groundTextureLoaderA1 = new THREE.TextureLoader();
+var a1Ground = groundTextureLoaderAF.load('assets/067b9e8acdd5d2015d919f8ab7bcf883-1449266962.png');
+var planeGeo1 = new THREE.PlaneGeometry(20, 25);
+var a1GroundMaterial = new THREE.MeshLambertMaterial();
+a1GroundMaterial.map = a1Ground;
+a1GroundMaterial.map.wrapS = THREE.RepeatWrapping;
+a1GroundMaterial.map.wrapT = THREE.RepeatWrapping;
+a1Ground.repeat.set(20, 25, 75, 75);
+groundPlaneA1 = new THREE.Mesh(planeGeo1, a1GroundMaterial);
+
 groundPlaneA1.translateY(-2.8);
 groundPlaneA1.translateX(13);
 groundPlaneA1.translateZ(35.6);
