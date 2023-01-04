@@ -378,10 +378,13 @@ let area1Boxes = [];
 let area1BridgeSlots = [];
 
 function createArea1(){
+  var a1Wall = textureLoader.load('assets/Companion_Cube_3471872-446758844.png');
+  var Area1WallMaterial = new THREE.MeshLambertMaterial();
+  Area1WallMaterial.map = a1Wall;
   function createSelectableCubesA1(){
     
     for(let i = 0; i < 6; i++){
-      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeMaterial);
+      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, Area1WallMaterial);
       switch (i){
         case 0:
           cubeA1.position.copy(new THREE.Vector3(9, -2.3, 29));
@@ -403,6 +406,8 @@ function createArea1(){
         break;
       }
       cubeA1.updateBlockBB();
+      //unglazed-color-body-porcelain-mosaics_40758-2733325481.png
+      //Companion_Cube_3471872-446758844.png
       scene.add(cubeA1);
       selectableCubes.push(cubeA1);
       area1Boxes.push(cubeA1);
