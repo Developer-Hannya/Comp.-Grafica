@@ -842,7 +842,7 @@ function createArea2(){
   for(var x = 9.5; x <= 16.5; x++) {
     for(var z= -64; z <= -58; z++) {
       if(x == 9.5 || z == -64 || x == 16.5) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
