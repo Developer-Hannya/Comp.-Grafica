@@ -400,6 +400,7 @@ function buildArea1Bridge(){
     for(let i = 0; i < area1BridgeSlots.length; i++) {
       const slot = area1BridgeSlots[i];
       if(box.bb.intersectsBox(slot.space)){
+        box.pressing = true;
         let x = (slot.space.min.x + slot.space.max.x)/2;
         let y = (slot.space.min.y + slot.space.max.y)/2;
         let z = (slot.space.min.z + slot.space.max.z)/2;
@@ -433,6 +434,7 @@ function buildArea1Bridge(){
       console.log(closestPosition);
       
       selectableCubes = selectableCubes.filter(cube => cube.uuid != box.uuid);
+      console.log(selectableCubes);
   
       box.position.x = closestPosition.position.x;
       box.position.y = closestPosition.position.y;
@@ -616,13 +618,17 @@ function creckAnyPlateIsPressed(placas, cubos){
         placa.pressedBy = cube;
         cube.pressing = true;
         cube.isPressing = placa;
-        //platformSoundEffect.play();
+        if(placa.audioPlayed === false){
+          platformSoundEffect.play();
+          placa.audioPlayed = true;
+        }
       }
       // checa se a placa não é precionada por nenhum dos 'n' cubo (se pressedBy for null ignora a condicional,
       // se não, checa colisão com o ultimo cubo pressionado, se não ouver colisão então exacuta a condicional)
       else if (placa.pressedBy!= null && !checkCollisions(placa.bb, placa.pressedBy.bb)){
         placa.position.lerp(new THREE.Vector3(placa.position.x, placa.getYNotPressed(), placa.position.z), 0.03);
         placa.pressed = false;
+        placa.audioPlayed = false;
         placa.pressedBy.pressing = false;
       }
     })
@@ -909,37 +915,6 @@ function onProgress ( xhr, model ) {
     }
 }
 
-function keyboardUpdate() {
-
-  keyboard.update();
-  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
-  if ( keyboard.down("C"))  {
-    changeProjection();
-  }
-  //modo de teste
-  if(keyboard.down("T") || keyboard.down("t")){
-    player.blue = true;
-    player.red = true;
-    player.yellow = true;
-    const keyBlue = document.getElementById('blue_key'); 
-    keyBlue.style.display = '';
-    const  keyRed = document.getElementById('red_key');
-    keyRed.style.display = '';
-    const  keyYellow = document.getElementById('yellow_key');
-    keyYellow.style.display = '';
-  }
-  updateCamera();
-}
-
-// atualiza as luzes
-function lightsUpdate(){
-  directlight.updateLight();
-  lightDowngrade();
-  tetoVisibility();
-  paredeTranslucidaVisibility();
-  lightSensor();
-}
-
 export let fwdValue = 0;
 export let bkdValue = 0;
 export let rgtValue = 0;
@@ -979,6 +954,37 @@ function addJoystick(){
   })
 }
 addJoystick();
+
+function keyboardUpdate() {
+
+  keyboard.update();
+  playAction = moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede);
+  if ( keyboard.down("C"))  {
+    changeProjection();
+  }
+  //modo de teste
+  if(keyboard.down("T") || keyboard.down("t")){
+    player.blue = true;
+    player.red = true;
+    player.yellow = true;
+    const keyBlue = document.getElementById('blue_key'); 
+    keyBlue.style.display = '';
+    const  keyRed = document.getElementById('red_key');
+    keyRed.style.display = '';
+    const  keyYellow = document.getElementById('yellow_key');
+    keyYellow.style.display = '';
+  }
+  updateCamera();
+}
+
+// atualiza as luzes
+function lightsUpdate(){
+  directlight.updateLight();
+  lightDowngrade();
+  tetoVisibility();
+  paredeTranslucidaVisibility();
+  lightSensor();
+}
 
 // sensor de proximidade dos botões iluminados (se a porta A3 estiver aberta acende todas sporlights)
 function lightSensor(){
