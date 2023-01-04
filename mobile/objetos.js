@@ -43,6 +43,7 @@ export class SelectableCube extends THREE.Mesh{
         // });
         super(geometry, material);
         this.position.copy(position);
+        this.newPos = null;
         this.selected = false;
         this.castShadow = true;
         this.receiveShadow = true;
@@ -69,6 +70,7 @@ export class PressurePlate extends THREE.Mesh{
         super(geometry, material);
         this.position.copy(position);
         this.Y = position.y;
+        this.audioPlayed = false;
         this.castShadow = true;
         this.receiveShadow = true;
         this.pressed = false;

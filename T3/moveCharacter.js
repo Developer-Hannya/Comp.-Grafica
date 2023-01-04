@@ -1,10 +1,22 @@
 import * as THREE from  'three';
 import checkCollisions from "./trabalho02.js";
 import { keyboard } from './trabalho02.js';
-import {isHoldingBlock, objectHolded} from './selecaoDeObjetos.js'
+import {isHoldingBlock, objectHolded, cubeSide} from './selecaoDeObjetos.js'
+
 
 export function moveCharacter(playAction, quaternion, player, cameraHolder, objects, parede){
-    // codigo para mover o personagem, a camera e colidir com objetos
+  
+    if(isHoldingBlock != true && objectHolded != null && objectHolded.pressing === false){
+      objectHolded.position.lerp(objectHolded.newPos,0.3);
+      if(objectHolded.position.y < objectHolded.newPos.y + 0.15){
+        objectHolded.updateBlockBB();
+      }
+      }else if(isHoldingBlock === true ){
+        objectHolded.position.lerp(cubeSide(),0.3);
+        objectHolded.updateBlockBB();
+      }
+
+  // codigo para mover o personagem, a camera e colidir com objetos
     if(!player.loaded) return;
     player.xSpeed = 0;
     player.zSpeed = 0;
