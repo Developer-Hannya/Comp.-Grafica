@@ -792,9 +792,40 @@ function createArea2(){
     }
   }
 
+  function loadCubeModel(cube, fileName)
+{
+  var loader = new GLTFLoader( );
+  loader.load( 'assets/cubes/' + fileName + '.glb', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+      }
+    });
+    obj.traverse( function( node )
+    {
+      if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+
+    obj.scale.x = 0.2;
+    obj.scale.y = 0.2;
+    obj.scale.z = 0.2;
+    obj.translateY(0)   
+    obj.rotateZ(-Math.PI/2);
+    cube.add(obj);
+    cube.bb = new THREE.Box3();
+    cube.bb.setFromObject(cube);
+    });
+}
+
   function createSelectableCubesA2(){
+    let transparentMaterial = new THREE.MeshPhongMaterial({
+      transparent: true,
+      opacity: 0
+    });
     for(let i = 0; i <= 5; i ++){  
       let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      //loadCubeModel(cubeA2, "portalCube");
       switch (i){
         case 0:
           cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
