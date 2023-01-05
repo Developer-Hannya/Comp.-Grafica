@@ -206,7 +206,7 @@ groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
-var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
+var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(13,3,23)"); // (width, height, width segments, height segments, color)
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane2.receiveShadow = false;
