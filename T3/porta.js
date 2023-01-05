@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
-import { createBBHelper, objects, player} from './trabalho02.js';
+import { createBBHelper, objects, player} from './trabalho03.js';
 import { doorSoundEffect } from './sons.js';
 
 export let closedDoors = [];
@@ -85,7 +85,7 @@ export function createDoor(){
    csgObject = internalRectangleCSG.union(cylinderCSG)
    mesh = CSG.toMesh(csgObject, auxMat)
 
-   mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(115,89,49)'})
+   mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(60,60,60)'})
    mesh.position.set(0, -1.5, 0)
    return mesh;
 }

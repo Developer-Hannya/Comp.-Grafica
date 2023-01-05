@@ -3,7 +3,7 @@ import { Vector3 } from '../build/three.module.js';
 import { CSG } from '../libs/other/CSGMesh.js';
 import { setDefaultMaterial } from '../libs/util/util.js';
 import { cameraHolder } from './camera.js';
-import { createBBHelper, escadas, parede, player } from './trabalho02.js';
+import { createBBHelper, escadas, parede, player } from './trabalho03.js';
 
 function updateObject(mesh)
 {
@@ -14,7 +14,7 @@ function updateObject(mesh)
 export function createStaircase() {
     
     const geometry = new THREE.BoxGeometry( 5, 0.8, 0.8 );
-    const staircaseMaterial = new THREE.MeshBasicMaterial( {color: "rgb(182,144,95)"} );
+    const staircaseMaterial = new THREE.MeshBasicMaterial( {color: "rgb(50,50,50)"} );
 
     let stepHeight1 = -1.2;
     let stepPlaneHeight1 = -0.8;
@@ -39,7 +39,7 @@ export function createStaircase() {
 
     let auxMat = new THREE.Matrix4();
     centerStep = CSG.toMesh(centerStepCSG, auxMat);
-    centerStep.material = setDefaultMaterial("rgb(222,184,135)");
+    centerStep.material = setDefaultMaterial("rgb(70,70,70)");
     centerStep.receiveShadow = true;
     centerStep.rotateY(Math.PI);
     // scene.add(centerStep);

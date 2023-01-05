@@ -3,6 +3,8 @@ import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import KeyboardState from '../libs/util/KeyboardState.js'
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
+import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js';
+import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         createGroundPlane,
         initDefaultBasicLight,
@@ -27,7 +29,7 @@ import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import {Key} from './key.js';
-import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect } from './sons.js';
+import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect, soundtrack } from './sons.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -37,6 +39,39 @@ export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 export var textureLoader = new THREE.TextureLoader;
 
+//-------------------------------------------------------------------------------
+// Loading Screen
+//-------------------------------------------------------------------------------
+console.log(document);
+const loadingManager = new THREE.LoadingManager( () => {
+  let loadingScreen = document.getElementById("loading-screen");
+  loadingScreen.transition = 0;
+  loadingScreen.style.setProperty('--speed1', '0');  
+  loadingScreen.style.setProperty('--speed2', '0');  
+  loadingScreen.style.setProperty('--speed3', '0');      
+
+  let button  = document.getElementById("loading-button")
+  let loadingImg  = document.getElementById("loading-gif");
+  loadingImg.remove();
+  button.style.backgroundColor = '#7c7e82';
+  button.innerHTML = 'Iniciar';
+  button.addEventListener("click", onStartButtonPressed);
+});
+
+function onStartButtonPressed() {
+  const gameScreen = document.getElementById( 'webgl-output' );
+  const loadingScreen = document.getElementById( 'loading-screen' );
+  const button  = document.getElementById("loading-button")
+  loadingScreen.transition = 0;
+  loadingScreen.classList.add( 'fade-out' );
+  loadingScreen.addEventListener( 'transitionend', (e) => {
+    const element = e.target;
+    element.remove();  
+  });  
+  gameScreen.style.setProperty("display", "block");
+  button.style.setProperty("display", "none");
+  soundtrack.play();
+}
 //-------------------------------------------------------------------------------
 // Renderer
 //-------------------------------------------------------------------------------
@@ -156,7 +191,7 @@ var firstRender = false;
 var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoader0 = new THREE.TextureLoader();
-var a0Ground = groundTextureLoader0.load('assets/glass+prop+clean-1745557365.png');
+var a0Ground = groundTextureLoader0.load('assets/ground3.png');
 var planeGeo0 = new THREE.PlaneGeometry(45, 35);
 var a0GroundMaterial = new THREE.MeshLambertMaterial();
 a0GroundMaterial.map = a0Ground;
@@ -164,39 +199,41 @@ a0GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a0GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 a0Ground.repeat.set(45, 35, 75, 75);
 groundPlane = new THREE.Mesh(planeGeo0, a0GroundMaterial);
+groundPlane.receiveShadow = true;
 
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
-var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
+var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(13,3,23)"); // (width, height, width segments, height segments, color)
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane2.receiveShadow = false;
 scene.add(groundPlane2);
 groundPlane2.castShadow = false;
 
-// add a grid in ground so it look like it has tiles
-const gridHelper = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper.translateX(8);
-scene.add( gridHelper );
+// // add a grid in ground so it look like it has tiles
+// const gridHelper = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelper.translateX(8);
+// scene.add( gridHelper );
 
-const gridHelper1 = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper1.translateX(18);
-scene.add( gridHelper1 );
+// const gridHelper1 = new THREE.GridHelper(35, 35, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelper1.translateX(18);
+// scene.add( gridHelper1 );
 
 var groundPlaneA3 = createGroundPlane(40, 20, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderA3 = new THREE.TextureLoader();
-var a3Ground = groundTextureLoaderA3.load('assets/old_grate_png-1550183187.png');
+var a3Ground = groundTextureLoaderA3.load('assets/ground3.png');
 var planeGeo3 = new THREE.PlaneGeometry(40, 20);
 var a3GroundMaterial = new THREE.MeshLambertMaterial();
 a3GroundMaterial.map = a3Ground;
 a3GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a3GroundMaterial.map.wrapT = THREE.RepeatWrapping;
-a3Ground.repeat.set(45, 35, 75, 75);
+a3Ground.repeat.set(35, 20, 75, 75);
 groundPlaneA3 = new THREE.Mesh(planeGeo3, a3GroundMaterial);
+groundPlaneA3.receiveShadow = true;
 
 groundPlaneA3.translateX(65);
 groundPlaneA3.translateY(-6);
@@ -206,7 +243,7 @@ scene.add(groundPlaneA3);
 var groundPlaneA3_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 //th-3660782532.jpeg
 var groundTextureLoaderA3_2 = new THREE.TextureLoader();
-var a3_2Ground = groundTextureLoaderA3_2.load('assets/th-3660782532.jpeg');
+var a3_2Ground = groundTextureLoaderA3_2.load('assets/ground3.png');
 var planeGeo3_2 = new THREE.PlaneGeometry(6, 6);
 var a3_2GroundMaterial = new THREE.MeshLambertMaterial();
 a3_2GroundMaterial.map = a3_2Ground;
@@ -214,29 +251,30 @@ a3_2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a3_2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 a3_2Ground.repeat.set(6, 6, 5, 5);
 groundPlaneA3_2 = new THREE.Mesh(planeGeo3_2, a3_2GroundMaterial);
+groundPlaneA3_2.receiveShadow = true;
 
 groundPlaneA3_2.translateX(88);
 groundPlaneA3_2.translateY(-6);
 groundPlaneA3_2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA3_2);
 
-const gridHelperA3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA3.translateX(55);
-gridHelperA3.translateY(-6);
-scene.add( gridHelperA3 );
-const gridHelper2A3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper2A3.translateX(75);
-gridHelper2A3.translateY(-6);
-scene.add( gridHelper2A3 );
-const gridHelperA3_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA3_2.translateX(88);
-gridHelperA3_2.translateY(-6);
-scene.add( gridHelperA3_2 );
+// const gridHelperA3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA3.translateX(55);
+// gridHelperA3.translateY(-6);
+// scene.add( gridHelperA3 );
+// const gridHelper2A3 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelper2A3.translateX(75);
+// gridHelper2A3.translateY(-6);
+// scene.add( gridHelper2A3 );
+// const gridHelperA3_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA3_2.translateX(88);
+// gridHelperA3_2.translateY(-6);
+// scene.add( gridHelperA3_2 );
 
 var groundPlaneA2 = createGroundPlane(25, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoader = new THREE.TextureLoader();
-var a2Ground = groundTextureLoader.load('assets/metal_plate_tile_texture_by_i_madethis-d7euvrk-152716083.png');
+var a2Ground = groundTextureLoader.load('assets/ground2.png');
 var planeGeo = new THREE.PlaneGeometry(25, 35);
 var a2GroundMaterial = new THREE.MeshLambertMaterial();
 a2GroundMaterial.map = a2Ground;
@@ -244,6 +282,7 @@ a2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 a2Ground.repeat.set(25, 35, 75, 75);
 groundPlaneA2 = new THREE.Mesh(planeGeo, a2GroundMaterial);
+groundPlaneA2.receiveShadow = true;
 
 groundPlaneA2.translateY(2.8);
 groundPlaneA2.translateX(13);
@@ -253,26 +292,26 @@ groundPlaneA2.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA2);
 
 
-const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2.translateX(13);
-gridHelperA2.translateZ(-36);
-gridHelperA2.translateY(2.8);
-scene.add( gridHelperA2 );
-const gridHelper2A2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelper2A2.translateX(13);
-gridHelper2A2.translateZ(-45);
-gridHelper2A2.translateY(2.8);
-scene.add( gridHelper2A2 );
-const gridHelperA2_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA2_2.translateX(13);
-gridHelperA2_2.translateZ(-60.5);
-gridHelperA2_2.translateY(2.8);
-scene.add( gridHelperA2_2 );
+// const gridHelperA2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA2.translateX(13);
+// gridHelperA2.translateZ(-36);
+// gridHelperA2.translateY(2.8);
+// scene.add( gridHelperA2 );
+// const gridHelper2A2 = new THREE.GridHelper(26, 26, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelper2A2.translateX(13);
+// gridHelper2A2.translateZ(-45);
+// gridHelper2A2.translateY(2.8);
+// scene.add( gridHelper2A2 );
+// const gridHelperA2_2 = new THREE.GridHelper(6, 6, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA2_2.translateX(13);
+// gridHelperA2_2.translateZ(-60.5);
+// gridHelperA2_2.translateY(2.8);
+// scene.add( gridHelperA2_2 );
 
 var groundPlaneA2_2 = createGroundPlane(6, 6, 5, 5, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderA2_2 = new THREE.TextureLoader();
-var a2_2Ground = groundTextureLoaderA2_2.load('assets/maroon-marble-99552673.png');
+var a2_2Ground = groundTextureLoaderA2_2.load('assets/ground2.png');
 var planeGeo2_2 = new THREE.PlaneGeometry(6, 6);
 var a2_2GroundMaterial = new THREE.MeshLambertMaterial();
 a2_2GroundMaterial.map = a2_2Ground;
@@ -280,6 +319,7 @@ a2_2GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a2_2GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 a2_2Ground.repeat.set(6, 6, 5, 5);
 groundPlaneA2_2 = new THREE.Mesh(planeGeo2_2, a2_2GroundMaterial);
+groundPlaneA2_2.receiveShadow = true;
 
 groundPlaneA2_2.translateX(13);
 groundPlaneA2_2.translateZ(-60.5);
@@ -291,7 +331,7 @@ scene.add(groundPlaneA2_2);
 var groundPlaneAf = createGroundPlane(10, 10, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderAF = new THREE.TextureLoader();
-var aFGround = groundTextureLoaderAF.load('assets/0342c310c6fd5f2c0045945df352d358-848762209.jpeg');
+var aFGround = groundTextureLoaderAF.load('assets/ground3.png');
 var planeGeoF = new THREE.PlaneGeometry(10, 10);
 var aFGroundMaterial = new THREE.MeshLambertMaterial();
 aFGroundMaterial.map = aFGround;
@@ -299,21 +339,22 @@ aFGroundMaterial.map.wrapS = THREE.RepeatWrapping;
 aFGroundMaterial.map.wrapT = THREE.RepeatWrapping;
 aFGround.repeat.set(10, 10, 75, 75);
 groundPlaneAf = new THREE.Mesh(planeGeoF, aFGroundMaterial);
+groundPlaneAf.receiveShadow = true;
 
 groundPlaneAf.translateY(2.8);
 groundPlaneAf.translateX(-20.2);
 groundPlaneAf.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneAf);
-const gridHelperAf = new THREE.GridHelper(11, 11, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperAf.translateX(-20.6);
-gridHelperAf.translateY(2.8);
-scene.add( gridHelperAf );
+// const gridHelperAf = new THREE.GridHelper(11, 11, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperAf.translateX(-20.6);
+// gridHelperAf.translateY(2.8);
+// scene.add( gridHelperAf );
 
 // area 1
 var groundPlaneA1 = createGroundPlane(20, 25, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderA1 = new THREE.TextureLoader();
-var a1Ground = groundTextureLoaderA1.load('assets/067b9e8acdd5d2015d919f8ab7bcf883-1449266962.png');
+var a1Ground = groundTextureLoaderA1.load('assets/ground1.jpg');
 var planeGeo1 = new THREE.PlaneGeometry(20, 25);
 var a1GroundMaterial = new THREE.MeshLambertMaterial();
 a1GroundMaterial.map = a1Ground;
@@ -321,28 +362,29 @@ a1GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a1GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 a1Ground.repeat.set(20, 25, 75, 75);
 groundPlaneA1 = new THREE.Mesh(planeGeo1, a1GroundMaterial);
+groundPlaneA1.receiveShadow = true;
 
 groundPlaneA1.translateY(-2.8);
 groundPlaneA1.translateX(13);
 groundPlaneA1.translateZ(35.6);
 groundPlaneA1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneA1);
-const gridHelperA1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA1.translateX(13);
-gridHelperA1.translateZ(34);
-gridHelperA1.translateY(-2.8);
-scene.add( gridHelperA1 );
-const gridHelperA1_1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA1_1.translateX(13);
-gridHelperA1_1.translateZ(38);
-gridHelperA1_1.translateY(-2.8);
-scene.add( gridHelperA1_1 );
+// const gridHelperA1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA1.translateX(13);
+// gridHelperA1.translateZ(34);
+// gridHelperA1.translateY(-2.8);
+// scene.add( gridHelperA1 );
+// const gridHelperA1_1 = new THREE.GridHelper(20, 20, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA1_1.translateX(13);
+// gridHelperA1_1.translateZ(38);
+// gridHelperA1_1.translateY(-2.8);
+// scene.add( gridHelperA1_1 );
 
 // area chave 1
 var groundPlaneAc1 = createGroundPlane(11, 11, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoaderAc1 = new THREE.TextureLoader();
-var ac1Ground = groundTextureLoaderAc1.load('assets/e686e148211fcb0f4c598d1c300d7ca5-3382935121.jpeg');
+var ac1Ground = groundTextureLoaderAc1.load('assets/ground1.jpg');
 var planeGeoAc1 = new THREE.PlaneGeometry(11, 11);
 var ac1GroundMaterial = new THREE.MeshLambertMaterial();
 ac1GroundMaterial.map = ac1Ground;
@@ -350,6 +392,7 @@ ac1GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 ac1GroundMaterial.map.wrapT = THREE.RepeatWrapping;
 ac1Ground.repeat.set(11, 11, 75, 75);
 groundPlaneAc1 = new THREE.Mesh(planeGeoAc1, ac1GroundMaterial);
+groundPlaneAc1.receiveShadow = true;
 
 groundPlaneAc1.translateY(-2.8);
 groundPlaneAc1.translateX(13);
@@ -357,21 +400,56 @@ groundPlaneAc1.translateZ(56.6);
 groundPlaneAc1.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlaneAc1);
 
-const gridHelperA1_2 = new THREE.GridHelper(10, 10, "rgb(7,7,7)", "rgb(7,7,7)");
-gridHelperA1_2.translateX(13);
-gridHelperA1_2.translateZ(56);
-gridHelperA1_2.translateY(-2.8);
-scene.add( gridHelperA1_2 );
+// const gridHelperA1_2 = new THREE.GridHelper(10, 10, "rgb(7,7,7)", "rgb(7,7,7)");
+// gridHelperA1_2.translateX(13);
+// gridHelperA1_2.translateZ(56);
+// gridHelperA1_2.translateY(-2.8);
+// scene.add( gridHelperA1_2 );
 
+function loadCubeModel(cube, fileName, area)
+{
+  var loader = new GLTFLoader( );
+  loader.load( 'assets/cubes/' + fileName + '.glb', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+      }
+    });
+    obj.traverse( function( node )
+    {
+      if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+    if(area === "A2" || area === "A1"){
+      obj.scale.x = 0.2;
+      obj.scale.y = 0.2;
+      obj.scale.z = 0.2;
+    }
+    if(area === 'A3'){
+      obj.scale.x = 0.5;
+      obj.scale.y = 0.5;
+      obj.scale.z = 0.5;
+    }
+    obj.translateY(0)   
+    obj.rotateZ(-Math.PI/2);
+    cube.add(obj);
+    //cube.bb = new THREE.Box3();
+    //cube.bb.setFromObject(cube);
+    });
+}
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
-  color: "rgb(182,144,95)",
+  transparent: true,
+  opacity: 0.01,
 });
 export let cubeMaterialSelected = new MeshLambertMaterial({
-  color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  //color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  transparent: true,
+  opacity: 0.01,
 });
+
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
 let area1Boxes = [];
@@ -388,7 +466,8 @@ function createArea1(){
   function createSelectableCubesA1(){
     
     for(let i = 0; i < 6; i++){
-      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeArea1Material);
+      let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeMaterial);
+      loadCubeModel(cubeA1, "portalCube", "A1");
       switch (i){
         case 0:
           cubeA1.position.copy(new THREE.Vector3(9, -2.3, 29));
@@ -534,7 +613,6 @@ function buildArea1Bridge(){
       console.log(closestPosition);
       
       selectableCubes = selectableCubes.filter(cube => cube.uuid != box.uuid);
-      console.log(selectableCubes);
   
       box.position.x = closestPosition.position.x;
       box.position.y = closestPosition.position.y;
@@ -551,13 +629,13 @@ function buildArea1Bridge(){
 
 function createArea3(){
   var a3Wall = textureLoader.load('assets/a3-wall.png');
-  var Area3WallMaterial = new THREE.MeshLambertMaterial();
-  Area3WallMaterial.map = a3Wall;
+  var area3WallMaterial = new THREE.MeshLambertMaterial();
+  area3WallMaterial.map = a3Wall;
   // position cubes in the area A3 like a "house"
   for(var y = -5.5; y <= 1; y++){
     for(var x = 45.5; x <= 85.5; x++) {
       for(var z= -10.5; z <= 10.5; z++) {
-        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area3WallMaterial);
         if((x == 45.5 || x == 85.5 || z == -10.5 || z == 10.5) && (((x < -2.5)||(x > 2.5)) && ((z < -2.5)||(z > 2.5)))) {
           cube.position.set(x, y, z);
           cube.castShadow = true;
@@ -609,7 +687,7 @@ function createArea3(){
   for(var x = 85.5; x <= 91.5; x++) {
     for(var z= -3; z <= 3; z++) {
       if(x == 91.5 || z == 3 || z == -3) {
-        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area3WallMaterial);
         cube.position.set(x, -5.5, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -655,7 +733,8 @@ function createArea3(){
   cubeArea3Material.map = cubeA3;
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
-      let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeArea3Material);
+      let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      loadCubeModel(cubeA3, "CompanionCube", "A3");
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       }
@@ -818,12 +897,12 @@ for(var i = -25.6; i <= -15.6; i++) {
 
 function createArea2(){
   var a2Wall = textureLoader.load('assets/a2-wall.png');
-  var Area2WallMaterial = new THREE.MeshLambertMaterial();
-  Area2WallMaterial.map = a2Wall;
-  //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
+  var area2WallMaterial = new THREE.MeshLambertMaterial();
+  area2WallMaterial.map = a2Wall;
+  let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
   for(var x = 0.5; x <= 25.5; x++) {
     for(var z= -58;z <= -23; z++) {
-      let cubeArea2 = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, area2WallMaterial);
       if((x == 0.5 || x == 25.5 || z == -58 || z == -23) && ((x < 10)||(x > 16))) {
         cubeArea2.position.set(x, 3.3, z);
         cubeArea2.castShadow = true;
@@ -842,7 +921,7 @@ function createArea2(){
   for(var x = 9.5; x <= 16.5; x++) {
     for(var z= -64; z <= -58; z++) {
       if(x == 9.5 || z == -64 || x == 16.5) {
-        let cube = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area2WallMaterial);
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -864,7 +943,8 @@ function createArea2(){
 
   function createSelectableCubesA2(){
     for(let i = 0; i <= 5; i ++){  
-      let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeArea2Material);
+      let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+        loadCubeModel(cubeA2, "portalCube", "A2");
       switch (i){
         case 0:
           cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
@@ -891,7 +971,7 @@ function createArea2(){
     }
   }
   createSelectableCubesA2();
-  // crias as placas de pressão da A3
+  // crias as placas de pressão da A2
 
   function createPressurePlatesA2(){
     let pressPlateA2Material = new THREE.MeshPhongMaterial({
@@ -982,7 +1062,7 @@ loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
-  var loader = new GLTFLoader( );
+  var loader = new GLTFLoader(loadingManager);
   loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
@@ -1110,7 +1190,7 @@ scene.add(pressPlateAf);
 let pressPlateBb = new THREE.Box3();
 pressPlateBb.setFromObject(pressPlateAf);
 pressPlateBb.max.y += 3;
-createBBHelper(pressPlateBb, "yellow");
+//createBBHelper(pressPlateBb, "yellow");
 
 const endingMessage = document.getElementById('endingMessage');
 

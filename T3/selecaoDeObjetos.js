@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion, player } from './trabalho02.js';
+import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion, player } from './trabalho03.js';
 import { camera, cameraHolder} from './camera.js';
 import {SelectableCube} from './objetos.js';
 
@@ -39,26 +39,21 @@ export function onDocumentMouseDown( event )
         objectHolded.material=cubeMaterial;
         scene.add(objectHolded);
         let newPos = new THREE.Vector3(Math.round(auxPos.x+cameraHolder.position.x), cameraHolder.position.y + 0.5 , Math.round(auxPos.z+cameraHolder.position.z));
-        //objectHolded.position.copy(newPos);
-        objectHolded.newPos = newPos;
-        objectHolded.pos = newPos;
-        //objectHolded.updateBlockBB();
         objectHolded.position.copy(auxPos2.position);
-        //auxPos2.position.copy(newPos);
-        //objectHolded.bb.setFromObject(newPos);
+        objectHolded.newPos = newPos;
+        objectHolded.updateBlockBB();
         //objectHolded = null;
         isHoldingBlock = false;
     }
     else if(intersects.length==0) return;
     else if(isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false && player.bb.distanceToPoint(intersects[0].object.position) <3.5 || intersects[0].object.pressing === true && player.bb.distanceToPoint(intersects[0].object.isPressing.position)<3.5 && isSameMaterial(intersects[0].object.material, cubeMaterial) && isHoldingBlock === false) {
+        intersects[0].object.material=cubeMaterialSelected;
         let auxPos = intersects[0].object.position;
         //intersects[0].object.getWorldPosition(auxPos.position);
-        intersects[0].object.material=cubeMaterialSelected;
         cameraHolder.add(intersects[0].object);
-        let Pos = new THREE.Vector3(auxPos.x-cameraHolder.position.x, cameraHolder.position.y + 2 , auxPos.z-cameraHolder.position.z);
-        intersects[0].object.position.copy(Pos);
-        //intersects[0].object.position.set(cubeSide().x, cubeSide().y-2.5, cubeSide().z);
-        intersects[0].object.updateBlockBB();
+        let newPos = new THREE.Vector3(Math.round(auxPos.x-cameraHolder.position.x), cameraHolder.position.y + 0.5 , Math.round(auxPos.z-cameraHolder.position.z));
+        intersects[0].object.position.copy(newPos);
+        //intersects[0].object.updateBlockBB();
         isHoldingBlock = true;
         objectHolded = intersects[0].object;
     }

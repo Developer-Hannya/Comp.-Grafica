@@ -39,7 +39,7 @@ export function createStaircase() {
 
     let auxMat = new THREE.Matrix4();
     centerStep = CSG.toMesh(centerStepCSG, auxMat);
-    centerStep.material = setDefaultMaterial("rgb(222,184,135)");
+    centerStep.material = setDefaultMaterial("rgb(70,70,70)");
     centerStep.receiveShadow = true;
     centerStep.rotateY(Math.PI);
     // scene.add(centerStep);

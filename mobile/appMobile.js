@@ -27,7 +27,11 @@ import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import {Key} from './key.js';
+<<<<<<< HEAD
 import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect } from './sons.js';
+=======
+import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect, soundtrack } from './sons.js';
+>>>>>>> juliana
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -36,7 +40,43 @@ var stats = new Stats();          // To show FPS information
 export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 export var textureLoader = new THREE.TextureLoader;
+<<<<<<< HEAD
 
+=======
+//-------------------------------------------------------------------------------
+// Loading Screen
+//-------------------------------------------------------------------------------
+console.log(document);
+const loadingManager = new THREE.LoadingManager( () => {
+  let loadingScreen = document.getElementById("loading-screen");
+  loadingScreen.transition = 0;
+  loadingScreen.style.setProperty('--speed1', '0');  
+  loadingScreen.style.setProperty('--speed2', '0');  
+  loadingScreen.style.setProperty('--speed3', '0');      
+
+  let button  = document.getElementById("loading-button")
+  let loadingImg  = document.getElementById("loading-gif");
+  loadingImg.remove();
+  button.style.backgroundColor = '#7c7e82';
+  button.innerHTML = 'Iniciar';
+  button.addEventListener("click", onStartButtonPressed);
+});
+
+function onStartButtonPressed() {
+  const gameScreen = document.getElementById( 'webgl-output' );
+  const loadingScreen = document.getElementById( 'loading-screen' );
+  const button  = document.getElementById("loading-button")
+  loadingScreen.transition = 0;
+  loadingScreen.classList.add( 'fade-out' );
+  loadingScreen.addEventListener( 'transitionend', (e) => {
+    const element = e.target;
+    element.remove();  
+  });  
+  gameScreen.style.setProperty("display", "block");
+  button.style.setProperty("display", "none");
+  soundtrack.play();
+}
+>>>>>>> juliana
 //-------------------------------------------------------------------------------
 // Renderer
 //-------------------------------------------------------------------------------
@@ -159,7 +199,11 @@ groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
+<<<<<<< HEAD
 var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
+=======
+var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(13,3,23)"); // (width, height, width segments, height segments, color)
+>>>>>>> juliana
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane2.receiveShadow = false;
@@ -344,7 +388,11 @@ function createArea1(){
   //area da chave da area 1
   for(var i = 8; i <= 18; i++) {
     for(var j= 51.6; j <= 61.6; j++) {
+<<<<<<< HEAD
       let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+=======
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, area1WallMaterial);
+>>>>>>> juliana
       //console.log(j);
       if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 14)||(j == 61.6))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -509,7 +557,11 @@ function createArea3(){
   for(var x = 85.5; x <= 91.5; x++) {
     for(var z= -3; z <= 3; z++) {
       if(x == 91.5 || z == 3 || z == -3) {
+<<<<<<< HEAD
         let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+=======
+        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
+>>>>>>> juliana
         cube.position.set(x, -5.5, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -739,7 +791,11 @@ function createArea2(){
   for(var x = 9.5; x <= 16.5; x++) {
     for(var z= -64; z <= -58; z++) {
       if(x == 9.5 || z == -64 || x == 16.5) {
+<<<<<<< HEAD
         let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+=======
+        let cube = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
+>>>>>>> juliana
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -875,7 +931,11 @@ loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
+<<<<<<< HEAD
   var loader = new GLTFLoader( );
+=======
+  var loader = new GLTFLoader(loadingManager);
+>>>>>>> juliana
   loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
@@ -1043,7 +1103,11 @@ scene.add(pressPlateAf);
 let pressPlateBb = new THREE.Box3();
 pressPlateBb.setFromObject(pressPlateAf);
 pressPlateBb.max.y += 3;
+<<<<<<< HEAD
 createBBHelper(pressPlateBb, "yellow");
+=======
+//createBBHelper(pressPlateBb, "yellow");
+>>>>>>> juliana
 
 const endingMessage = document.getElementById('endingMessage');
 
