@@ -311,14 +311,48 @@ gridHelperA1_2.translateZ(56);
 gridHelperA1_2.translateY(-2.8);
 scene.add( gridHelperA1_2 );
 
+function loadCubeModel(cube, fileName, area)
+{
+  var loader = new GLTFLoader( );
+  loader.load( 'assets/cubes/' + fileName + '.glb', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+      }
+    });
+    obj.traverse( function( node )
+    {
+      if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+    if(area === "A2"){
+      obj.scale.x = 0.2;
+      obj.scale.y = 0.2;
+      obj.scale.z = 0.2;
+    }
+    if(area === 'A3'){
+      obj.scale.x = 0.5;
+      obj.scale.y = 0.5;
+      obj.scale.z = 0.5;
+    }
+    obj.translateY(0)   
+    obj.rotateZ(-Math.PI/2);
+    cube.add(obj);
+    cube.bb = new THREE.Box3();
+    cube.bb.setFromObject(cube);
+    });
+}
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
-  color: "rgb(182,144,95)",
+  transparent: true,
+  opacity: 0.01,
 });
 export let cubeMaterialSelected = new MeshLambertMaterial({
-  color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  //color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  transparent: true,
+  opacity: 0.01,
 });
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -590,6 +624,7 @@ function createArea3(){
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
       let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      loadCubeModel(cubeA3, "CompanionCube", "A3");
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       }
@@ -792,32 +827,6 @@ function createArea2(){
     }
   }
 
-  function loadCubeModel(cube, fileName)
-{
-  var loader = new GLTFLoader( );
-  loader.load( 'assets/cubes/' + fileName + '.glb', function ( gltf ) {
-    var obj = gltf.scene;
-    obj.traverse( function ( child ) {
-      if ( child ) {
-          child.castShadow = true;
-      }
-    });
-    obj.traverse( function( node )
-    {
-      if( node.material ) node.material.side = THREE.DoubleSide;
-    });
-
-    obj.scale.x = 0.2;
-    obj.scale.y = 0.2;
-    obj.scale.z = 0.2;
-    obj.translateY(0)   
-    obj.rotateZ(-Math.PI/2);
-    cube.add(obj);
-    cube.bb = new THREE.Box3();
-    cube.bb.setFromObject(cube);
-    });
-}
-
   function createSelectableCubesA2(){
     let transparentMaterial = new THREE.MeshPhongMaterial({
       transparent: true,
@@ -825,7 +834,7 @@ function createArea2(){
     });
     for(let i = 0; i <= 5; i ++){  
       let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
-      //loadCubeModel(cubeA2, "portalCube");
+        loadCubeModel(cubeA2, "portalCube", "A2");
       switch (i){
         case 0:
           cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
