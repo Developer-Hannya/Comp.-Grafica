@@ -191,7 +191,7 @@ var firstRender = false;
 var groundPlane = createGroundPlane(45, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoader0 = new THREE.TextureLoader();
-var a0Ground = groundTextureLoader0.load('assets/glass+prop+clean-1745557365.png');
+var a0Ground = groundTextureLoader0.load('assets/ground1.jpg');
 var planeGeo0 = new THREE.PlaneGeometry(45, 35);
 var a0GroundMaterial = new THREE.MeshLambertMaterial();
 a0GroundMaterial.map = a0Ground;
@@ -253,7 +253,7 @@ scene.add( gridHelperA3_2 );
 var groundPlaneA2 = createGroundPlane(25, 35, 75, 75, "rgb(222,184,135)"); // (width, height, width segments, height segments, color)
 
 var groundTextureLoader = new THREE.TextureLoader();
-var a2Ground = groundTextureLoader.load('assets/metal_plate_tile_texture_by_i_madethis-d7euvrk-152716083.png');
+var a2Ground = groundTextureLoader.load('assets/ground2.png');
 var planeGeo = new THREE.PlaneGeometry(25, 35);
 var a2GroundMaterial = new THREE.MeshLambertMaterial();
 a2GroundMaterial.map = a2Ground;
