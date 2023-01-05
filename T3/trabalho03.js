@@ -231,7 +231,7 @@ var a3GroundMaterial = new THREE.MeshLambertMaterial();
 a3GroundMaterial.map = a3Ground;
 a3GroundMaterial.map.wrapS = THREE.RepeatWrapping;
 a3GroundMaterial.map.wrapT = THREE.RepeatWrapping;
-a3Ground.repeat.set(45, 35, 75, 75);
+a3Ground.repeat.set(35, 20, 75, 75);
 groundPlaneA3 = new THREE.Mesh(planeGeo3, a3GroundMaterial);
 groundPlaneA3.receiveShadow = true;
 
