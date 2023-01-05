@@ -1,13 +1,5 @@
 import * as THREE from  'three';
-<<<<<<< HEAD
-<<<<<<< HEAD:mobile/objetos.js
 import {scene, objects} from './appMobile.js';
-=======
-import {scene, objects} from './trabalho03.js';
->>>>>>> juliana:T3/objetos.js
-=======
-import {scene, objects} from './appMobile.js';
->>>>>>> juliana
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 
@@ -78,14 +70,7 @@ export class PressurePlate extends THREE.Mesh{
         super(geometry, material);
         this.position.copy(position);
         this.Y = position.y;
-<<<<<<< HEAD
-<<<<<<< HEAD:mobile/objetos.js
         this.audioPlayed = false;
-=======
->>>>>>> juliana:T3/objetos.js
-=======
-        this.audioPlayed = false;
->>>>>>> juliana
         this.castShadow = true;
         this.receiveShadow = true;
         this.pressed = false;
@@ -95,10 +80,7 @@ export class PressurePlate extends THREE.Mesh{
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
         this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
         this.bbHelper.visible = false;
-<<<<<<< HEAD
-        this.sound = true;
-=======
->>>>>>> juliana
+        //this.sound = true;
         objects.push({bb:this.bb});
         scene.add(this.bbHelper);
     }
