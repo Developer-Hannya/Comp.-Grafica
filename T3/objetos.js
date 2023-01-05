@@ -80,6 +80,7 @@ export class PressurePlate extends THREE.Mesh{
         this.bb.setFromCenterAndSize( this.position, this.bbSize );
         this.bbHelper = new THREE.Box3Helper(this.bb, 'yellow');
         this.bbHelper.visible = false;
+        //this.sound = true;
         objects.push({bb:this.bb});
         scene.add(this.bbHelper);
     }

@@ -3,6 +3,8 @@ import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import KeyboardState from '../libs/util/KeyboardState.js'
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
+import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js';
+import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         createGroundPlane,
         initDefaultBasicLight,
@@ -27,7 +29,7 @@ import { createPortals, Portal } from './portais.js';
 import { Door } from './porta.js';
 import { SecondaryBox } from '../libs/util/util.js';
 import {Key} from './key.js';
-import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect } from './sons.js';
+import { bridgeSoundEffect, finalSoundEffect, platformSoundEffect, soundtrack } from './sons.js';
 
 export var scene = new THREE.Scene();    // Create main scene
 export var keyboard = new KeyboardState();
@@ -37,6 +39,39 @@ export var quaternion = new THREE.Quaternion();      //cria um quaternion
 quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0),Math.PI/2);    // muda os eixos do quaternion
 export var textureLoader = new THREE.TextureLoader;
 
+//-------------------------------------------------------------------------------
+// Loading Screen
+//-------------------------------------------------------------------------------
+console.log(document);
+const loadingManager = new THREE.LoadingManager( () => {
+  let loadingScreen = document.getElementById("loading-screen");
+  loadingScreen.transition = 0;
+  loadingScreen.style.setProperty('--speed1', '0');  
+  loadingScreen.style.setProperty('--speed2', '0');  
+  loadingScreen.style.setProperty('--speed3', '0');      
+
+  let button  = document.getElementById("loading-button")
+  let loadingImg  = document.getElementById("loading-gif");
+  loadingImg.remove();
+  button.style.backgroundColor = '#7c7e82';
+  button.innerHTML = 'Iniciar';
+  button.addEventListener("click", onStartButtonPressed);
+});
+
+function onStartButtonPressed() {
+  const gameScreen = document.getElementById( 'webgl-output' );
+  const loadingScreen = document.getElementById( 'loading-screen' );
+  const button  = document.getElementById("loading-button")
+  loadingScreen.transition = 0;
+  loadingScreen.classList.add( 'fade-out' );
+  loadingScreen.addEventListener( 'transitionend', (e) => {
+    const element = e.target;
+    element.remove();  
+  });  
+  gameScreen.style.setProperty("display", "block");
+  button.style.setProperty("display", "none");
+  soundtrack.play();
+}
 //-------------------------------------------------------------------------------
 // Renderer
 //-------------------------------------------------------------------------------
@@ -170,7 +205,11 @@ groundPlane.translateX(13);
 scene.add(groundPlane);
 
 // secondary ground plane
-var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(222,184,125)"); // (width, height, width segments, height segments, color)
+// var fundo = textureLoader.load('assets/fundo.jpg');
+// var fundoMaterial = new THREE.MeshLambertMaterial();
+// fundoMaterial.map = fundo;
+// var groundPlane2 = new THREE.Mesh(new THREE.PlaneGeometry(700, 700), fundoMaterial);
+var groundPlane2 = createGroundPlane(1000, 1000, 1, 1, "rgb(13,3,23)"); // (width, height, width segments, height segments, color)
 groundPlane2.translateY(-15);
 groundPlane2.rotateX(THREE.MathUtils.degToRad(-90));
 groundPlane2.receiveShadow = false;
@@ -297,14 +336,48 @@ gridHelperA1_2.translateZ(56);
 gridHelperA1_2.translateY(-2.8);
 scene.add( gridHelperA1_2 );
 
+function loadCubeModel(cube, fileName, area)
+{
+  var loader = new GLTFLoader( );
+  loader.load( 'assets/cubes/' + fileName + '.glb', function ( gltf ) {
+    var obj = gltf.scene;
+    obj.traverse( function ( child ) {
+      if ( child ) {
+          child.castShadow = true;
+      }
+    });
+    obj.traverse( function( node )
+    {
+      if( node.material ) node.material.side = THREE.DoubleSide;
+    });
+    if(area === "A2"){
+      obj.scale.x = 0.2;
+      obj.scale.y = 0.2;
+      obj.scale.z = 0.2;
+    }
+    if(area === 'A3'){
+      obj.scale.x = 0.5;
+      obj.scale.y = 0.5;
+      obj.scale.z = 0.5;
+    }
+    obj.translateY(0)   
+    obj.rotateZ(-Math.PI/2);
+    cube.add(obj);
+    cube.bb = new THREE.Box3();
+    cube.bb.setFromObject(cube);
+    });
+}
 
 // create basic cube components
 //export let cubeMaterial = setDefaultMaterial("rgb(182,144,95)");
 export let cubeMaterial = new MeshLambertMaterial({
-  color: "rgb(182,144,95)",
+  transparent: true,
+  opacity: 0.01,
 });
 export let cubeMaterialSelected = new MeshLambertMaterial({
-  color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  //color: "rgb(100,255,100)", emissive: "rgb(100,255,100)", emissiveIntensity: 0.2
+  transparent: true,
+  opacity: 0.01,
 });
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
@@ -369,7 +442,7 @@ function createArea1(){
   //area da chave da area 1
   for(var i = 8; i <= 18; i++) {
     for(var j= 51.6; j <= 61.6; j++) {
-      let cubeArea1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
+      let cubeArea1 = new THREE.Mesh(cubeGeometry, area1WallMaterial);
       //console.log(j);
       if((i == 8 || i == 18 || j == 51.6 || j == 61.6) && ((i < 12)||(i > 14)||(j == 61.6))) {
         cubeArea1.position.set(i, -2.3, j);
@@ -459,7 +532,6 @@ function buildArea1Bridge(){
       console.log(closestPosition);
       
       selectableCubes = selectableCubes.filter(cube => cube.uuid != box.uuid);
-      console.log(selectableCubes);
   
       box.position.x = closestPosition.position.x;
       box.position.y = closestPosition.position.y;
@@ -476,13 +548,13 @@ function buildArea1Bridge(){
 
 function createArea3(){
   var a3Wall = textureLoader.load('assets/a3-wall.png');
-  var Area3WallMaterial = new THREE.MeshLambertMaterial();
-  Area3WallMaterial.map = a3Wall;
+  var area3WallMaterial = new THREE.MeshLambertMaterial();
+  area3WallMaterial.map = a3Wall;
   // position cubes in the area A3 like a "house"
   for(var y = -5.5; y <= 1; y++){
     for(var x = 45.5; x <= 85.5; x++) {
       for(var z= -10.5; z <= 10.5; z++) {
-        let cube = new THREE.Mesh(cubeGeometry, Area3WallMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area3WallMaterial);
         if((x == 45.5 || x == 85.5 || z == -10.5 || z == 10.5) && (((x < -2.5)||(x > 2.5)) && ((z < -2.5)||(z > 2.5)))) {
           cube.position.set(x, y, z);
           cube.castShadow = true;
@@ -534,7 +606,7 @@ function createArea3(){
   for(var x = 85.5; x <= 91.5; x++) {
     for(var z= -3; z <= 3; z++) {
       if(x == 91.5 || z == 3 || z == -3) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area3WallMaterial);
         cube.position.set(x, -5.5, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -578,6 +650,7 @@ function createArea3(){
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
       let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+      loadCubeModel(cubeA3, "CompanionCube", "A3");
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       }
@@ -740,12 +813,12 @@ for(var i = -25.6; i <= -15.6; i++) {
 
 function createArea2(){
   var a2Wall = textureLoader.load('assets/a2-wall.png');
-  var Area2WallMaterial = new THREE.MeshLambertMaterial();
-  Area2WallMaterial.map = a2Wall;
+  var area2WallMaterial = new THREE.MeshLambertMaterial();
+  area2WallMaterial.map = a2Wall;
   //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
   for(var x = 0.5; x <= 25.5; x++) {
     for(var z= -58;z <= -23; z++) {
-      let cubeArea2 = new THREE.Mesh(cubeGeometry, Area2WallMaterial);
+      let cubeArea2 = new THREE.Mesh(cubeGeometry, area2WallMaterial);
       if((x == 0.5 || x == 25.5 || z == -58 || z == -23) && ((x < 10)||(x > 16))) {
         cubeArea2.position.set(x, 3.3, z);
         cubeArea2.castShadow = true;
@@ -764,7 +837,7 @@ function createArea2(){
   for(var x = 9.5; x <= 16.5; x++) {
     for(var z= -64; z <= -58; z++) {
       if(x == 9.5 || z == -64 || x == 16.5) {
-        let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        let cube = new THREE.Mesh(cubeGeometry, area2WallMaterial);
         cube.position.set(x, 3.3, z);
         cube.castShadow = true;
         cube.receiveShadow = true;
@@ -783,6 +856,7 @@ function createArea2(){
   function createSelectableCubesA2(){
     for(let i = 0; i <= 5; i ++){  
       let cubeA2 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
+        loadCubeModel(cubeA2, "portalCube", "A2");
       switch (i){
         case 0:
           cubeA2.position.copy(new THREE.Vector3(4, 3.3, -30));
@@ -809,7 +883,7 @@ function createArea2(){
     }
   }
   createSelectableCubesA2();
-  // crias as placas de pressão da A3
+  // crias as placas de pressão da A2
 
   function createPressurePlatesA2(){
     let pressPlateA2Material = new THREE.MeshPhongMaterial({
@@ -900,7 +974,7 @@ loadGLTFFile('assets/robot.glb');
 
 function loadGLTFFile(modelName)
 {
-  var loader = new GLTFLoader( );
+  var loader = new GLTFLoader(loadingManager);
   loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
@@ -1028,7 +1102,7 @@ scene.add(pressPlateAf);
 let pressPlateBb = new THREE.Box3();
 pressPlateBb.setFromObject(pressPlateAf);
 pressPlateBb.max.y += 3;
-createBBHelper(pressPlateBb, "yellow");
+//createBBHelper(pressPlateBb, "yellow");
 
 const endingMessage = document.getElementById('endingMessage');
 

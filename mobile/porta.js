@@ -85,7 +85,11 @@ export function createDoor(){
    csgObject = internalRectangleCSG.union(cylinderCSG)
    mesh = CSG.toMesh(csgObject, auxMat)
 
+<<<<<<< HEAD
    mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(115,89,49)'})
+=======
+   mesh.material = new THREE.MeshPhongMaterial({color: 'rgb(60,60,60)'})
+>>>>>>> juliana
    mesh.position.set(0, -1.5, 0)
    return mesh;
 }
