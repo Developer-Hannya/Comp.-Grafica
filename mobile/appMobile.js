@@ -722,7 +722,7 @@ function createArea3(){
   function createSelectableCubesA3(){
     for(let i = 0; i <=1; i ++){  
       let cubeA3 = new SelectableCube(new THREE.Vector3(3, 0.5, 3), cubeGeometry, cubeMaterial);
-      loadCubeModel(cubeA3, "CompanionCube", "A3");
+      loadCubeModel(cubeA3, "companionCube", "A3");
       if(i === 0){
         cubeA3.position.copy(new THREE.Vector3(62, -5.5, -8));
       }
