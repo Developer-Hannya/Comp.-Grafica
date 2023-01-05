@@ -350,7 +350,7 @@ function loadCubeModel(cube, fileName, area)
     {
       if( node.material ) node.material.side = THREE.DoubleSide;
     });
-    if(area === "A2"){
+    if(area === "A2" || area === "A1"){
       obj.scale.x = 0.2;
       obj.scale.y = 0.2;
       obj.scale.z = 0.2;
@@ -363,8 +363,8 @@ function loadCubeModel(cube, fileName, area)
     obj.translateY(0)   
     obj.rotateZ(-Math.PI/2);
     cube.add(obj);
-    cube.bb = new THREE.Box3();
-    cube.bb.setFromObject(cube);
+    //cube.bb = new THREE.Box3();
+    //cube.bb.setFromObject(cube);
     });
 }
 
@@ -379,6 +379,7 @@ export let cubeMaterialSelected = new MeshLambertMaterial({
   transparent: true,
   opacity: 0.01,
 });
+
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
 
 let area1Boxes = [];
@@ -389,6 +390,7 @@ function createArea1(){
     
     for(let i = 0; i < 6; i++){
       let cubeA1 = new SelectableCube(new THREE.Vector3(0, -2.3, 0), cubeGeometry, cubeMaterial);
+      loadCubeModel(cubeA1, "portalCube", "A1");
       switch (i){
         case 0:
           cubeA1.position.copy(new THREE.Vector3(9, -2.3, 29));
@@ -815,7 +817,7 @@ function createArea2(){
   var a2Wall = textureLoader.load('assets/a2-wall.png');
   var area2WallMaterial = new THREE.MeshLambertMaterial();
   area2WallMaterial.map = a2Wall;
-  //let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
+  let cubeMaterialArea2 = setDefaultMaterial("rgb(10,10,255)");
   for(var x = 0.5; x <= 25.5; x++) {
     for(var z= -58;z <= -23; z++) {
       let cubeArea2 = new THREE.Mesh(cubeGeometry, area2WallMaterial);
