@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {keyboard, renderer, scene} from './trabalho02.js';
+import {keyboard, renderer, scene} from './trabalho03.js';
 import {SecondaryBox} from "../libs/util/util.js";
 
 var message = new SecondaryBox("press 'C' to change camera type - Orthographic");

@@ -3,7 +3,7 @@ import { Vector3 } from '../build/three.module.js';
 import { CSG } from '../libs/other/CSGMesh.js';
 import { setDefaultMaterial } from '../libs/util/util.js';
 import { cameraHolder } from './camera.js';
-import { createBBHelper, escadas, parede, player } from './trabalho02.js';
+import { createBBHelper, escadas, parede, player } from './trabalho03.js';
 
 function updateObject(mesh)
 {

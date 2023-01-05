@@ -1,6 +1,6 @@
 import * as THREE from  'three';
-import checkCollisions from "./trabalho02.js";
-import { keyboard } from './trabalho02.js';
+import checkCollisions from "./trabalho03.js";
+import { keyboard } from './trabalho03.js';
 import {isHoldingBlock, objectHolded, cubeSide} from './selecaoDeObjetos.js'
 
 

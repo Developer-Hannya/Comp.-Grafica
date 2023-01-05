@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {scene, objects} from './trabalho02.js';
+import {scene, objects} from './trabalho03.js';
 import {cameraHolder} from './camera.js';
 import {spotLight} from './luz.js';
 

@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
-import { createBBHelper, objects, scene } from './trabalho02.js';
+import { createBBHelper, objects, scene } from './trabalho03.js';
 
 export var textureLoader = new THREE.TextureLoader;
 var iaWall = textureLoader.load('assets/ia-wall.png');

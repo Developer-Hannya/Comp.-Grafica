@@ -1,7 +1,7 @@
 import * as THREE from  'three';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import { setDefaultMaterial } from '../libs/util/util.js';
-import { chaves, createBBHelper, player, scene } from './trabalho02.js';
+import { chaves, createBBHelper, player, scene } from './trabalho03.js';
 import { keySoundEffect } from './sons.js';
 
 export class Key extends THREE.Mesh{

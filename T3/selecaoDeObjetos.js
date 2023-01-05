@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion, player } from './trabalho02.js';
+import checkCollisions, { cubeMaterial, cubeMaterialSelected, renderer, objects, parede, scene, selectableCubes, quaternion, player } from './trabalho03.js';
 import { camera, cameraHolder} from './camera.js';
 import {SelectableCube} from './objetos.js';
 

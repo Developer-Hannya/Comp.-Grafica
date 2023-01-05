@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import { CSG } from '../libs/other/CSGMesh.js';
-import { createBBHelper, objects, player} from './trabalho02.js';
+import { createBBHelper, objects, player} from './trabalho03.js';
 import { doorSoundEffect } from './sons.js';
 
 export let closedDoors = [];

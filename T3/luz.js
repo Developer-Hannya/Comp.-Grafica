@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import {player, scene} from './trabalho02.js';
+import {player, scene} from './trabalho03.js';
 import {cameraHolder} from './camera.js';
 import { color } from '../libs/util/dat.gui.module.js';
 import { SpotLightHelper } from '../build/three.module.js';
